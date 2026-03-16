@@ -1,0 +1,22 @@
+name: jwizard
+
+services:
+  jwizard-rabbitmq:
+    container_name: jwizard-rabbitmq
+    image: bitnami/rabbitmq:latest
+    ports:
+      - '${JW_RABBITMQ_AMQP_PORT}:5672'
+      - '${JW_RABBITMQ_PANEL_PORT}:15672'
+    environment:
+      RABBITMQ_SECURE_PASSWORD: true
+      RABBITMQ_USERNAME: ${JW_RABBITMQ_USERNAME}
+      RABBITMQ_PASSWORD: ${JW_RABBITMQ_PASSWORD}
+      RABBITMQ_MANAGEMENT_ALLOW_WEB_ACCESS: true
+    volumes:
+      - ./.volumes/rabbitmq/rabbitmq-volume:/bitnami/rabbitmq/mnesia
+    networks:
+      - jwizard-network
+
+networks:
+  jwizard-network:
+    driver: bridge

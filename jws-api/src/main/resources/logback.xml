@@ -1,0 +1,4 @@
+<configuration>
+  <property name="SERVICE_NAME" value="jws-api"/>
+  <include resource="logback-base.xml"/>
+</configuration>

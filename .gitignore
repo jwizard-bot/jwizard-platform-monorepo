@@ -1,0 +1,7 @@
+.idea/
+.gradle/
+.volumes/**/*volume/
+build/
+out/
+
+.env
