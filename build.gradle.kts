@@ -27,7 +27,6 @@ subprojects {
         apply(plugin = getPluginId(rootProject.libs.plugins.shadow))
 
         dependencies {
-            implementation(project(":jwl-common"))
             runtimeOnly(rootProject.libs.logback.classic)
         }
     }
