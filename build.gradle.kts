@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     id("java")
     alias(libs.plugins.shadow) apply false
@@ -28,6 +30,11 @@ subprojects {
 
         dependencies {
             runtimeOnly(rootProject.libs.logback.classic)
+        }
+
+        tasks.withType<ShadowJar> {
+            archiveFileName.set("${project.name}.jar")
+            destinationDirectory.set(layout.projectDirectory.dir(".bin"))
         }
     }
 }
