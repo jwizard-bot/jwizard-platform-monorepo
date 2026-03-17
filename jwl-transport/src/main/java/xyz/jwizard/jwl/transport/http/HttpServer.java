@@ -130,7 +130,7 @@ public class HttpServer {
     }
 
     // only for unit/integration tests
-    public void stop() {
+    void stop() {
         if (server == null || !server.isRunning()) {
             return;
         }
