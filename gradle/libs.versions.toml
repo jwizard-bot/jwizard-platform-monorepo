@@ -1,10 +1,23 @@
 [versions]
+assertj = "3.27.7"
+jackson = "3.1.0"
+jettyServer = "12.1.7"
+junit = "5.10.2"
 logback = "1.5.32"
+mockito = "5.11.0"
+reflections = "0.10.2"
 shadow = "8.1.1"
 slf4j = "2.0.17"
 
 [libraries]
+assertj-core = { group = "org.assertj", name = "assertj-core", version.ref = "assertj" }
+jackson-databind = { module = "tools.jackson.core:jackson-databind", version.ref = "jackson" }
+jetty-server = { module = "org.eclipse.jetty:jetty-server", version.ref = "jettyServer" }
+junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junit" }
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
+mockito-jupiter = { group = "org.mockito", name = "mockito-junit-jupiter", version.ref = "mockito" }
+reflections = { module = "org.reflections:reflections", version.ref = "reflections" }
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 
 [plugins]
