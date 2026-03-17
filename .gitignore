@@ -1,5 +1,9 @@
-.bin
 .idea/
+!.idea/misc.xml
+!.idea/inspectionProfiles/
+!.idea/codeStyles/
+
+.bin
 .gradle/
 .volumes/**/*volume/
 build/
