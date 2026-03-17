@@ -7,7 +7,7 @@ plugins {
 
 allprojects {
     group = "xyz.jwizard"
-    version = "1.0-SNAPSHOT"
+    version = getEnv("VERSION", "0.0.0")
 
     repositories {
         mavenCentral()
@@ -39,4 +39,10 @@ subprojects {
     }
 }
 
-fun getPluginId(accessor: Provider<PluginDependency>) = accessor.get().pluginId
+fun getPluginId(accessor: Provider<PluginDependency>): String {
+    return accessor.get().pluginId
+}
+
+fun getEnv(name: String, defValue: String = ""): String {
+    return System.getenv("JW_$name") ?: defValue
+}
