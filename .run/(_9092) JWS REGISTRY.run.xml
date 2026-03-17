@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="(:9093) JWS REGISTRY" type="Application" factoryName="Application">
+  <configuration default="false" name="(:9092) JWS REGISTRY" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="xyz.jwizard.jws.registry.JwsRegistryMain" />
     <module name="jwizard-platform.jws-registry.main" />
     <extension name="coverage">

@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="(:9095) JWS WORKER" type="Application" factoryName="Application">
+  <configuration default="false" name="(:0000) JWS WORKER" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="xyz.jwizard.jws.worker.JwsWorkerMain" />
     <module name="jwizard-platform.jws-worker.main" />
     <extension name="coverage">
