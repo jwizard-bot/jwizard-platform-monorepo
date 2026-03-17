@@ -23,9 +23,10 @@ public class RangeValidator implements AnnotationValidator<Range> {
         }
         final double doubleVal = num.doubleValue();
         if (doubleVal < annotation.min() || doubleVal > annotation.max()) {
-            final String errorMessage = String.format("Field '%s' must be between %d and %d",
-                field.getName(), annotation.min(), annotation.max());
-            throw new ValidationException(errorMessage);
+            final String msg = annotation.message()
+                .replace("{min}", String.valueOf(annotation.min()))
+                .replace("{max}", String.valueOf(annotation.max()));
+            throw new ValidationException(String.format("Field '%s' %s", field.getName(), msg));
         }
     }
 }

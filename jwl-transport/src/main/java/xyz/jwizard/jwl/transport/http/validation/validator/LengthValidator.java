@@ -23,8 +23,10 @@ public class LengthValidator implements AnnotationValidator<Length> {
         }
         final int len = str.length();
         if (len < annotation.min() || len > annotation.max()) {
-            throw new ValidationException(String.format("Field '%s' length must be between %d and %d",
-                field.getName(), annotation.min(), annotation.max()));
+            final String msg = annotation.message()
+                .replace("{min}", String.valueOf(annotation.min()))
+                .replace("{max}", String.valueOf(annotation.max()));
+            throw new ValidationException(String.format("Field '%s' %s", field.getName(), msg));
         }
     }
 }

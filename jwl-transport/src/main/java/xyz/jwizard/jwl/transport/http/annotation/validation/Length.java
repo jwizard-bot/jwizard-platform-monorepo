@@ -12,5 +12,5 @@ public @interface Length {
 
     int max() default Integer.MAX_VALUE;
 
-    String message() default "length is out of bounds";
+    String message() default "length must be between {min} and {max}";
 }

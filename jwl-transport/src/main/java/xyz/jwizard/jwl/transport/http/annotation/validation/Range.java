@@ -12,5 +12,5 @@ public @interface Range {
 
     long max() default Long.MAX_VALUE;
 
-    String message() default "value is out of bounds";
+    String message() default "must be between {min} and {max}";
 }

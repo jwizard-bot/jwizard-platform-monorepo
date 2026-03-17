@@ -55,7 +55,7 @@ public class ValidationHandlerTest {
         // when & then
         assertThatThrownBy(() -> validationHandler.validate(invalidTestUser))
             .isInstanceOf(ValidationException.class)
-            .hasMessageContaining("length must be between 3");
+            .hasMessageContaining("Field 'name' length must be between 3 and");
     }
 
     @Test
