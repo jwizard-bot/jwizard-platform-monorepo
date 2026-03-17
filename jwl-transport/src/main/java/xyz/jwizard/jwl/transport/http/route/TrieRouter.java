@@ -1,0 +1,72 @@
+package xyz.jwizard.jwl.transport.http.route;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class TrieRouter implements Router {
+    private static final Logger LOG = LoggerFactory.getLogger(TrieRouter.class);
+
+    private static final String DELIMITER_START = "{";
+    private static final String DELIMITER_END = "}";
+
+    private final RouteNode root = new RouteNode();
+
+    @Override
+    public void addRoute(String method, String path, Route route) {
+        final String[] parts = (method + path).split("/");
+        RouteNode current = root;
+        for (final String part : parts) {
+            if (part.isEmpty()) {
+                continue;
+            }
+            if (part.startsWith(DELIMITER_START) && part.endsWith(DELIMITER_END)) {
+                if (current.getVariableChild() == null) {
+                    current.setVariableName(part.substring(1, part.length() - 1));
+                    current.setVariableChild(new RouteNode());
+                }
+                current = current.getVariableChild();
+            } else {
+                current.getStaticChildren().putIfAbsent(part, new RouteNode());
+                current = current.getStaticChildren().get(part);
+            }
+        }
+        if (current.getRoute() != null) {
+            LOG.warn("Overwriting existing route: {} {}", method, path);
+        }
+        current.setRoute(route);
+        LOG.info("Registered route: {} {}", method, path);
+    }
+
+    @Override
+    public MatchResult findRoute(String method, String path) {
+        LOG.debug("Searching for route match: {} {}", method, path);
+        final String[] parts = (method + path).split("/");
+        final Map<String, String> extractedVariables = new HashMap<>();
+        RouteNode current = root;
+        for (String part : parts) {
+            if (part.isEmpty()) {
+                continue;
+            }
+            if (current.getStaticChildren().containsKey(part)) {
+                current = current.getStaticChildren().get(part);
+            } else if (current.getVariableChild() != null) {
+                String varName = current.getVariableName();
+                current = current.getVariableChild();
+                extractedVariables.put(varName, part);
+            } else {
+                LOG.debug("Route not found (missed at node '{}'): {} {}", part, method, path);
+                return null;
+            }
+        }
+        if (current.getRoute() == null) {
+            LOG.debug("Node exists but no route action assigned for: {} {}", method, path);
+            return null;
+        }
+        LOG.debug("Route found for: {} {}. Extracted variables: {}", method, path,
+            extractedVariables);
+        return new MatchResult(current.getRoute(), extractedVariables);
+    }
+}
