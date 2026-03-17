@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.jwizard.jwl.contracts.JwlContracts;
 import xyz.jwizard.jwl.persistence.JwlPersistence;
+import xyz.jwizard.jwl.transport.http.HttpServer;
 
 public class JwsApiMain {
     private static final Logger LOG = LoggerFactory.getLogger(JwsApiMain.class);
@@ -12,5 +13,11 @@ public class JwsApiMain {
         LOG.info("HELLO FROM JWS-API");
         JwlContracts.hello();
         JwlPersistence.hello();
+
+        final HttpServer httpServer = HttpServer.builder()
+            .basePackageToScan("xyz.jwizard.jws.api")
+            .port(9091)
+            .build();
+        httpServer.start();
     }
 }
