@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.json.JsonSerializer;
+import xyz.jwizard.jwl.common.util.Assert;
 import xyz.jwizard.jwl.common.util.CollectionUtil;
 import xyz.jwizard.jwl.common.util.io.IoUtil;
 import xyz.jwizard.jwl.http.exception.handler.AnnotatedExceptionHandler;
@@ -203,6 +204,9 @@ public class HttpServer implements Closeable {
         }
 
         public HttpServer build() {
+            Assert.notNull(provider, "ComponentProvider is missing");
+            Assert.notNull(jsonSerializer, "JsonSerializer is missing");
+            Assert.state(port >= 0 && port < 65536, "Invalid port number: " + port);
             return new HttpServer(this);
         }
     }
