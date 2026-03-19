@@ -1,8 +1,8 @@
 package xyz.jwizard.jwl.http;
 
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import xyz.jwizard.jwl.common.reflect.ClassScanner;
 import xyz.jwizard.jwl.http.annotation.Body;
 import xyz.jwizard.jwl.http.annotation.HttpController;
 import xyz.jwizard.jwl.http.annotation.HttpMethod;
@@ -18,24 +18,21 @@ import java.util.Set;
 class RouteScanner {
     private static final Logger LOG = LoggerFactory.getLogger(RouteScanner.class);
 
-    private final String basePackage;
+    private final ClassScanner classScanner;
     private final Router router;
     private int scannedControllersCount = 0;
     private int registeredRoutesCount = 0;
 
-    RouteScanner(String basePackage, Router router) {
-        this.basePackage = basePackage;
+    RouteScanner(ClassScanner classScanner, Router router) {
+        this.classScanner = classScanner;
         this.router = router;
     }
 
     void scan() {
-        LOG.info("Starting component scan for package: {}", basePackage);
-        final Reflections reflections = new Reflections(basePackage);
-        final Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(HttpController.class);
+        final Set<Class<?>> controllers = classScanner.getTypesAnnotatedWith(HttpController.class);
         for (final Class<?> clazz : controllers) {
             processController(clazz);
         }
-        LOG.info("Component scan completed successfully");
         LOG.info("Controllers initialized: {}", scannedControllersCount);
         LOG.info("Routes registered: {}", registeredRoutesCount);
     }
