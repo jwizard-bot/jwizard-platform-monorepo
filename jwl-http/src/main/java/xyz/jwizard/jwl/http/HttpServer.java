@@ -5,8 +5,7 @@ import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import xyz.jwizard.jwl.common.CollectionUtil;
-import xyz.jwizard.jwl.common.json.JacksonSerializer;
+import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.json.JsonSerializer;
 import xyz.jwizard.jwl.http.exception.AnnotatedExceptionHandler;
 import xyz.jwizard.jwl.http.exception.BadRequestExceptionHandler;
@@ -37,21 +36,24 @@ public class HttpServer {
         "/favicon.ico",
         "/robots.txt"
     );
+
+    private final Router router;
+    private final ComponentProvider provider;
     private final Set<String> ignoredPaths;
-    private final String basePackageToScan;
     private final int port;
-    private final boolean blockingMode;
+
     private final Set<ArgumentResolver> resolvers;
     private final Set<ResponseWriter> writers;
     private final Set<ExceptionHandler> exceptionHandlers;
+
     private Server server;
     private ServerConnector connector;
 
     private HttpServer(Builder builder) {
+        router = new TrieRouter();
+        provider = builder.provider;
         ignoredPaths = builder.ignoredPaths;
-        basePackageToScan = builder.basePackageToScan;
         port = builder.port;
-        blockingMode = builder.blockingMode;
 
         // validators init
         final Set<AnnotationValidator<?>> allValidators = new LinkedHashSet<>();
@@ -63,7 +65,7 @@ public class HttpServer {
 
         // resolvers init
         resolvers = new LinkedHashSet<>(builder.resolvers);
-        resolvers.add(new PathVariableResolver());
+        resolvers.add(new PathVariableResolver(router));
         resolvers.add(new RequestParamResolver());
         resolvers.add(new RequestBodyResolver(builder.jsonSerializer, validationHandler));
 
@@ -93,8 +95,7 @@ public class HttpServer {
     public void start() {
         LOG.info("Initializing HTTP server...");
 
-        final Router router = new TrieRouter();
-        final RouteScanner scanner = new RouteScanner(basePackageToScan, router);
+        final RouteScanner scanner = new RouteScanner(provider, router, resolvers);
         scanner.scan();
 
         final Set<String> combinedIgnoredPaths = combineIgnoredPaths();
@@ -165,12 +166,16 @@ public class HttpServer {
         private final LinkedHashSet<ResponseWriter> writers = new LinkedHashSet<>();
         private final LinkedHashSet<ExceptionHandler> exceptionHandlers = new LinkedHashSet<>();
         private final LinkedHashSet<AnnotationValidator<?>> validators = new LinkedHashSet<>();
-        private JsonSerializer jsonSerializer = new JacksonSerializer();
-        private String basePackageToScan = "xyz.jwizard";
+        private ComponentProvider provider;
+        private JsonSerializer jsonSerializer;
         private int port = 8080;
-        private boolean blockingMode = true;
 
         private Builder() {
+        }
+
+        public Builder componentProvider(ComponentProvider provider) {
+            this.provider = provider;
+            return this;
         }
 
         public Builder ignoredPaths(Set<String> paths) {
@@ -198,22 +203,12 @@ public class HttpServer {
             return this;
         }
 
-        public Builder basePackageToScan(String basePackageToScan) {
-            this.basePackageToScan = basePackageToScan;
-            return this;
-        }
-
         public Builder port(int port) {
             this.port = port;
             return this;
         }
 
-        public Builder blockingMode(boolean blockingMode) {
-            this.blockingMode = blockingMode;
-            return this;
-        }
-
-        public Builder objectMapper(JsonSerializer jsonSerializer) {
+        public Builder jsonSerializer(JsonSerializer jsonSerializer) {
             this.jsonSerializer = jsonSerializer;
             return this;
         }

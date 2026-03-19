@@ -2,68 +2,58 @@ package xyz.jwizard.jwl.http;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import xyz.jwizard.jwl.common.reflect.ClassScanner;
-import xyz.jwizard.jwl.http.annotation.Body;
+import xyz.jwizard.jwl.common.di.ComponentProvider;
+import xyz.jwizard.jwl.common.util.PathUtil;
 import xyz.jwizard.jwl.http.annotation.HttpController;
 import xyz.jwizard.jwl.http.annotation.HttpMethod;
 import xyz.jwizard.jwl.http.annotation.RequestMapping;
+import xyz.jwizard.jwl.http.resolver.ArgumentResolver;
 import xyz.jwizard.jwl.http.route.Route;
 import xyz.jwizard.jwl.http.route.Router;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.Set;
 
 class RouteScanner {
     private static final Logger LOG = LoggerFactory.getLogger(RouteScanner.class);
 
-    private final ClassScanner classScanner;
+    private final ComponentProvider provider;
     private final Router router;
-    private int scannedControllersCount = 0;
+    private final Set<ArgumentResolver> resolvers;
+
     private int registeredRoutesCount = 0;
 
-    RouteScanner(ClassScanner classScanner, Router router) {
-        this.classScanner = classScanner;
+    RouteScanner(ComponentProvider provider, Router router, Set<ArgumentResolver> resolvers) {
+        this.provider = provider;
         this.router = router;
+        this.resolvers = resolvers;
     }
 
     void scan() {
-        final Set<Class<?>> controllers = classScanner.getTypesAnnotatedWith(HttpController.class);
-        for (final Class<?> clazz : controllers) {
-            processController(clazz);
+        final Collection<Object> instances = provider
+            .getInstancesAnnotatedWith(HttpController.class);
+        for (final Object instance : instances) {
+            registerRoutesForInstance(instance);
         }
-        LOG.info("Controllers initialized: {}", scannedControllersCount);
-        LOG.info("Routes registered: {}", registeredRoutesCount);
+        LOG.info("HTTP controllers initialized: {}", instances.size());
+        LOG.info("Total routes registered: {}", registeredRoutesCount);
     }
 
-    private void processController(Class<?> clazz) {
-        try {
-            final Constructor<?> constructor = clazz.getDeclaredConstructor();
-            constructor.setAccessible(true);
-            final Object instance = constructor.newInstance();
-            final String basePath = clazz.getAnnotation(HttpController.class).value();
-            for (final Method method : clazz.getDeclaredMethods()) {
-                if (method.isAnnotationPresent(RequestMapping.class)) {
-                    validateMethod(method);
-                    registerMethodRoutes(instance, basePath, method);
-                }
+    private void registerRoutesForInstance(Object instance) {
+        final Class<?> clazz = instance.getClass();
+        final String basePath = clazz.getAnnotation(HttpController.class).value();
+        for (final Method method : clazz.getDeclaredMethods()) {
+            if (method.isAnnotationPresent(RequestMapping.class)) {
+                registerMethodRoutes(instance, basePath, method);
+                validateMethod(method);
             }
-            scannedControllersCount++;
-        } catch (Exception ex) {
-            LOG.error("Failed to initialize controller: {}", clazz.getName(), ex);
         }
     }
 
     private void validateMethod(Method method) {
-        final long bodyParamsCount = Arrays.stream(method.getParameters())
-            .filter(p -> p.isAnnotationPresent(Body.class))
-            .count();
-        if (bodyParamsCount > 1) {
-            throw new IllegalStateException(String.format(
-                "Invalid mapping in %s.%s(): multiple @Body detected. Only one is allowed.",
-                method.getDeclaringClass().getSimpleName(), method.getName()
-            ));
+        for (final ArgumentResolver resolver : resolvers) {
+            resolver.validate(method);
         }
     }
 
@@ -72,27 +62,11 @@ class RouteScanner {
         final String[] paths = mapping.value();
         final HttpMethod httpMethod = mapping.method();
         for (final String path : paths) {
-            final String fullPath = combinePaths(basePath, path);
+            final String fullPath = PathUtil.combinePaths(basePath, path);
             router.addRoute(httpMethod.name(), fullPath, new Route(instance, method));
             registeredRoutesCount++;
             LOG.debug("Registered route: [{} {}] -> {}.{}()", httpMethod, fullPath,
                 instance.getClass().getSimpleName(), method.getName());
         }
-    }
-
-    private String combinePaths(String prefix, String path) {
-        if (prefix == null || prefix.isBlank() || prefix.equals("/")) {
-            return ensureLeadingSlash(path);
-        }
-        final String cleanPrefix = prefix.replaceAll("/+$", ""); // remove slash from the end
-        final String cleanPath = path.replaceAll("^/+", ""); // remove slash from the beginning
-        return ensureLeadingSlash(cleanPrefix + "/" + cleanPath);
-    }
-
-    private String ensureLeadingSlash(String path) {
-        if (path == null || path.isEmpty()) {
-            return "/";
-        }
-        return path.startsWith("/") ? path : "/" + path;
     }
 }

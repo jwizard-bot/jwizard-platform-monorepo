@@ -1,15 +1,11 @@
-package xyz.jwizard.jwl.http.annotation;
-
-import jakarta.inject.Singleton;
+package xyz.jwizard.jwl.common.di;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Singleton
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface HttpController {
-    String value() default "";
+@interface TestMarker {
 }

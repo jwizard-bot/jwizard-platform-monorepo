@@ -5,8 +5,11 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import xyz.jwizard.jwl.common.di.ApplicationContext;
 import xyz.jwizard.jwl.common.json.JacksonSerializer;
 import xyz.jwizard.jwl.common.json.JsonSerializer;
+import xyz.jwizard.jwl.common.reflect.ClassGraphScanner;
+import xyz.jwizard.jwl.common.reflect.ClassScanner;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -23,10 +26,13 @@ public class HttpServerIntegrationTest {
 
     @BeforeAll
     static void startServer() {
+        final String packageName = HttpServerIntegrationTest.class.getPackageName();
+        final ClassScanner scanner = new ClassGraphScanner(packageName);
+        final ApplicationContext context = new ApplicationContext(scanner);
         httpServer = HttpServer.builder()
+            .componentProvider(context.getProvider())
+            .jsonSerializer(new JacksonSerializer())
             .port(0)
-            .basePackageToScan("xyz.jwizard.jwl.transport.http")
-            .blockingMode(false)
             .build();
         httpServer.start();
         dynamicPort = httpServer.getLocalPort();
