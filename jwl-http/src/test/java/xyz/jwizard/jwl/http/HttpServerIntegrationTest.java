@@ -41,9 +41,7 @@ public class HttpServerIntegrationTest {
 
     @AfterAll
     static void stopServer() {
-        if (httpServer != null) {
-            httpServer.stop();
-        }
+        IoUtil.closeQuietly(httpServer);
     }
 
     private HttpResponse<String> get(String path) throws Exception {

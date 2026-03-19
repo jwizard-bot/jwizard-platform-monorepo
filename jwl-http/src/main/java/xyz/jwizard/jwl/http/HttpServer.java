@@ -2,11 +2,14 @@ package xyz.jwizard.jwl.http;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.util.component.AbstractLifeCycle;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.json.JsonSerializer;
+import xyz.jwizard.jwl.common.util.CollectionUtil;
+import xyz.jwizard.jwl.common.util.io.IoUtil;
 import xyz.jwizard.jwl.http.exception.handler.AnnotatedExceptionHandler;
 import xyz.jwizard.jwl.http.exception.handler.BadRequestExceptionHandler;
 import xyz.jwizard.jwl.http.exception.handler.ExceptionHandler;
@@ -24,12 +27,13 @@ import xyz.jwizard.jwl.http.validation.validator.NotNullValidator;
 import xyz.jwizard.jwl.http.validation.validator.RangeValidator;
 import xyz.jwizard.jwl.http.writer.*;
 
+import java.io.Closeable;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.Executors;
 
-public class HttpServer {
+public class HttpServer implements Closeable {
     private static final Logger LOG = LoggerFactory.getLogger(HttpServer.class);
 
     private static final Set<String> DEFAULT_IGNORED_PATHS = Set.of(
@@ -120,29 +124,14 @@ public class HttpServer {
         server.setStopAtShutdown(true);
         try {
             server.start();
-            LOG.info("HTTP server is listening on http://localhost:{}", port);
-            if (blockingMode) {
-                server.join();
-            }
         } catch (Exception ex) {
-            LOG.error("Failed to start HTTP server", ex);
-            throw new RuntimeException("HTTP server startup failed", ex);
+            throw new CriticalBootstrapException("HTTP server startup failed", ex);
         }
     }
 
-    // only for unit/integration tests
-    void stop() {
-        if (server == null || !server.isRunning()) {
-            return;
-        }
-        try {
-            LOG.info("Stopping HTTP server...");
-            server.stop();
-            server.join();
-            LOG.info("HTTP server stopped successfully.");
-        } catch (Exception ex) {
-            LOG.error("Error while stopping HTTP server", ex);
-        }
+    @Override
+    public void close() {
+        IoUtil.actionQuietly(server, AbstractLifeCycle::stop);
     }
 
     public int getLocalPort() {
