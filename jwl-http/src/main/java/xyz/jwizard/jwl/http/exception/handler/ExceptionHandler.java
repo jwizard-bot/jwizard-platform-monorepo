@@ -1,4 +1,4 @@
-package xyz.jwizard.jwl.http.exception;
+package xyz.jwizard.jwl.http.exception.handler;
 
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;

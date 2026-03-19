@@ -10,6 +10,7 @@ import xyz.jwizard.jwl.common.json.JacksonSerializer;
 import xyz.jwizard.jwl.common.json.JsonSerializer;
 import xyz.jwizard.jwl.common.reflect.ClassGraphScanner;
 import xyz.jwizard.jwl.common.reflect.ClassScanner;
+import xyz.jwizard.jwl.common.util.io.IoUtil;
 
 import java.net.URI;
 import java.net.http.HttpClient;

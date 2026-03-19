@@ -8,7 +8,7 @@ import org.eclipse.jetty.util.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.jwizard.jwl.common.cache.ProviderCache;
-import xyz.jwizard.jwl.http.exception.ExceptionHandler;
+import xyz.jwizard.jwl.http.exception.handler.ExceptionHandler;
 import xyz.jwizard.jwl.http.resolver.ArgumentResolver;
 import xyz.jwizard.jwl.http.route.MatchResult;
 import xyz.jwizard.jwl.http.route.Router;
