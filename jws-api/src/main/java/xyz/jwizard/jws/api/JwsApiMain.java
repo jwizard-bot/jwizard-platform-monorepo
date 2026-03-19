@@ -3,8 +3,8 @@ package xyz.jwizard.jws.api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.jwizard.jwl.contracts.JwlContracts;
+import xyz.jwizard.jwl.http.HttpServer;
 import xyz.jwizard.jwl.persistence.JwlPersistence;
-import xyz.jwizard.jwl.transport.http.HttpServer;
 
 public class JwsApiMain {
     private static final Logger LOG = LoggerFactory.getLogger(JwsApiMain.class);

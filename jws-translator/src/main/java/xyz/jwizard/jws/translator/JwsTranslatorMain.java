@@ -2,8 +2,8 @@ package xyz.jwizard.jws.translator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import xyz.jwizard.jwl.http.HttpServer;
 import xyz.jwizard.jwl.i18n.JwlI18n;
-import xyz.jwizard.jwl.transport.http.HttpServer;
 
 public class JwsTranslatorMain {
     private static final Logger LOG = LoggerFactory.getLogger(JwsTranslatorMain.class);
