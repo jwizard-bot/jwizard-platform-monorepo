@@ -55,8 +55,8 @@ public class TrieRouter implements Router {
             if (current.getStaticChildren().containsKey(part)) {
                 current = current.getStaticChildren().get(part);
             } else if (current.getVariableChild() != null) {
-                current = current.getVariableChild();
                 extractedVariables.put(current.getVariableName(), part);
+                current = current.getVariableChild();
             } else {
                 LOG.debug("Route not found (missed at node '{}'): {} {}", part, method, path);
                 return null;
