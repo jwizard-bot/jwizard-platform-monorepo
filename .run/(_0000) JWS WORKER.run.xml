@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="(:0000) JWS WORKER" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="xyz.jwizard.jws.worker.JwsWorkerMain" />
-    <module name="jwizard-platform.jws-worker.main" />
+    <module name="jwizard-platform-monorepo.jws-worker.main" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="xyz.jwizard.jws.worker.*" />

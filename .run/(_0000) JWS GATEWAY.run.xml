@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="(:0000) JWS GATEWAY" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="xyz.jwizard.jws.gateway.JwsGatewayMain" />
-    <module name="jwizard-platform.jws-gateway.main" />
+    <module name="jwizard-platform-monorepo.jws-gateway.main" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="xyz.jwizard.jws.gateway.*" />

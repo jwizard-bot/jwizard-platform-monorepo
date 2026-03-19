@@ -1,10 +1,10 @@
-rootProject.name = "jwizard-platform"
+rootProject.name = "jwizard-platform-monorepo"
 
 include("jwl-common")
 include("jwl-contracts")
+include("jwl-http")
 include("jwl-i18n")
 include("jwl-persistence")
-include("jwl-transport")
 include("jws-api")
 include("jws-gateway")
 include("jws-registry")

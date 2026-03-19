@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="(:9092) JWS REGISTRY" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="xyz.jwizard.jws.registry.JwsRegistryMain" />
-    <module name="jwizard-platform.jws-registry.main" />
+    <module name="jwizard-platform-monorepo.jws-registry.main" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="xyz.jwizard.jws.registry.*" />
