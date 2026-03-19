@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="ValidationHandlerTest" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
+  <configuration default="false" name="ValidationHandlerTest" type="JUnit" factoryName="JUnit" folderName="jwl-http" nameIsGenerated="true">
     <module name="jwizard-platform-monorepo.jwl-http.test" />
     <extension name="coverage">
       <pattern>

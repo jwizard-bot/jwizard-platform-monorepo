@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="ProviderCacheTest" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
+  <configuration default="false" name="ProviderCacheTest" type="JUnit" factoryName="JUnit" folderName="jwl-common" nameIsGenerated="true">
     <module name="jwizard-platform-monorepo.jwl-common.test" />
     <extension name="coverage">
       <pattern>
