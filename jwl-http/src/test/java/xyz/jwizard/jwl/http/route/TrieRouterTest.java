@@ -5,6 +5,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.util.Set;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TrieRouterTest {
@@ -105,5 +107,53 @@ public class TrieRouterTest {
         // then
         assertThat(result).isNotNull();
         assertThat(result.route()).isEqualTo(mockRoute);
+    }
+
+    @Test
+    @DisplayName("should extract variable names from complex path for validation")
+    void shouldExtractVariableNamesFromComplexPath() {
+        // given
+        final Route mockRoute = Mockito.mock(Route.class);
+        String method = "GET";
+        String path = "/users/{userId}/posts/{postId}";
+        router.addRoute(method, path, mockRoute);
+        // when
+        final Set<String> variableNames = router.getVariableNamesFor(method, path);
+        // then
+        assertThat(variableNames)
+            .hasSize(2)
+            .containsExactlyInAnyOrder("userId", "postId");
+    }
+
+    @Test
+    @DisplayName("should return empty set for static path validation")
+    void shouldReturnEmptySetForStaticPath() {
+        // given
+        router.addRoute("POST", "/auth/login", Mockito.mock(Route.class));
+        // when
+        final Set<String> variableNames = router.getVariableNamesFor("POST", "/auth/login");
+        // Then
+        assertThat(variableNames).isEmpty();
+    }
+
+    @Test
+    @DisplayName("should return empty set if path does not exist in trie during validation")
+    void shouldReturnEmptySetIfPathDoesNotExistInTrie() {
+        // when
+        final Set<String> variableNames = router.getVariableNamesFor("GET", "/unknown/path/{id}");
+        // then
+        assertThat(variableNames).isEmpty();
+    }
+
+    @Test
+    @DisplayName("should correctly extract names from mixed static/variable path")
+    void shouldHandleMixedPathCorrectly() {
+        // given
+        router.addRoute("GET", "/api/v1/resource/{resourceId}/details", Mockito.mock(Route.class));
+        // when
+        final Set<String> variableNames = router
+            .getVariableNamesFor("GET", "/api/v1/resource/{resourceId}/details");
+        // then
+        assertThat(variableNames).containsExactly("resourceId");
     }
 }

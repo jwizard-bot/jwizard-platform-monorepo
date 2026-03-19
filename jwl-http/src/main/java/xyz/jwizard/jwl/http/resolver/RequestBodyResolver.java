@@ -4,11 +4,14 @@ import org.eclipse.jetty.io.Content;
 import org.eclipse.jetty.server.Request;
 import xyz.jwizard.jwl.common.json.JsonSerializer;
 import xyz.jwizard.jwl.http.annotation.Body;
+import xyz.jwizard.jwl.http.exception.RouteValidationException;
 import xyz.jwizard.jwl.http.route.MatchResult;
 import xyz.jwizard.jwl.http.validation.ValidationHandler;
 
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.Arrays;
 
 public class RequestBodyResolver implements ArgumentResolver {
     private final JsonSerializer jsonSerializer;
@@ -35,6 +38,17 @@ public class RequestBodyResolver implements ArgumentResolver {
                 validationHandler.validate(body);
             }
             return body;
+        }
+    }
+
+    @Override
+    public void validate(Method method) throws RouteValidationException {
+        final long bodyParams = Arrays.stream(method.getParameters())
+            .filter(this::supports)
+            .count();
+        if (bodyParams > 1) {
+            throw new RouteValidationException(method,
+                "Multiple @Body parameters detected. Only one request body is allowed per route.");
         }
     }
 }

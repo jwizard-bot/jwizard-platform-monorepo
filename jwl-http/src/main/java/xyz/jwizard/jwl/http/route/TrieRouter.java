@@ -4,7 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class TrieRouter implements Router {
     private static final Logger LOG = LoggerFactory.getLogger(TrieRouter.class);
@@ -67,5 +69,32 @@ public class TrieRouter implements Router {
         LOG.debug("Route found for: {} {}. Extracted variables: {}", method, path,
             extractedVariables);
         return new MatchResult(current.getRoute(), extractedVariables);
+    }
+
+    @Override
+    public Set<String> getVariableNamesFor(String method, String path) {
+        LOG.debug("Extracting variable names for validation: {} {}", method, path);
+        final String[] parts = (method + path).split("/");
+        final Set<String> variableNames = new HashSet<>();
+        RouteNode current = root;
+        for (String part : parts) {
+            if (part.isEmpty()) {
+                continue;
+            }
+            if (part.startsWith(DELIMITER_START) && part.endsWith(DELIMITER_END)) {
+                final String varName = part.substring(1, part.length() - 1);
+                variableNames.add(varName);
+                LOG.debug("Found variable placeholder '{}' in path", varName);
+                current = current.getVariableChild();
+            } else {
+                current = current.getStaticChildren().get(part);
+            }
+            if (current == null) {
+                LOG.debug("Traversal stopped: part '{}' does not exist in trie", part);
+                break;
+            }
+        }
+        LOG.debug("Extracted variable names for {} {}: {}", method, path, variableNames);
+        return variableNames;
     }
 }
