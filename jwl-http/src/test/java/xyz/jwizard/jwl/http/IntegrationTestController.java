@@ -2,6 +2,8 @@ package xyz.jwizard.jwl.http;
 
 import xyz.jwizard.jwl.http.annotation.*;
 
+import java.util.Map;
+
 @HttpController
 public class IntegrationTestController {
     @RequestMapping(value = "/api/test", method = HttpMethod.POST)
@@ -45,5 +47,14 @@ public class IntegrationTestController {
     public ResponseEntity<String> getItems(
         @RequestParam(value = "limit", defaultValue = "10") Integer limit) {
         return ResponseEntity.ok("Limit: " + limit);
+    }
+
+    @RequestMapping(value = "/api/map", method = HttpMethod.GET)
+    public ResponseEntity<Map<String, Object>> getMap() {
+        return ResponseEntity.ok(Map.of(
+            "status", "UP",
+            "version", "1.0.0",
+            "active", true
+        ));
     }
 }

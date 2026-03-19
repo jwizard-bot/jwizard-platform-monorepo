@@ -146,4 +146,16 @@ public class HttpServerIntegrationTest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK_200);
         assertThat(response.body()).isEqualTo("Limit: 10");
     }
+
+    @Test
+    @DisplayName("GET /api/map should return 200 OK and serialize Map to JSON")
+    void shouldReturnMapAsJson() throws Exception {
+        // given & when
+        final HttpResponse<String> response = get("/api/map");
+        // then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK_200);
+        final String body = response.body();
+        assertThat(body).isNotBlank();
+        assertThat(body).contains("\"status\":\"UP\"");
+    }
 }
