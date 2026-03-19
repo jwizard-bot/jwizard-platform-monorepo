@@ -6,6 +6,7 @@ import org.eclipse.jetty.util.component.AbstractLifeCycle;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import xyz.jwizard.jwl.common.bootstrap.CriticalBootstrapException;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.json.JsonSerializer;
 import xyz.jwizard.jwl.common.util.Assert;
@@ -122,7 +123,6 @@ public class HttpServer implements Closeable {
             writers,
             exceptionHandlers
         ));
-        server.setStopAtShutdown(true);
         try {
             server.start();
         } catch (Exception ex) {
