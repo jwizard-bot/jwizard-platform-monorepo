@@ -8,7 +8,16 @@ enum ParameterConverter {
     STRING(String.class, value -> value),
     INTEGER(Integer.class, Integer::valueOf),
     LONG(Long.class, Long::valueOf),
-    BOOLEAN(Boolean.class, Boolean::valueOf),
+    BOOLEAN(Boolean.class, value -> {
+        if ("true".equalsIgnoreCase(value)) {
+            return true;
+        }
+        if ("false".equalsIgnoreCase(value)) {
+            return false;
+        }
+        throw new IllegalArgumentException("Invalid boolean value: '" + value +
+            "'. Expected 'true' or 'false'.");
+    }),
     DOUBLE(Double.class, Double::valueOf),
     ;
 
