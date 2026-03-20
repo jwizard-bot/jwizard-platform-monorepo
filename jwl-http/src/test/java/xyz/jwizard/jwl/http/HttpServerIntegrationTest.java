@@ -10,6 +10,7 @@ import xyz.jwizard.jwl.common.json.JsonSerializer;
 import xyz.jwizard.jwl.common.reflect.ClassGraphScanner;
 import xyz.jwizard.jwl.common.reflect.ClassScanner;
 import xyz.jwizard.jwl.common.util.io.IoUtil;
+import xyz.jwizard.jwl.http.filter.CacheSpyFilter;
 import xyz.jwizard.jwl.http.header.TestHttpHeaderName;
 import xyz.jwizard.jwl.http.header.TestHttpHeaderValue;
 import xyz.jwizard.jwl.http.jetty.JettyHttpServer;
@@ -226,7 +227,7 @@ public class HttpServerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Filters should be executed in order based on their priority")
+    @DisplayName("filters should be executed in order based on their priority")
     void shouldExecuteFiltersInCorrectOrder() throws Exception {
         // given & when
         final HttpResponse<String> response = get("/api/public");
@@ -235,5 +236,21 @@ public class HttpServerIntegrationTest {
         assertThat(response.headers().firstValue(TestHttpHeaderName.X_FILTER_ORDER.getKey()))
             .isPresent()
             .contains("First -> Second");
+    }
+
+    @Test
+    @DisplayName("filter should be resolved via supports() only once and then cached")
+    void shouldCacheFilterSupportResult() throws Exception {
+        CacheSpyFilter.supportsCounter.set(0);
+        // given & when
+        get("/api/map");
+        final int countAfterFirstRequest = CacheSpyFilter.supportsCounter.get();
+        assertThat(countAfterFirstRequest).isEqualTo(1);
+        get("/api/map");
+        final int countAfterSecondRequest = CacheSpyFilter.supportsCounter.get();
+        // then
+        assertThat(countAfterSecondRequest)
+            .withFailMessage("Filter supports() was called again! Cache is not working.")
+            .isEqualTo(1);
     }
 }
