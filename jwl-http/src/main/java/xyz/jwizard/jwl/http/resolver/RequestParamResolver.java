@@ -1,8 +1,6 @@
 package xyz.jwizard.jwl.http.resolver;
 
-import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.util.MultiMap;
-import org.eclipse.jetty.util.UrlEncoded;
+import xyz.jwizard.jwl.http.HttpRequest;
 import xyz.jwizard.jwl.http.annotation.RequestParam;
 import xyz.jwizard.jwl.http.route.MatchResult;
 
@@ -15,16 +13,11 @@ public class RequestParamResolver implements ArgumentResolver {
     }
 
     @Override
-    public Object resolve(Parameter parameter, Request req, MatchResult match) {
+    public Object resolve(Parameter parameter, HttpRequest req, MatchResult match) {
         final RequestParam annotation = parameter.getAnnotation(RequestParam.class);
         final String paramName = annotation.value();
 
-        final String query = req.getHttpURI().getQuery();
-        final MultiMap<String> params = (query != null && !query.isEmpty())
-            ? UrlEncoded.decodeQuery(query)
-            : new MultiMap<>();
-
-        String paramValue = params.getValue(paramName);
+        String paramValue = req.getQueryParam(paramName);
         if (paramValue == null) {
             if (annotation.defaultValue().isEmpty()) {
                 if (annotation.required()) {

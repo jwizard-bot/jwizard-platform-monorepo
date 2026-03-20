@@ -6,6 +6,7 @@ import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.json.JacksonSerializer;
 import xyz.jwizard.jwl.common.util.io.IoUtil;
 import xyz.jwizard.jwl.http.HttpServer;
+import xyz.jwizard.jwl.http.jetty.JettyHttpServer;
 
 @Singleton
 public class HttpServerLifecycle implements LifecycleHook {
@@ -19,7 +20,7 @@ public class HttpServerLifecycle implements LifecycleHook {
 
     @Override
     public void onStart(ComponentProvider provider) {
-        httpServer = HttpServer.builder()
+        httpServer = JettyHttpServer.builder()
             .componentProvider(provider)
             .jsonSerializer(new JacksonSerializer())
             .port(9093) /*TODO: incoming from config server*/

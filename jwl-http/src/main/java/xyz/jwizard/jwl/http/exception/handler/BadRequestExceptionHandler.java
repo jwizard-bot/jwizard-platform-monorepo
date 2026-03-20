@@ -1,12 +1,11 @@
 package xyz.jwizard.jwl.http.exception.handler;
 
-import org.eclipse.jetty.http.HttpStatus;
-import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.Response;
-import org.eclipse.jetty.util.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.jwizard.jwl.common.json.JsonException;
+import xyz.jwizard.jwl.http.HttpRequest;
+import xyz.jwizard.jwl.http.HttpResponse;
+import xyz.jwizard.jwl.http.HttpStatus;
 import xyz.jwizard.jwl.http.validation.ValidationException;
 
 public class BadRequestExceptionHandler implements ExceptionHandler {
@@ -20,9 +19,9 @@ public class BadRequestExceptionHandler implements ExceptionHandler {
     }
 
     @Override
-    public void handle(Request req, Response res, Throwable throwable, Callback callback) {
-        LOG.warn("Bad request [{}]: {}", req.getHttpURI().getPath(), throwable.getMessage());
+    public void handle(HttpRequest req, HttpResponse res, Throwable throwable) {
+        LOG.warn("Bad request [{}]: {}", req.getPath(), throwable.getMessage());
         res.setStatus(HttpStatus.BAD_REQUEST_400);
-        callback.succeeded();
+        res.end();
     }
 }

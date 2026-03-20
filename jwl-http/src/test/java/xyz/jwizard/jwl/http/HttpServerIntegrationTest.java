@@ -1,6 +1,5 @@
 package xyz.jwizard.jwl.http;
 
-import org.eclipse.jetty.http.HttpStatus;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +10,7 @@ import xyz.jwizard.jwl.common.json.JsonSerializer;
 import xyz.jwizard.jwl.common.reflect.ClassGraphScanner;
 import xyz.jwizard.jwl.common.reflect.ClassScanner;
 import xyz.jwizard.jwl.common.util.io.IoUtil;
+import xyz.jwizard.jwl.http.jetty.JettyHttpServer;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -20,19 +20,20 @@ import java.net.http.HttpResponse;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class HttpServerIntegrationTest {
-    private static int dynamicPort;
+    private static final JsonSerializer JSON_SERIALIZER = new JacksonSerializer();
     private static HttpServer httpServer;
+    private static int dynamicPort;
+
     private final HttpClient httpClient = HttpClient.newHttpClient();
-    private final JsonSerializer jsonSerializer = new JacksonSerializer();
 
     @BeforeAll
     static void startServer() {
         final String packageName = HttpServerIntegrationTest.class.getPackageName();
         final ClassScanner scanner = new ClassGraphScanner(packageName);
         final ApplicationContext context = new ApplicationContext(scanner);
-        httpServer = HttpServer.builder()
+        httpServer = JettyHttpServer.builder()
             .componentProvider(context.getProvider())
-            .jsonSerializer(new JacksonSerializer())
+            .jsonSerializer(JSON_SERIALIZER)
             .port(0)
             .build();
         httpServer.start();
@@ -53,7 +54,7 @@ public class HttpServerIntegrationTest {
     }
 
     private HttpResponse<String> post(Object body) throws Exception {
-        final String json = jsonSerializer.serialize(body);
+        final String json = JSON_SERIALIZER.serialize(body);
         final HttpRequest request = HttpRequest.newBuilder()
             .uri(URI.create("http://localhost:" + dynamicPort + "/api/test"))
             .header("Content-Type", "application/json")
@@ -66,12 +67,12 @@ public class HttpServerIntegrationTest {
     @DisplayName("POST /api/test should return 200 OK when valid JSON is sent")
     void shouldReturnOkForValidRequest() throws Exception {
         // given
-        final TestEnvelope payload = new TestEnvelope("REQ-001", new TestUser("Jwizard", 25));
+        final TestEnvelope payload = new TestEnvelope("REQ-001", new TestUser("JWizard", 25));
         // when
         final HttpResponse<String> response = post(payload);
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat(response.body()).contains("Success: Jwizard");
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK_200.getCode());
+        assertThat(response.body()).contains("Success: JWizard");
     }
 
     @Test
@@ -82,7 +83,7 @@ public class HttpServerIntegrationTest {
         // when
         final HttpResponse<String> response = post(payload);
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST_400);
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST_400.getCode());
         assertThat(response.body()).isEmpty();
     }
 
@@ -92,7 +93,7 @@ public class HttpServerIntegrationTest {
         // given & when
         final HttpResponse<String> response = get("/non-existing");
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.NOT_FOUND_404.getCode());
     }
 
     @Test
@@ -101,7 +102,7 @@ public class HttpServerIntegrationTest {
         // given & when
         final HttpResponse<String> response = get("/api/users/12345");
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK_200.getCode());
         assertThat(response.body()).isEqualTo("User ID: 12345");
     }
 
@@ -111,7 +112,7 @@ public class HttpServerIntegrationTest {
         // given & when
         final HttpResponse<String> response = get("/api/search?q=java&page=1");
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK_200.getCode());
         assertThat(response.body()).isEqualTo("Search: java on page 1");
     }
 
@@ -121,7 +122,7 @@ public class HttpServerIntegrationTest {
         // given & when
         final HttpResponse<String> response = get("/api/products");
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK_200.getCode());
         assertThat(response.body()).isEqualTo("Category: all");
     }
 
@@ -131,7 +132,7 @@ public class HttpServerIntegrationTest {
         // given & when
         final HttpResponse<String> response = get("/api/profile");
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK_200.getCode());
         assertThat(response.body()).isEqualTo("Status: Guest");
     }
 
@@ -141,7 +142,7 @@ public class HttpServerIntegrationTest {
         // given & when
         final HttpResponse<String> response = get("/api/items");
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK_200.getCode());
         assertThat(response.body()).isEqualTo("Limit: 10");
     }
 
@@ -151,7 +152,7 @@ public class HttpServerIntegrationTest {
         // given & when
         final HttpResponse<String> response = get("/api/map");
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK_200.getCode());
         final String body = response.body();
         assertThat(body).isNotBlank();
         assertThat(body).contains("\"status\":\"UP\"");

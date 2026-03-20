@@ -1,11 +1,10 @@
 package xyz.jwizard.jwl.http.exception.handler;
 
-import org.eclipse.jetty.http.HttpStatus;
-import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.Response;
-import org.eclipse.jetty.util.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import xyz.jwizard.jwl.http.HttpRequest;
+import xyz.jwizard.jwl.http.HttpResponse;
+import xyz.jwizard.jwl.http.HttpStatus;
 
 public class GlobalExceptionHandler implements ExceptionHandler {
     private static final Logger LOG = LoggerFactory.getLogger(GlobalExceptionHandler.class);
@@ -16,9 +15,9 @@ public class GlobalExceptionHandler implements ExceptionHandler {
     }
 
     @Override
-    public void handle(Request req, Response res, Throwable throwable, Callback callback) {
-        LOG.error("Internal server error at {}: ", req.getHttpURI().getPath(), throwable);
+    public void handle(HttpRequest req, HttpResponse res, Throwable throwable) {
+        LOG.error("Internal server error at {}: ", req.getPath(), throwable);
         res.setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
-        callback.succeeded();
+        res.end();
     }
 }

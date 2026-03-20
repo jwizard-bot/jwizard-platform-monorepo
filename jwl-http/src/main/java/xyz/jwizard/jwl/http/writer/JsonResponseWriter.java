@@ -1,10 +1,9 @@
 package xyz.jwizard.jwl.http.writer;
 
-import org.eclipse.jetty.http.HttpHeader;
-import org.eclipse.jetty.io.Content;
-import org.eclipse.jetty.server.Response;
-import org.eclipse.jetty.util.Callback;
 import xyz.jwizard.jwl.common.json.JsonSerializer;
+import xyz.jwizard.jwl.http.HttpHeader;
+import xyz.jwizard.jwl.http.HttpHeaderName;
+import xyz.jwizard.jwl.http.HttpResponse;
 
 public class JsonResponseWriter implements ResponseWriter {
     private final JsonSerializer jsonSerializer;
@@ -19,9 +18,9 @@ public class JsonResponseWriter implements ResponseWriter {
     }
 
     @Override
-    public void write(Response res, Object result, Callback callback) {
-        res.getHeaders().put(HttpHeader.CONTENT_TYPE, "application/json; charset=utf-8");
+    public void write(HttpResponse res, Object result) {
+        res.setHeader(HttpHeaderName.CONTENT_TYPE, HttpHeader.APPLICATION_JSON_UTF_8);
         final String json = jsonSerializer.serialize(result);
-        Content.Sink.write(res, true, json, callback);
+        res.write(json, true);
     }
 }

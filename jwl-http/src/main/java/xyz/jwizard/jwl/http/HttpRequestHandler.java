@@ -1,26 +1,25 @@
 package xyz.jwizard.jwl.http;
 
-import org.eclipse.jetty.http.HttpStatus;
-import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.Response;
-import org.eclipse.jetty.util.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import xyz.jwizard.jwl.common.cache.MultiProviderCache;
 import xyz.jwizard.jwl.common.cache.ProviderCache;
 import xyz.jwizard.jwl.http.exception.handler.ExceptionHandler;
+import xyz.jwizard.jwl.http.filter.HttpFilter;
 import xyz.jwizard.jwl.http.resolver.ArgumentResolver;
 import xyz.jwizard.jwl.http.route.MatchResult;
+import xyz.jwizard.jwl.http.route.Route;
 import xyz.jwizard.jwl.http.route.Router;
 import xyz.jwizard.jwl.http.writer.ResponseWriter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.List;
 import java.util.Set;
 
-class RequestHandler extends Handler.Abstract {
-    private static final Logger LOG = LoggerFactory.getLogger(RequestHandler.class);
+public class HttpRequestHandler {
+    private static final Logger LOG = LoggerFactory.getLogger(HttpRequestHandler.class);
 
     private final Router router;
     private final Set<String> ignoredPaths; // must be set! (O(1), table/list are much slower)
@@ -30,48 +29,72 @@ class RequestHandler extends Handler.Abstract {
     private final ProviderCache<Class<?>, Object, ResponseWriter> writerCache;
     private final ProviderCache<Class<? extends Throwable>, Throwable, ExceptionHandler>
         exceptionCache;
+    private final MultiProviderCache<Route, Route, HttpFilter> filterCache;
 
-    RequestHandler(Router router,
-                   Set<String> ignoredPaths,
-                   Set<ArgumentResolver> resolvers,
-                   Set<ResponseWriter> writers,
-                   Set<ExceptionHandler> exceptionHandlers) {
+    public HttpRequestHandler(Router router,
+                              Set<String> ignoredPaths,
+                              List<HttpFilter> sortedFilters,
+                              Set<ArgumentResolver> resolvers,
+                              Set<ResponseWriter> writers,
+                              Set<ExceptionHandler> exceptionHandlers) {
         this.router = router;
         this.ignoredPaths = ignoredPaths;
+
         resolverCache = new ProviderCache<>(resolvers, ArgumentResolver::supports);
         writerCache = new ProviderCache<>(writers, ResponseWriter::supports);
         exceptionCache = new ProviderCache<>(exceptionHandlers, ExceptionHandler::supports);
-        LOG.info("RequestHandler initialized with {} resolvers, {} writers, {} exception handlers",
-            resolvers.size(), writers.size(), exceptionHandlers.size());
+        filterCache = new MultiProviderCache<>(sortedFilters, HttpFilter::supports);
+
+        LOG.info("HTTP pipeline initialized with {} filters, {} resolvers, {} writers, {} " +
+                "exception handlers", sortedFilters.size(), resolvers.size(), writers.size(),
+            exceptionHandlers.size());
     }
 
-    @Override
-    public boolean handle(Request request, Response response, Callback callback) {
-        final String method = request.getMethod();
-        final String path = request.getHttpURI().getPath();
+    public void processRequest(HttpRequest req, HttpResponse res) throws Exception {
+        final String method = req.getMethod();
+        final String path = req.getPath();
 
         LOG.debug("Incoming request: {} {}", method, path);
 
         if (ignoredPaths.contains(path)) {
             LOG.debug("Path {} is in ignored paths list, skipping", path);
-            return finish(response, HttpStatus.NO_CONTENT_204, callback);
+            finish(res, HttpStatus.NO_CONTENT_204);
+            return;
         }
         final MatchResult match = router.findRoute(method, path);
         if (match == null) {
             LOG.debug("No route found for {} {}", method, path);
-            return finish(response, HttpStatus.NOT_FOUND_404, callback);
+            finish(res, HttpStatus.NOT_FOUND_404);
+            return;
         }
+        final Route route = match.route();
         LOG.debug("Route matched: {} -> {}.{}()", path,
-            match.route().instance().getClass().getSimpleName(), match.route().method().getName());
-        try {
-            final Object result = execute(request, match);
-            return processResponse(response, result, callback);
-        } catch (Exception e) {
-            return handleException(request, response, e, callback);
+            route.instance().getClass().getSimpleName(), route.method().getName());
+
+        final List<HttpFilter> activeFilters = filterCache.get(route, route);
+        for (final HttpFilter filter : activeFilters) {
+            if (!filter.preHandle(req, res)) {
+                LOG.debug("Request stopped by filter: {}", filter.getClass().getSimpleName());
+                res.end();
+                return;
+            }
         }
+        final Object result = execute(req, match);
+        processResponse(res, result);
     }
 
-    private Object execute(Request req, MatchResult match) throws Exception {
+    public void handleException(HttpRequest req, HttpResponse res, Exception ex) {
+        final Throwable cause = (ex instanceof InvocationTargetException) ? ex.getCause() : ex;
+        final Class<? extends Throwable> causeClass = cause.getClass();
+        final ExceptionHandler handler = exceptionCache.get(causeClass, cause);
+        if (handler != null) {
+            handler.handle(req, res, cause);
+            return;
+        }
+        finish(res, HttpStatus.INTERNAL_SERVER_ERROR_500);
+    }
+
+    private Object execute(HttpRequest req, MatchResult match) throws Exception {
         final Method actionMethod = match.route().method();
         actionMethod.setAccessible(true);
 
@@ -96,44 +119,22 @@ class RequestHandler extends Handler.Abstract {
         return actionMethod.invoke(match.route().instance(), args);
     }
 
-    private boolean processResponse(Response res, Object result, Callback callback)
-        throws Exception {
+    private void processResponse(HttpResponse res, Object result) throws Exception {
         if (!(result instanceof ResponseEntity<?>)) {
             res.setStatus(HttpStatus.OK_200);
         }
         final Class<?> resultClass = (result == null) ? void.class : result.getClass();
-        if (LOG.isDebugEnabled() && result instanceof ResponseEntity<?> entity) {
-            LOG.debug("Result is ResponseEntity with status {}", entity.status());
-        }
         final ResponseWriter writer = writerCache.get(resultClass, result);
         if (writer != null) {
-            LOG.debug("Writing response using {}", writer.getClass().getSimpleName());
-            writer.write(res, result, callback);
-            return true;
+            writer.write(res, result);
+            return;
         }
         LOG.error("No suitable ResponseWriter found for result class: {}", resultClass);
-        return finish(res, HttpStatus.INTERNAL_SERVER_ERROR_500, callback);
+        finish(res, HttpStatus.INTERNAL_SERVER_ERROR_500);
     }
 
-    private boolean handleException(Request req, Response res, Exception ex, Callback callback) {
-        final Throwable cause = (ex instanceof InvocationTargetException) ? ex.getCause() : ex;
-        final Class<? extends Throwable> causeClass = cause.getClass();
-
-        LOG.debug("Exception caught during request execution: {}", causeClass.getName());
-
-        final ExceptionHandler handler = exceptionCache.get(causeClass, cause);
-        if (handler != null) {
-            LOG.debug("Exception handled by {}", handler.getClass().getSimpleName());
-            handler.handle(req, res, cause, callback);
-            return true;
-        }
-        return finish(res, HttpStatus.INTERNAL_SERVER_ERROR_500, callback);
-    }
-
-    private boolean finish(Response response, int status, Callback callback) {
-        LOG.debug("Finishing request with status: {}", status);
+    private void finish(HttpResponse response, HttpStatus status) {
         response.setStatus(status);
-        callback.succeeded();
-        return true;
+        response.end();
     }
 }

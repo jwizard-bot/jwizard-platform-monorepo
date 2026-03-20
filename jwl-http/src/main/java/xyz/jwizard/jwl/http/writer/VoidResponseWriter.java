@@ -1,9 +1,7 @@
 package xyz.jwizard.jwl.http.writer;
 
-import org.eclipse.jetty.http.HttpStatus;
-import org.eclipse.jetty.io.Content;
-import org.eclipse.jetty.server.Response;
-import org.eclipse.jetty.util.Callback;
+import xyz.jwizard.jwl.http.HttpResponse;
+import xyz.jwizard.jwl.http.HttpStatus;
 
 public class VoidResponseWriter implements ResponseWriter {
     @Override
@@ -12,8 +10,8 @@ public class VoidResponseWriter implements ResponseWriter {
     }
 
     @Override
-    public void write(Response res, Object result, Callback callback) {
+    public void write(HttpResponse res, Object result) {
         res.setStatus(HttpStatus.NO_CONTENT_204);
-        Content.Sink.write(res, true, "", callback);
+        res.writeEmpty(true);
     }
 }

@@ -1,9 +1,8 @@
 package xyz.jwizard.jwl.http.writer;
 
-import org.eclipse.jetty.server.Response;
-import org.eclipse.jetty.util.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import xyz.jwizard.jwl.http.HttpResponse;
 import xyz.jwizard.jwl.http.ResponseEntity;
 
 import java.util.Map;
@@ -27,7 +26,7 @@ public class ResponseEntityResponseWriter implements ResponseWriter {
     }
 
     @Override
-    public void write(Response res, Object result, Callback callback) throws Exception {
+    public void write(HttpResponse res, Object result) throws Exception {
         final ResponseEntity<?> entity = (ResponseEntity<?>) result;
         res.setStatus(entity.status());
 
@@ -41,10 +40,10 @@ public class ResponseEntityResponseWriter implements ResponseWriter {
                 .orElse(null)
         );
         if (writer != null) {
-            writer.write(res, body, callback);
+            writer.write(res, body);
             return;
         }
         LOG.error("No suitable ResponseWriter found for body type: {}", bodyClass);
-        callback.succeeded();
+        res.end();
     }
 }

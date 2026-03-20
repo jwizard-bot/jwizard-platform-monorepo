@@ -1,7 +1,7 @@
 package xyz.jwizard.jwl.http.resolver;
 
-import org.eclipse.jetty.server.Request;
 import xyz.jwizard.jwl.common.util.PathUtil;
+import xyz.jwizard.jwl.http.HttpRequest;
 import xyz.jwizard.jwl.http.annotation.HttpController;
 import xyz.jwizard.jwl.http.annotation.PathVariable;
 import xyz.jwizard.jwl.http.annotation.RequestMapping;
@@ -26,7 +26,7 @@ public class PathVariableResolver implements ArgumentResolver {
     }
 
     @Override
-    public Object resolve(Parameter parameter, Request req, MatchResult match) {
+    public Object resolve(Parameter parameter, HttpRequest req, MatchResult match) {
         final PathVariable annotation = parameter.getAnnotation(PathVariable.class);
         final String name = annotation.value();
         final String value = match.variables().get(name);

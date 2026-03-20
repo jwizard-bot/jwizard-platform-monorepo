@@ -1,9 +1,8 @@
 package xyz.jwizard.jwl.http.writer;
 
-import org.eclipse.jetty.http.HttpHeader;
-import org.eclipse.jetty.io.Content;
-import org.eclipse.jetty.server.Response;
-import org.eclipse.jetty.util.Callback;
+import xyz.jwizard.jwl.http.HttpHeader;
+import xyz.jwizard.jwl.http.HttpHeaderName;
+import xyz.jwizard.jwl.http.HttpResponse;
 
 public class StringResponseWriter implements ResponseWriter {
     @Override
@@ -12,8 +11,8 @@ public class StringResponseWriter implements ResponseWriter {
     }
 
     @Override
-    public void write(Response res, Object result, Callback callback) {
-        res.getHeaders().put(HttpHeader.CONTENT_TYPE, "text/plain; charset=utf-8");
-        Content.Sink.write(res, true, (String) result, callback);
+    public void write(HttpResponse res, Object result) {
+        res.setHeader(HttpHeaderName.CONTENT_TYPE, HttpHeader.TEXT_PLAIN_UTF_8);
+        res.write((String) result, true);
     }
 }

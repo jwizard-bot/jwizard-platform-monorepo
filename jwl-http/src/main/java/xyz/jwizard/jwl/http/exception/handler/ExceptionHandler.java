@@ -1,11 +1,10 @@
 package xyz.jwizard.jwl.http.exception.handler;
 
-import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.Response;
-import org.eclipse.jetty.util.Callback;
+import xyz.jwizard.jwl.http.HttpRequest;
+import xyz.jwizard.jwl.http.HttpResponse;
 
 public interface ExceptionHandler {
     boolean supports(Throwable throwable);
 
-    void handle(Request req, Response res, Throwable throwable, Callback callback);
+    void handle(HttpRequest req, HttpResponse res, Throwable throwable);
 }
