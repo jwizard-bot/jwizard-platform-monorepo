@@ -5,6 +5,7 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.util.MultiMap;
 import org.eclipse.jetty.util.UrlEncoded;
 import xyz.jwizard.jwl.http.HttpRequest;
+import xyz.jwizard.jwl.http.header.HttpHeaderName;
 
 import java.io.InputStream;
 
@@ -52,6 +53,11 @@ public class JettyHttpRequestAdapter implements HttpRequest {
             }
         }
         return queryParams.getValue(name);
+    }
+
+    @Override
+    public String getHeader(HttpHeaderName name) {
+        return getHeaderUnsafe(name.getKey());
     }
 
     @Override

@@ -1,5 +1,7 @@
 package xyz.jwizard.jwl.http;
 
+import xyz.jwizard.jwl.http.header.HttpHeaderName;
+
 import java.io.InputStream;
 
 public interface HttpRequest {
@@ -14,6 +16,8 @@ public interface HttpRequest {
     String getQuery();
 
     String getQueryParam(String name);
+
+    String getHeader(HttpHeaderName name);
 
     String getHeaderUnsafe(String name);
 }

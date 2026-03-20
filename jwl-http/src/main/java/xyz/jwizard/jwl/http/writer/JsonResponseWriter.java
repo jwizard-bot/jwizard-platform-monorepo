@@ -1,9 +1,9 @@
 package xyz.jwizard.jwl.http.writer;
 
 import xyz.jwizard.jwl.common.json.JsonSerializer;
-import xyz.jwizard.jwl.http.HttpHeader;
-import xyz.jwizard.jwl.http.HttpHeaderName;
 import xyz.jwizard.jwl.http.HttpResponse;
+import xyz.jwizard.jwl.http.header.CommonHttpHeaderName;
+import xyz.jwizard.jwl.http.header.CommonHttpHeaderValue;
 
 public class JsonResponseWriter implements ResponseWriter {
     private final JsonSerializer jsonSerializer;
@@ -19,7 +19,8 @@ public class JsonResponseWriter implements ResponseWriter {
 
     @Override
     public void write(HttpResponse res, Object result) {
-        res.setHeader(HttpHeaderName.CONTENT_TYPE, HttpHeader.APPLICATION_JSON_UTF_8);
+        res.setHeader(CommonHttpHeaderName.CONTENT_TYPE,
+            CommonHttpHeaderValue.APPLICATION_JSON_UTF_8);
         final String json = jsonSerializer.serialize(result);
         res.write(json, true);
     }

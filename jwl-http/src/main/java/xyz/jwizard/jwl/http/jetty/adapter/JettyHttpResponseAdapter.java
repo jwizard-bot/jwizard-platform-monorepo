@@ -3,10 +3,10 @@ package xyz.jwizard.jwl.http.jetty.adapter;
 import org.eclipse.jetty.io.Content;
 import org.eclipse.jetty.server.Response;
 import org.eclipse.jetty.util.Callback;
-import xyz.jwizard.jwl.http.HttpHeader;
-import xyz.jwizard.jwl.http.HttpHeaderName;
 import xyz.jwizard.jwl.http.HttpResponse;
 import xyz.jwizard.jwl.http.HttpStatus;
+import xyz.jwizard.jwl.http.header.HttpHeaderName;
+import xyz.jwizard.jwl.http.header.HttpHeaderValue;
 
 public class JettyHttpResponseAdapter implements HttpResponse {
     private final Response response;
@@ -18,18 +18,34 @@ public class JettyHttpResponseAdapter implements HttpResponse {
     }
 
     @Override
+    public String getHeaderUnsafe(String name) {
+        return response.getHeaders().get(name);
+    }
+
+    @Override
+    public String getHeader(HttpHeaderName name) {
+        return getHeaderUnsafe(name.getKey());
+    }
+
+    @Override
     public void setStatus(HttpStatus statusCode) {
         response.setStatus(statusCode.getCode());
     }
 
     @Override
-    public void setHeader(HttpHeaderName name, HttpHeader value) {
+    public void setHeader(HttpHeaderName name, HttpHeaderValue value) {
         setHeaderUnsafe(name.getKey(), value.getKey());
     }
 
     @Override
+    public void setHeader(HttpHeaderName name, String value) {
+        setHeaderUnsafe(name.getKey(), value);
+    }
+
+    @Override
     public void setHeaderUnsafe(String name, String value) {
-        response.getHeaders().add(name, value);
+        // put means override, add create new header with same key
+        response.getHeaders().put(name, value);
     }
 
     @Override

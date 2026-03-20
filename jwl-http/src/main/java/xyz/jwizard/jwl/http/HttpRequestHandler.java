@@ -72,6 +72,9 @@ public class HttpRequestHandler {
             route.instance().getClass().getSimpleName(), route.method().getName());
 
         final List<HttpFilter> activeFilters = filterCache.get(route, route);
+        LOG.debug("Active filters for {}: {}", route.path(),
+            activeFilters.stream().map(f -> f.getClass().getSimpleName()).toList());
+
         for (final HttpFilter filter : activeFilters) {
             if (!filter.preHandle(req, res)) {
                 LOG.debug("Request stopped by filter: {}", filter.getClass().getSimpleName());

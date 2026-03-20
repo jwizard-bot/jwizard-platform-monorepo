@@ -63,7 +63,7 @@ class RouteScanner {
         final HttpMethod httpMethod = mapping.method();
         for (final String path : paths) {
             final String fullPath = PathUtil.combinePaths(basePath, path);
-            router.addRoute(httpMethod.name(), fullPath, new Route(instance, method));
+            router.addRoute(httpMethod.name(), fullPath, new Route(instance, method, path));
             registeredRoutesCount++;
             LOG.debug("Registered route: [{} {}] -> {}.{}()", httpMethod, fullPath,
                 instance.getClass().getSimpleName(), method.getName());
