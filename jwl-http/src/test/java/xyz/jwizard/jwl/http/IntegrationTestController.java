@@ -57,4 +57,20 @@ public class IntegrationTestController {
             "active", true
         ));
     }
+
+    @RequestMapping(value = "/api/blocked", method = HttpMethod.GET)
+    public ResponseEntity<String> blockedEndpoint() {
+        return ResponseEntity.ok("blocked");
+    }
+
+    @RequestMapping(value = "/api/public", method = HttpMethod.GET)
+    public ResponseEntity<String> openEndpoint() {
+        return ResponseEntity.ok("public data");
+    }
+
+    @Secured
+    @RequestMapping(value = "/api/private", method = HttpMethod.GET)
+    public ResponseEntity<String> secureEndpoint() {
+        return ResponseEntity.ok("secret data");
+    }
 }
