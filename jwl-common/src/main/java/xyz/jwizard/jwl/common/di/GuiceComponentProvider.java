@@ -6,6 +6,7 @@ import com.google.inject.TypeLiteral;
 import jakarta.inject.Inject;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -29,6 +30,18 @@ public class GuiceComponentProvider implements ComponentProvider {
             .map(TypeLiteral::getRawType)
             .filter(clazz -> clazz.isAnnotationPresent(annotation))
             .map(injector::getInstance)
+            .collect(Collectors.toSet());
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> Collection<T> getInstancesOf(Class<T> type) {
+        return injector.getAllBindings().keySet().stream()
+            .map(Key::getTypeLiteral)
+            .map(TypeLiteral::getRawType)
+            .filter(type::isAssignableFrom)
+            .filter(clazz -> !clazz.isInterface() && !Modifier.isAbstract(clazz.getModifiers()))
+            .map(clazz -> (T) injector.getInstance(clazz))
             .collect(Collectors.toSet());
     }
 }

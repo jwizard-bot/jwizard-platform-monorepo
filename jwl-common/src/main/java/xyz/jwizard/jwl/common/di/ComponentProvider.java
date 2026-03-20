@@ -7,4 +7,6 @@ public interface ComponentProvider {
     <T> T getInstance(Class<T> clazz);
 
     Collection<Object> getInstancesAnnotatedWith(Class<? extends Annotation> annotation);
+
+    <T> Collection<T> getInstancesOf(Class<T> type);
 }
