@@ -12,7 +12,9 @@ import java.util.concurrent.CountDownLatch;
 
 public class DefaultBootstrapper {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultBootstrapper.class);
+
     private static final CountDownLatch SHUTDOWN_LATCH = new CountDownLatch(1);
+    private static final String JWL_SUFFIX = ".jwl";
 
     private DefaultBootstrapper() {
     }
@@ -92,6 +94,11 @@ public class DefaultBootstrapper {
     private static String[] getPackagesToScan(Class<?> primarySource) {
         final Set<String> packagesToScan = new HashSet<>();
         packagesToScan.add(primarySource.getPackageName());
+        String jwlRoot = DefaultBootstrapper.class.getPackageName();
+        if (jwlRoot.contains(JWL_SUFFIX)) {
+            jwlRoot = jwlRoot.substring(0, jwlRoot.indexOf(JWL_SUFFIX) + JWL_SUFFIX.length());
+        }
+        packagesToScan.add(jwlRoot);
         if (primarySource.isAnnotationPresent(AppBootstrapper.class)) {
             final AppBootstrapper appInitializer = primarySource
                 .getAnnotation(AppBootstrapper.class);

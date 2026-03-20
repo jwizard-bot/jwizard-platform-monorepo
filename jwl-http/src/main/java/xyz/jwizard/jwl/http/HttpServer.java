@@ -6,6 +6,7 @@ import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.json.JsonSerializer;
 import xyz.jwizard.jwl.common.util.Assert;
 import xyz.jwizard.jwl.common.util.CollectionUtil;
+import xyz.jwizard.jwl.http.annotation.Validator;
 import xyz.jwizard.jwl.http.exception.handler.AnnotatedExceptionHandler;
 import xyz.jwizard.jwl.http.exception.handler.BadRequestExceptionHandler;
 import xyz.jwizard.jwl.http.exception.handler.ExceptionHandler;
@@ -17,10 +18,8 @@ import xyz.jwizard.jwl.http.resolver.RequestBodyResolver;
 import xyz.jwizard.jwl.http.resolver.RequestParamResolver;
 import xyz.jwizard.jwl.http.route.Router;
 import xyz.jwizard.jwl.http.route.TrieRouter;
+import xyz.jwizard.jwl.http.validation.AnnotationValidator;
 import xyz.jwizard.jwl.http.validation.ValidationHandler;
-import xyz.jwizard.jwl.http.validation.validator.LengthValidator;
-import xyz.jwizard.jwl.http.validation.validator.NotNullValidator;
-import xyz.jwizard.jwl.http.validation.validator.RangeValidator;
 import xyz.jwizard.jwl.http.writer.*;
 
 import java.io.Closeable;
@@ -28,6 +27,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public abstract class HttpServer implements Closeable {
     protected final Logger LOG = LoggerFactory.getLogger(getClass());
@@ -37,6 +37,7 @@ public abstract class HttpServer implements Closeable {
     protected final Set<String> ignoredPaths;
     protected final int port;
 
+    protected final List<HttpFilter> filters; // must be list or sorted set!
     protected final Set<ArgumentResolver> resolvers;
     protected final Set<ResponseWriter> writers;
     protected final Set<ExceptionHandler> exceptionHandlers;
@@ -47,41 +48,50 @@ public abstract class HttpServer implements Closeable {
     );
 
     protected HttpServer(AbstractBuilder<?> builder) {
-        this.provider = builder.provider;
-        this.router = new TrieRouter();
-        this.port = builder.port;
-        this.ignoredPaths = combinePaths(builder.ignoredPaths);
-
-        final ValidationHandler validationHandler = new ValidationHandler(CollectionUtil
-            .linkedSetOf(
-                new NotNullValidator(),
-                new LengthValidator(),
-                new RangeValidator()
-            ));
+        provider = builder.provider;
+        router = new TrieRouter();
+        port = builder.port;
+        ignoredPaths = combinePaths(builder.ignoredPaths);
+        filters = provider.getInstancesOf(HttpFilter.class)
+            .stream()
+            .sorted(Comparator.comparingInt(HttpFilter::order))
+            .toList();
+        final Set<AnnotationValidator<?>> validators = provider
+            .getInstancesAnnotatedWith(Validator.class)
+            .stream()
+            .map(obj -> (AnnotationValidator<?>) obj)
+            .collect(Collectors.toSet());
         resolvers = CollectionUtil.linkedSetOf(
             new PathVariableResolver(router),
             new RequestParamResolver(),
-            new RequestBodyResolver(builder.jsonSerializer, validationHandler)
+            new RequestBodyResolver(builder.jsonSerializer, new ValidationHandler(validators))
         );
-        this.writers = initWriters(builder.jsonSerializer);
-        this.exceptionHandlers = CollectionUtil.linkedSetOf(
+        writers = initWriters(builder.jsonSerializer);
+        exceptionHandlers = CollectionUtil.linkedSetOf(
             new AnnotatedExceptionHandler(),
             new BadRequestExceptionHandler(),
             new GlobalExceptionHandler()
         );
+        LOG.info("HTTP server initialized with:");
+        LOG.info("-- {} filter(s) (via reflect api)", filters.size());
+        LOG.info("-- {} validator(s) (via reflect api)", validators.size());
+        LOG.info("-- {} resolver(s) (statically typed)", resolvers.size());
+        LOG.info("-- {} writer(s) (statically typed)", writers.size());
+        LOG.info("-- {} exception handler(s) (statically typed)", exceptionHandlers.size());
     }
 
     protected HttpRequestHandler prepareRequestHandler() {
         LOG.info("Scanning routes and preparing HTTP request handler");
         final RouteScanner scanner = new RouteScanner(provider, router, resolvers);
         scanner.scan();
-
-        final List<HttpFilter> filters = provider.getInstancesOf(HttpFilter.class).stream()
-            .sorted(Comparator.comparingInt(HttpFilter::order))
-            .toList();
-
-        return new HttpRequestHandler(router, ignoredPaths, filters, resolvers, writers,
-            exceptionHandlers);
+        return new HttpRequestHandler(
+            router,
+            ignoredPaths,
+            filters,
+            resolvers,
+            writers,
+            exceptionHandlers
+        );
     }
 
     private Set<String> combinePaths(Set<String> customPaths) {

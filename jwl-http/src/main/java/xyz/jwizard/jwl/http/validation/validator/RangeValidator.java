@@ -1,5 +1,6 @@
 package xyz.jwizard.jwl.http.validation.validator;
 
+import xyz.jwizard.jwl.http.annotation.Validator;
 import xyz.jwizard.jwl.http.annotation.validation.Range;
 import xyz.jwizard.jwl.http.validation.AnnotationValidator;
 import xyz.jwizard.jwl.http.validation.ValidationException;
@@ -7,6 +8,7 @@ import xyz.jwizard.jwl.http.validation.ValidationException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
+@Validator
 public class RangeValidator implements AnnotationValidator<Range> {
     @Override
     public boolean supports(Class<? extends Annotation> annotationType) {

@@ -44,10 +44,6 @@ public class HttpRequestHandler {
         writerCache = new ProviderCache<>(writers, ResponseWriter::supports);
         exceptionCache = new ProviderCache<>(exceptionHandlers, ExceptionHandler::supports);
         filterCache = new MultiProviderCache<>(sortedFilters, HttpFilter::supports);
-
-        LOG.info("HTTP pipeline initialized with {} filters, {} resolvers, {} writers, {} " +
-                "exception handlers", sortedFilters.size(), resolvers.size(), writers.size(),
-            exceptionHandlers.size());
     }
 
     public void processRequest(HttpRequest req, HttpResponse res) throws Exception {

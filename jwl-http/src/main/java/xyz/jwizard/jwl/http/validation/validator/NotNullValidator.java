@@ -1,5 +1,6 @@
 package xyz.jwizard.jwl.http.validation.validator;
 
+import xyz.jwizard.jwl.http.annotation.Validator;
 import xyz.jwizard.jwl.http.annotation.validation.NotNull;
 import xyz.jwizard.jwl.http.validation.AnnotationValidator;
 import xyz.jwizard.jwl.http.validation.ValidationException;
@@ -7,6 +8,7 @@ import xyz.jwizard.jwl.http.validation.ValidationException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
+@Validator
 public class NotNullValidator implements AnnotationValidator<NotNull> {
     @Override
     public boolean supports(Class<? extends Annotation> annotationType) {
