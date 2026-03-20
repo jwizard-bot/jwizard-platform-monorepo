@@ -66,7 +66,7 @@ public class TrieRouter implements Router {
             LOG.debug("Node exists but no route action assigned for: {} {}", method, path);
             return null;
         }
-        LOG.debug("Route found for: {} {}. Extracted variables: {}", method, path,
+        LOG.debug("Route found for: {} {}, extracted variables: {}", method, path,
             extractedVariables);
         return new MatchResult(current.getRoute(), extractedVariables);
     }

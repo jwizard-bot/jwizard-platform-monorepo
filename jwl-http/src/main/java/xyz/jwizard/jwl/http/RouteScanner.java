@@ -36,7 +36,7 @@ class RouteScanner {
         for (final Object instance : instances) {
             registerRoutesForInstance(instance);
         }
-        LOG.info("HTTP controllers initialized: {}", instances.size());
+        LOG.info("Initialized {} HTTP controller(s)", instances.size());
         LOG.info("Total routes registered: {}", registeredRoutesCount);
     }
 

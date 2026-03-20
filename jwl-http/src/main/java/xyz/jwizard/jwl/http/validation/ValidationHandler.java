@@ -22,7 +22,7 @@ public class ValidationHandler {
 
     public ValidationHandler(Set<AnnotationValidator<?>> validators) {
         validatorCache = new ProviderCache<>(validators, AnnotationValidator::supports);
-        LOG.info("Initialized ValidatorHandler with {} validators", validators.size());
+        LOG.info("Initialized ValidatorHandler with {} validator(s)", validators.size());
     }
 
     public void validate(Object target) {
@@ -43,7 +43,7 @@ public class ValidationHandler {
     }
 
     private List<ValidationStep> buildValidationPlan(Class<?> clazz) {
-        LOG.debug("Cache miss. Building validation plan for class: {}", clazz.getName());
+        LOG.debug("Cache miss, building validation plan for class: {}", clazz.getName());
         final List<ValidationStep> steps = new ArrayList<>();
         for (final Field field : clazz.getDeclaredFields()) {
             field.setAccessible(true);
@@ -61,7 +61,7 @@ public class ValidationHandler {
                 }
             }
         }
-        LOG.debug("Validation plan built successfully. Cached {} step(s) for class: {}",
+        LOG.debug("Validation plan built successfully, cached {} step(s) for class: {}",
             steps.size(), clazz.getSimpleName());
         return steps;
     }

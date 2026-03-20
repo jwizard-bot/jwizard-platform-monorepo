@@ -16,7 +16,7 @@ enum ParameterConverter {
             return false;
         }
         throw new IllegalArgumentException("Invalid boolean value: '" + value +
-            "'. Expected 'true' or 'false'.");
+            "', expected 'true' or 'false'");
     }),
     DOUBLE(Double.class, Double::valueOf),
     ;
