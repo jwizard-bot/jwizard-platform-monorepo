@@ -8,6 +8,8 @@ import xyz.jwizard.jwl.common.util.io.IoUtil;
 import xyz.jwizard.jwl.http.HttpServer;
 import xyz.jwizard.jwl.http.jetty.JettyHttpServer;
 
+import java.util.Set;
+
 @Singleton
 public class HttpServerLifecycle implements LifecycleHook {
     private HttpServer httpServer;
@@ -23,6 +25,7 @@ public class HttpServerLifecycle implements LifecycleHook {
         httpServer = JettyHttpServer.builder()
             .componentProvider(provider)
             .jsonSerializer(new JacksonSerializer())
+            .ignoredPaths(Set.of())
             .port(9091) /*TODO: incoming from config server*/
             .build();
         httpServer.start();
