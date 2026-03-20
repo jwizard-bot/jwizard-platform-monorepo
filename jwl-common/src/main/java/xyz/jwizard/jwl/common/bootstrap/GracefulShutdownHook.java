@@ -21,7 +21,7 @@ public class GracefulShutdownHook extends Thread {
 
     @Override
     public void run() {
-        LOG.info("Shutting down application...");
+        LOG.info("Shutting down application");
         final List<LifecycleHook> stopOrder = new ArrayList<>(hooks);
         Collections.reverse(stopOrder);
         stopOrder.forEach(LifecycleHook::onStop);

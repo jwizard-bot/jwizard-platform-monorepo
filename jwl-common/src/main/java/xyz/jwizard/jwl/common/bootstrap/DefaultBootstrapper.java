@@ -19,7 +19,8 @@ public class DefaultBootstrapper {
 
     public static void run(Class<?> primarySource) {
         final String[] packagesToScan = getPackagesToScan(primarySource);
-        LOG.info("Bootstrap application on package(s): {}", Arrays.asList(packagesToScan));
+        LOG.info("Start bootstrapping application on package(s): {}",
+            Arrays.asList(packagesToScan));
 
         final long startTime = System.currentTimeMillis();
         try (final ClassScanner scanner = new ClassGraphScanner(packagesToScan)) {
@@ -35,7 +36,7 @@ public class DefaultBootstrapper {
         } catch (InterruptedException ex) {
             handleInterruption();
         } catch (Exception ex) {
-            LOG.error("Non-critical error during startup: ", ex);
+            LOG.error("Error during startup: ", ex);
         }
     }
 
@@ -67,7 +68,8 @@ public class DefaultBootstrapper {
 
     private static void awaitTermination(long startTime) throws InterruptedException {
         final long durationMs = System.currentTimeMillis() - startTime;
-        LOG.info("Started successfully in {}s", String.format("%.3f", durationMs / 1000.0));
+        LOG.info("Bootstrapped and started successfully in {}s",
+            String.format("%.3f", durationMs / 1000.0));
         try {
             System.in.close();
         } catch (Exception e) {
@@ -83,7 +85,7 @@ public class DefaultBootstrapper {
     }
 
     private static void handleInterruption() {
-        LOG.warn("Main thread interrupted. Initiating shutdown...");
+        LOG.warn("Main thread interrupted, initiating shutdown");
         Thread.currentThread().interrupt(); // restore interrupt flag
     }
 

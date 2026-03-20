@@ -25,7 +25,7 @@ class AutoScanModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        LOG.debug("Auto-configuring bindings for @Injectable components...");
+        LOG.debug("Auto-configuring bindings for @Injectable component(s)");
         bind(ComponentProvider.class).to(GuiceComponentProvider.class).in(Scopes.SINGLETON);
 
         final Provider<Injector> injectorProvider = getProvider(Injector.class);
@@ -39,7 +39,7 @@ class AutoScanModule extends AbstractModule {
                 boundedComponents++;
             }
         }
-        LOG.info("Successfully bound {} components.", boundedComponents);
+        LOG.info("Successfully bound {} component(s)", boundedComponents);
     }
 
     @SuppressWarnings("unchecked")
