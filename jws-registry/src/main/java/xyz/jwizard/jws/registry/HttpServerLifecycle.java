@@ -1,5 +1,6 @@
 package xyz.jwizard.jws.registry;
 
+import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import xyz.jwizard.jwl.common.bootstrap.LifecycleHook;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
@@ -12,7 +13,17 @@ import java.util.Set;
 
 @Singleton
 public class HttpServerLifecycle implements LifecycleHook {
-    private HttpServer httpServer;
+    private final HttpServer httpServer;
+
+    @Inject
+    HttpServerLifecycle(ComponentProvider provider) {
+        httpServer = JettyHttpServer.builder()
+            .componentProvider(provider)
+            .jsonSerializer(new JacksonSerializer())
+            .ignoredPaths(Set.of())
+            .port(9092) /*TODO: incoming from config server*/
+            .build();
+    }
 
     // init last, destroy first
     @Override
@@ -22,12 +33,6 @@ public class HttpServerLifecycle implements LifecycleHook {
 
     @Override
     public void onStart(ComponentProvider provider) {
-        httpServer = JettyHttpServer.builder()
-            .componentProvider(provider)
-            .jsonSerializer(new JacksonSerializer())
-            .ignoredPaths(Set.of())
-            .port(9092) /*TODO: incoming from config server*/
-            .build();
         httpServer.start();
     }
 
