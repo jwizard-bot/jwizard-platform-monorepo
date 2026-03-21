@@ -5,15 +5,37 @@ services:
     container_name: jwizard-rabbitmq
     image: bitnami/rabbitmq:latest
     ports:
-      - '${JW_RABBITMQ_AMQP_PORT}:5672'
-      - '${JW_RABBITMQ_PANEL_PORT}:15672'
+      - '${JW_RABBITMQ_AMQP_PORT:-5672}:5672'
+      - '${JW_RABBITMQ_PANEL_PORT:-15672}:15672'
     environment:
-      RABBITMQ_SECURE_PASSWORD: true
-      RABBITMQ_USERNAME: ${JW_RABBITMQ_USERNAME}
-      RABBITMQ_PASSWORD: ${JW_RABBITMQ_PASSWORD}
+      RABBITMQ_SECURE_PASSWORD: false
+      RABBITMQ_USERNAME: "guest"
+      RABBITMQ_PASSWORD: "guest"
       RABBITMQ_MANAGEMENT_ALLOW_WEB_ACCESS: true
     volumes:
       - ./.volumes/rabbitmq/rabbitmq-volume:/bitnami/rabbitmq/mnesia
+    networks:
+      - jwizard-network
+
+  jwizard-redis:
+    container_name: jwizard-redis
+    image: redis:7.2-alpine
+    ports:
+      - "${JW_REDIS_SINGLE_NODE_PORT:-6379}:6379"
+    volumes:
+      - ./.volumes/redis/redis-volume:/data
+    networks:
+      - jwizard-network
+
+  jwizard-redis-ui:
+    container_name: jwizard-redis-ui
+    image: rediscommander/redis-commander:latest
+    ports:
+      - "${JW_REDIS_PANEL_PORT:-8081}:8081"
+    environment:
+      - REDIS_HOSTS=local:jwizard-redis:6379
+    depends_on:
+      - jwizard-redis
     networks:
       - jwizard-network
 
