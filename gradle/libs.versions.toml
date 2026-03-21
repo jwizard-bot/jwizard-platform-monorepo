@@ -6,6 +6,7 @@ guice = "7.0.0"
 jackson = "3.1.0"
 jakartaCdiApi = "5.0.0-M1"
 jakartaInjectApi = "2.0.1"
+jedis = "7.4.0"
 jettyServer = "12.1.7"
 junit = "5.10.2"
 logback = "1.5.32"
@@ -21,6 +22,7 @@ guice = { module = "com.google.inject:guice", version.ref = "guice" }
 jackson-databind = { module = "tools.jackson.core:jackson-databind", version.ref = "jackson" }
 jakarta-cdi-api = { module = "jakarta.enterprise:jakarta.enterprise.cdi-api", version.ref = "jakartaCdiApi" }
 jakarta-inject-api = { module = "jakarta.inject:jakarta.inject-api", version.ref = "jakartaInjectApi" }
+jedis = { module = "redis.clients:jedis", version.ref = "jedis" }
 jetty-server = { module = "org.eclipse.jetty:jetty-server", version.ref = "jettyServer" }
 junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junit" }
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
