@@ -11,18 +11,18 @@ public class IoUtil {
     private IoUtil() {
     }
 
-    public static <T> void actionQuietly(T resource, CloseAction<T> action) {
-        if (resource == null || action == null) {
+    public static <T> void closeQuietly(T resource, CloseAction<T> closeAction) {
+        if (resource == null || closeAction == null) {
             return;
         }
         try {
-            action.perform(resource);
+            closeAction.perform(resource);
         } catch (Exception ex) {
             LOG.warn("Failed to close resource safely", ex);
         }
     }
 
     public static void closeQuietly(Closeable closeable) {
-        actionQuietly(closeable, AutoCloseable::close);
+        closeQuietly(closeable, AutoCloseable::close);
     }
 }

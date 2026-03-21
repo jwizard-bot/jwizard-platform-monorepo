@@ -54,7 +54,7 @@ public class JettyHttpServer extends HttpServer {
 
     @Override
     public void close() {
-        IoUtil.actionQuietly(server, AbstractLifeCycle::stop);
+        IoUtil.closeQuietly(server, AbstractLifeCycle::stop);
     }
 
     public static class JettyHttpServerBuilder extends AbstractBuilder<JettyHttpServerBuilder> {
