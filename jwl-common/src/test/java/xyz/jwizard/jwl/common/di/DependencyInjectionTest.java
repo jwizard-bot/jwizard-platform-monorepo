@@ -4,13 +4,14 @@ import jakarta.inject.Singleton;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import xyz.jwizard.jwl.common.reflect.ClassScanner;
 
 import java.util.Collection;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class DependencyInjectionTest {
     private ComponentProvider provider;
@@ -18,8 +19,8 @@ class DependencyInjectionTest {
     @BeforeEach
     void setUp() {
         // given
-        final ClassScanner scanner = Mockito.mock(ClassScanner.class);
-        Mockito.when(scanner.getTypesAnnotatedWith(Singleton.class))
+        final ClassScanner scanner = mock(ClassScanner.class);
+        when(scanner.getTypesAnnotatedWith(Singleton.class))
             .thenReturn(Set.of(MarkedComponent.class, SimpleComponent.class));
         final ApplicationContext context = new ApplicationContext(scanner);
         provider = context.getProvider();
