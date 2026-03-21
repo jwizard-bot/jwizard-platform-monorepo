@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MultiProviderCacheTest {
+class MultiProviderCacheTest {
     private MultiProviderCache<String, String, String> providerCache;
     private AtomicInteger callCount;
 

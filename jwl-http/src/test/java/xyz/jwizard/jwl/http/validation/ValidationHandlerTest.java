@@ -14,7 +14,7 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class ValidationHandlerTest {
+class ValidationHandlerTest {
     private ValidationHandler validationHandler;
 
     @BeforeEach

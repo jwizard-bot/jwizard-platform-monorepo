@@ -3,7 +3,7 @@ package xyz.jwizard.jwl.queue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JwlQueue {
+class JwlQueue {
     private static final Logger LOG = LoggerFactory.getLogger(JwlQueue.class);
 
     public static void hello() {

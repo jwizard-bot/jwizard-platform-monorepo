@@ -11,7 +11,7 @@ import java.util.List;
 
 import static org.mockito.Mockito.*;
 
-public class DefaultBootstrapperTest {
+class DefaultBootstrapperTest {
     @Test
     @DisplayName("should start hooks in correct priority order")
     void shouldStartHooksInOrder() {

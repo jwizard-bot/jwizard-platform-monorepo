@@ -7,7 +7,7 @@ import java.io.ByteArrayInputStream;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class JacksonSerializerTest {
+class JacksonSerializerTest {
     private final JacksonSerializer serializer = new JacksonSerializer();
 
     @Test

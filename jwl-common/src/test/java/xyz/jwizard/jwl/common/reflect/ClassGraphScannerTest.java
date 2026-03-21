@@ -7,7 +7,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ClassGraphScannerTest {
+class ClassGraphScannerTest {
     @Test
     @DisplayName("should find only classes annotated with @TestComponent")
     void shouldFindAnnotatedClasses() {

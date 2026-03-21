@@ -3,7 +3,7 @@ package xyz.jwizard.jwl.persistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JwlPersistence {
+class JwlPersistence {
     private static final Logger LOG = LoggerFactory.getLogger(JwlPersistence.class);
 
     public static void hello() {
