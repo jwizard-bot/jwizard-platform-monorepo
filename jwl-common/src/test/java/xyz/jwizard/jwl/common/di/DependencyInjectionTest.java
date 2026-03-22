@@ -14,7 +14,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class DependencyInjectionTest {
-    private ComponentProvider provider;
+    private ComponentProvider componentProvider;
 
     @BeforeEach
     void setUp() {
@@ -23,16 +23,16 @@ class DependencyInjectionTest {
         when(scanner.getTypesAnnotatedWith(Singleton.class))
             .thenReturn(Set.of(MarkedComponent.class, SimpleComponent.class));
         final ApplicationContext context = new ApplicationContext(scanner);
-        provider = context.getProvider();
+        componentProvider = context.getComponentProvider();
     }
 
     @Test
     @DisplayName("should provide singleton instances for all @Injectable classes")
     void shouldProvideSingletonInjectables() {
         // when
-        final MarkedComponent instance1 = provider.getInstance(MarkedComponent.class);
-        final MarkedComponent instance2 = provider.getInstance(MarkedComponent.class);
-        final SimpleComponent simple = provider.getInstance(SimpleComponent.class);
+        final MarkedComponent instance1 = componentProvider.getInstance(MarkedComponent.class);
+        final MarkedComponent instance2 = componentProvider.getInstance(MarkedComponent.class);
+        final SimpleComponent simple = componentProvider.getInstance(SimpleComponent.class);
         // then
         assertThat(instance1).isNotNull();
         assertThat(simple).isNotNull();
@@ -43,7 +43,7 @@ class DependencyInjectionTest {
     @DisplayName("should find instances by custom annotation")
     void shouldFindInstancesByAnnotation() {
         // when
-        Collection<Object> found = provider.getInstancesAnnotatedWith(TestMarker.class);
+        Collection<Object> found = componentProvider.getInstancesAnnotatedWith(TestMarker.class);
         // then
         assertThat(found).hasSize(1);
         assertThat(found.iterator().next()).isInstanceOf(MarkedComponent.class);
@@ -53,7 +53,7 @@ class DependencyInjectionTest {
     @DisplayName("should return empty collection when no components have the annotation")
     void shouldReturnEmptyForMissingAnnotation() {
         // when
-        final Collection<Object> found = provider.getInstancesAnnotatedWith(Override.class);
+        final Collection<Object> found = componentProvider.getInstancesAnnotatedWith(Override.class);
         // then
         assertThat(found).isEmpty();
     }

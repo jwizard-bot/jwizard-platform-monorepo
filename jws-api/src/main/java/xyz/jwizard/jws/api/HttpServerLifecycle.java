@@ -4,7 +4,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import xyz.jwizard.jwl.common.bootstrap.LifecycleHook;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
-import xyz.jwizard.jwl.common.json.JacksonSerializer;
+import xyz.jwizard.jwl.common.serialization.json.JacksonSerializer;
 import xyz.jwizard.jwl.common.util.io.IoUtil;
 import xyz.jwizard.jwl.http.HttpServer;
 import xyz.jwizard.jwl.http.jetty.JettyHttpServer;
@@ -16,10 +16,10 @@ class HttpServerLifecycle implements LifecycleHook {
     private final HttpServer httpServer;
 
     @Inject
-    HttpServerLifecycle(ComponentProvider provider) {
+    HttpServerLifecycle(ComponentProvider componentProvider) {
         httpServer = JettyHttpServer.builder()
-            .componentProvider(provider)
-            .jsonSerializer(new JacksonSerializer())
+            .componentProvider(componentProvider)
+            .jsonSerializer(JacksonSerializer.createDefaultStrictMapper())
             .ignoredPaths(Set.of())
             .port(9091) /*TODO: incoming from config server*/
             .build();
@@ -32,7 +32,7 @@ class HttpServerLifecycle implements LifecycleHook {
     }
 
     @Override
-    public void onStart(ComponentProvider provider) {
+    public void onStart(ComponentProvider componentProvider) {
         httpServer.start();
     }
 

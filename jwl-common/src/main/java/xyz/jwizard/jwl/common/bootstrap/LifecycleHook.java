@@ -9,7 +9,7 @@ public interface LifecycleHook {
         return 0;
     }
 
-    void onStart(ComponentProvider provider);
+    void onStart(ComponentProvider componentProvider);
 
     default void onStop() {
     }

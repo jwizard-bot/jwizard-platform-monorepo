@@ -18,20 +18,21 @@ import java.util.Set;
 class RouteScanner {
     private static final Logger LOG = LoggerFactory.getLogger(RouteScanner.class);
 
-    private final ComponentProvider provider;
+    private final ComponentProvider componentProvider;
     private final Router router;
     private final Set<ArgumentResolver> resolvers;
 
     private int registeredRoutesCount = 0;
 
-    RouteScanner(ComponentProvider provider, Router router, Set<ArgumentResolver> resolvers) {
-        this.provider = provider;
+    RouteScanner(ComponentProvider componentProvider, Router router,
+                 Set<ArgumentResolver> resolvers) {
+        this.componentProvider = componentProvider;
         this.router = router;
         this.resolvers = resolvers;
     }
 
     void scan() {
-        final Collection<Object> instances = provider
+        final Collection<Object> instances = componentProvider
             .getInstancesAnnotatedWith(HttpController.class);
         for (final Object instance : instances) {
             registerRoutesForInstance(instance);

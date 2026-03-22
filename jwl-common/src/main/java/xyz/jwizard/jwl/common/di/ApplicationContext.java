@@ -5,14 +5,14 @@ import com.google.inject.Injector;
 import xyz.jwizard.jwl.common.reflect.ClassScanner;
 
 public class ApplicationContext {
-    private final ComponentProvider provider;
+    private final ComponentProvider componentProvider;
 
     public ApplicationContext(ClassScanner scanner) {
         final Injector injector = Guice.createInjector(new AutoScanModule(scanner));
-        this.provider = injector.getInstance(ComponentProvider.class);
+        this.componentProvider = injector.getInstance(ComponentProvider.class);
     }
 
-    public ComponentProvider getProvider() {
-        return provider;
+    public ComponentProvider getComponentProvider() {
+        return componentProvider;
     }
 }

@@ -36,8 +36,8 @@ public class HttpServerIntegrationTest {
         final ClassScanner scanner = new ClassGraphScanner(packageName);
         final ApplicationContext context = new ApplicationContext(scanner);
         httpServer = JettyHttpServer.builder()
-            .componentProvider(context.getProvider())
             .jsonSerializer(JSON_SERIALIZER)
+            .componentProvider(context.getComponentProvider())
             .port(0)
             .build();
         httpServer.start();

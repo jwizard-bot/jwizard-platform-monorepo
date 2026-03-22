@@ -45,7 +45,7 @@ public class DefaultBootstrapper {
     private static List<? extends LifecycleHook> discoverAndSortHooks(ClassScanner scanner,
                                                                       ApplicationContext context) {
         return scanner.getSubtypesOf(LifecycleHook.class).stream()
-            .map(clazz -> context.getProvider().getInstance(clazz))
+            .map(clazz -> context.getComponentProvider().getInstance(clazz))
             .sorted(Comparator.comparingInt(LifecycleHook::priority).reversed())
             .toList();
     }
@@ -61,7 +61,7 @@ public class DefaultBootstrapper {
             final String name = hook.getClass().getSimpleName();
             try {
                 LOG.debug("Starting lifecycle hook: {} (priority: {})", name, hook.priority());
-                hook.onStart(context.getProvider());
+                hook.onStart(context.getComponentProvider());
             } catch (Exception ex) {
                 throw new CriticalBootstrapException("Failed to start hook: " + name, ex);
             }

@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 public abstract class HttpServer implements Closeable {
     protected final Logger LOG = LoggerFactory.getLogger(getClass());
 
-    protected final ComponentProvider provider;
+    protected final ComponentProvider componentProvider;
     protected final Router router;
     protected final Set<String> ignoredPaths;
     protected final int port;
@@ -48,15 +48,15 @@ public abstract class HttpServer implements Closeable {
     );
 
     protected HttpServer(AbstractBuilder<?> builder) {
-        provider = builder.provider;
+        componentProvider = builder.componentProvider;
         router = new TrieRouter();
         port = builder.port;
         ignoredPaths = combinePaths(builder.ignoredPaths);
-        filters = provider.getInstancesOf(HttpFilter.class)
+        filters = componentProvider.getInstancesOf(HttpFilter.class)
             .stream()
             .sorted(Comparator.comparingInt(HttpFilter::order))
             .toList();
-        final Set<AnnotationValidator<?>> validators = provider
+        final Set<AnnotationValidator<?>> validators = componentProvider
             .getInstancesAnnotatedWith(Validator.class)
             .stream()
             .map(obj -> (AnnotationValidator<?>) obj)
@@ -82,7 +82,7 @@ public abstract class HttpServer implements Closeable {
 
     protected HttpRequestHandler prepareRequestHandler() {
         LOG.info("Scanning routes and preparing HTTP request handler");
-        final RouteScanner scanner = new RouteScanner(provider, router, resolvers);
+        final RouteScanner scanner = new RouteScanner(componentProvider, router, resolvers);
         scanner.scan();
         return new HttpRequestHandler(
             router,
@@ -123,7 +123,7 @@ public abstract class HttpServer implements Closeable {
     public abstract static class AbstractBuilder<B extends AbstractBuilder<B>> {
         protected final Set<String> ignoredPaths = new HashSet<>();
 
-        protected ComponentProvider provider;
+        protected ComponentProvider componentProvider;
         protected JsonSerializer jsonSerializer;
         protected int port = 8080;
 
@@ -132,8 +132,8 @@ public abstract class HttpServer implements Closeable {
             return (B) this;
         }
 
-        public B componentProvider(ComponentProvider provider) {
-            this.provider = provider;
+        public B componentProvider(ComponentProvider componentProvider) {
+            this.componentProvider = componentProvider;
             return self();
         }
 
@@ -153,8 +153,8 @@ public abstract class HttpServer implements Closeable {
         }
 
         protected void validate() {
-            Assert.notNull(provider, "ComponentProvider is missing");
-            Assert.notNull(jsonSerializer, "JsonSerializer is missing");
+            Assert.notNull(componentProvider, "ComponentProvider cannot be null");
+            Assert.notNull(jsonSerializer, "JsonSerializer cannot be null");
             Assert.state(port >= 0 && port < 65536, "Invalid port number");
         }
 

@@ -11,6 +11,6 @@ class LowPriorityHook implements TestHook {
     }
 
     @Override
-    public void onStart(ComponentProvider provider) {
+    public void onStart(ComponentProvider componentProvider) {
     }
 }

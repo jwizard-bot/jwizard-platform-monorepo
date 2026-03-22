@@ -26,7 +26,7 @@ class KvServerLifecycle implements LifecycleHook {
     }
 
     @Override
-    public void onStart(ComponentProvider provider) {
+    public void onStart(ComponentProvider componentProvider) {
         kvServer.start();
     }
 

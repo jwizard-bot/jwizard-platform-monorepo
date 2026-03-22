@@ -16,10 +16,10 @@ public class HttpServerLifecycle implements LifecycleHook {
     private final HttpServer httpServer;
 
     @Inject
-    HttpServerLifecycle(ComponentProvider provider) {
+    HttpServerLifecycle(ComponentProvider componentProvider) {
         httpServer = JettyHttpServer.builder()
-            .componentProvider(provider)
             .jsonSerializer(new JacksonSerializer())
+            .componentProvider(componentProvider)
             .ignoredPaths(Set.of())
             .port(9093) /*TODO: incoming from config server*/
             .build();
@@ -32,7 +32,7 @@ public class HttpServerLifecycle implements LifecycleHook {
     }
 
     @Override
-    public void onStart(ComponentProvider provider) {
+    public void onStart(ComponentProvider componentProvider) {
         httpServer.start();
     }
 
