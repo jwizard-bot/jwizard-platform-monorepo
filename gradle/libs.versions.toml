@@ -16,7 +16,7 @@ slf4j = "2.0.17"
 testcontainers = "2.0.4"
 
 [libraries]
-assertj-core = { group = "org.assertj", name = "assertj-core", version.ref = "assertj" }
+assertj-core = { module = "org.assertj:assertj-core", version.ref = "assertj" }
 clazz-graph = { module = "io.github.classgraph:classgraph", version.ref = "clazzGraph" }
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
 guice = { module = "com.google.inject:guice", version.ref = "guice" }
@@ -25,10 +25,10 @@ jakarta-cdi-api = { module = "jakarta.enterprise:jakarta.enterprise.cdi-api", ve
 jakarta-inject-api = { module = "jakarta.inject:jakarta.inject-api", version.ref = "jakartaInjectApi" }
 jedis = { module = "redis.clients:jedis", version.ref = "jedis" }
 jetty-server = { module = "org.eclipse.jetty:jetty-server", version.ref = "jettyServer" }
-junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junit" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
-mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
-mockito-jupiter = { group = "org.mockito", name = "mockito-junit-jupiter", version.ref = "mockito" }
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
+mockito-jupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 testcontainers = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
 testcontainers-jupyter = { module = "org.testcontainers:testcontainers-junit-jupiter", version.ref = "testcontainers" }
