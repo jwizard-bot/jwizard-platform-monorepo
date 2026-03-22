@@ -3,41 +3,58 @@ package xyz.jwizard.jwl.kv;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.jwizard.jwl.common.bootstrap.CriticalBootstrapException;
+import xyz.jwizard.jwl.common.util.Assert;
 import xyz.jwizard.jwl.common.util.net.HostPort;
 import xyz.jwizard.jwl.common.util.net.NetworkUtil;
 
 import java.io.Closeable;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 public abstract class KvServer implements KeyValueStore, PubSubBroadcaster, Closeable {
     protected final Logger LOG = LoggerFactory.getLogger(getClass());
 
-    protected final Set<HostPort> kvClusterNodes;
+    protected final Set<HostPort> nodes;
     protected final String password;
 
-    protected KvServer(Set<HostPort> kvClusterNodes, String password) {
-        this.kvClusterNodes = kvClusterNodes;
-        this.password = password;
+    private final AtomicBoolean running = new AtomicBoolean(false);
+
+    protected KvServer(AbstractBuilder<?> builder) {
+        nodes = builder.nodes;
+        password = builder.password;
     }
 
     public void start() {
-        if (kvClusterNodes.isEmpty()) {
-            LOG.warn("Not providing any cluster nodes. Skipping configuration.");
-            return;
-        }
-        LOG.info("KV server starting initializing with {} node(s).", kvClusterNodes.size());
         try {
+            if (!running.compareAndSet(false, true)) {
+                return;
+            }
+            if (nodes.isEmpty()) {
+                LOG.warn("Not providing any nodes, skipping configuration");
+                return;
+            }
+            LOG.info("KV server start initializing with {} node(s)", nodes.size());
             onStart();
         } catch (Exception ex) {
-            throw new CriticalBootstrapException("KV server connection failed", ex);
+            throw new CriticalBootstrapException("KV server connection(s) failed", ex);
         }
     }
 
-    protected abstract void onStart();
+    @Override
+    public final void close() {
+        if (running.compareAndSet(true, false)) {
+            onEnd();
+            LOG.info("KV server has been stopped");
+        }
+    }
 
-    public abstract static class Builder<B extends Builder<B, T>, T extends KvServer> {
+    protected abstract void onStart() throws Exception;
+
+    protected abstract void onEnd();
+
+    public abstract static class AbstractBuilder<B extends AbstractBuilder<B>> {
         protected Set<HostPort> nodes = new HashSet<>();
         protected String password;
 
@@ -60,11 +77,16 @@ public abstract class KvServer implements KeyValueStore, PubSubBroadcaster, Clos
             return self();
         }
 
+        // might be null
         public B password(String password) {
             this.password = password;
             return self();
         }
 
-        public abstract T build();
+        protected void validate() {
+            Assert.notNull(nodes, "Nodes cannot be null");
+        }
+
+        public abstract KvServer build();
     }
 }

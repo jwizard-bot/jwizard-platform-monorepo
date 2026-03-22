@@ -5,8 +5,8 @@ import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.JedisClientConfig;
 import redis.clients.jedis.UnifiedJedis;
 import redis.clients.jedis.params.SetParams;
+import xyz.jwizard.jwl.common.util.Assert;
 import xyz.jwizard.jwl.common.util.io.IoUtil;
-import xyz.jwizard.jwl.common.util.net.HostPort;
 import xyz.jwizard.jwl.common.util.thread.ThreadUtil;
 import xyz.jwizard.jwl.kv.KvServer;
 import xyz.jwizard.jwl.kv.jedis.factory.ClusterJedisClientFactory;
@@ -26,10 +26,9 @@ public class JedisServer extends KvServer {
     private final JedisClientFactory clientFactory;
     private UnifiedJedis redisClient;
 
-    protected JedisServer(Set<HostPort> kvClusterNodes, String password,
-                          JedisClientFactory clientFactory) {
-        super(kvClusterNodes, password);
-        this.clientFactory = clientFactory;
+    private JedisServer(Builder builder) {
+        super(builder);
+        this.clientFactory = builder.factory;
     }
 
     public static Builder builder() {
@@ -38,15 +37,11 @@ public class JedisServer extends KvServer {
 
     @Override
     protected void onStart() {
-        if (redisClient != null) {
-            LOG.warn("KV server adapter start() ignored: client is already running");
-            return;
-        }
         final JedisClientConfig config = DefaultJedisClientConfig.builder()
             .password(password != null && !password.isBlank() ? password : null)
             .build();
 
-        final Set<HostAndPort> clusterNodes = kvClusterNodes.stream()
+        final Set<HostAndPort> clusterNodes = nodes.stream()
             .map(c -> new HostAndPort(c.host(), c.port()))
             .collect(Collectors.toSet());
 
@@ -57,12 +52,8 @@ public class JedisServer extends KvServer {
     }
 
     @Override
-    public void close() {
-        IoUtil.closeQuietly(redisClient, client -> {
-            client.close();
-            redisClient = null;
-            LOG.info("KV server cluster connections closed");
-        });
+    protected void onEnd() {
+        IoUtil.closeQuietly(redisClient, UnifiedJedis::close);
     }
 
     @Override
@@ -136,11 +127,11 @@ public class JedisServer extends KvServer {
             redisClient.subscribe(pubSub, channelBytes));
     }
 
-    public static class Builder extends KvServer.Builder<Builder, JedisServer> {
+    public static class Builder extends KvServer.AbstractBuilder<Builder> {
         private JedisClientFactory factory = new ClusterJedisClientFactory();
 
         public Builder withFactory(FactoryType factoryType) {
-            this.factory = factoryType.getFactory();
+            factory = factoryType.getFactory();
             return this;
         }
 
@@ -151,7 +142,9 @@ public class JedisServer extends KvServer {
 
         @Override
         public JedisServer build() {
-            return new JedisServer(nodes, password, factory);
+            validate();
+            Assert.notNull(factory, "JedisClientFactory cannot be null");
+            return new JedisServer(this);
         }
     }
 }
