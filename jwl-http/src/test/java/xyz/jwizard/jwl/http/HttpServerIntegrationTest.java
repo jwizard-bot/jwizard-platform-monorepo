@@ -25,7 +25,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 public class HttpServerIntegrationTest {
     public static final String TEST_PASSWORD = "SecretToken-123";
 
-    private static final JsonSerializer JSON_SERIALIZER = new JacksonSerializer();
+    private static final JsonSerializer SERIALIZER = JacksonSerializer.createDefaultStrictMapper();
     private static HttpServer httpServer;
     private static int dynamicPort;
     private final HttpClient httpClient = HttpClient.newHttpClient();
@@ -36,8 +36,8 @@ public class HttpServerIntegrationTest {
         final ClassScanner scanner = new ClassGraphScanner(packageName);
         final ApplicationContext context = new ApplicationContext(scanner);
         httpServer = JettyHttpServer.builder()
-            .jsonSerializer(JSON_SERIALIZER)
             .componentProvider(context.getComponentProvider())
+            .jsonSerializer(SERIALIZER)
             .port(0)
             .build();
         httpServer.start();
@@ -58,7 +58,7 @@ public class HttpServerIntegrationTest {
     }
 
     private HttpResponse<String> post(Object body) throws Exception {
-        final String json = JSON_SERIALIZER.serialize(body);
+        final String json = SERIALIZER.serialize(body);
         final HttpRequest request = HttpRequest.newBuilder()
             .uri(URI.create("http://localhost:" + dynamicPort + "/api/test"))
             .header("Content-Type", "application/json")

@@ -10,23 +10,20 @@ import java.io.InputStream;
 public class JacksonSerializer implements JsonSerializer {
     private final ObjectMapper objectMapper;
 
-    public JacksonSerializer(ObjectMapper objectMapper) {
+    private JacksonSerializer(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
-    public JacksonSerializer() {
-        this(createDefaultStrictMapper());
-    }
-
-    private static ObjectMapper createDefaultStrictMapper() {
-        return JsonMapper.builder()
-            // error when a field required by the constructor/record is missing in the json
+    public static JacksonSerializer createDefaultStrictMapper() {
+        final ObjectMapper mapper = JsonMapper.builder()
+            // error when a field required by the constructor/record is missing in the JSON
             .enable(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES)
-            // error when the json contains properties that do not exist in our class
+            // error when the JSON contains properties that do not exist in our class
             .enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
             // prevents setting null for primitive types (int, boolean, etc.)
             .enable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
             .build();
+        return new JacksonSerializer(mapper);
     }
 
     @Override
@@ -34,7 +31,7 @@ public class JacksonSerializer implements JsonSerializer {
         try {
             return objectMapper.writeValueAsString(value);
         } catch (JacksonException ex) {
-            throw new JsonException(getCleanMessage(ex), ex);
+            throw new JsonSerializerException(getCleanMessage(ex), ex);
         }
     }
 
@@ -43,7 +40,7 @@ public class JacksonSerializer implements JsonSerializer {
         try {
             return objectMapper.readValue(input, type);
         } catch (JacksonException ex) {
-            throw new JsonException(getCleanMessage(ex), ex);
+            throw new JsonSerializerException(getCleanMessage(ex), ex);
         }
     }
 
