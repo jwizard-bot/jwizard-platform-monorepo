@@ -21,8 +21,8 @@ public class JettyHttpServer extends HttpServer {
         super(builder);
     }
 
-    public static JettyHttpServerBuilder builder() {
-        return new JettyHttpServerBuilder();
+    public static Builder builder() {
+        return new Builder();
     }
 
     @Override
@@ -57,7 +57,7 @@ public class JettyHttpServer extends HttpServer {
         IoUtil.closeQuietly(server, AbstractLifeCycle::stop);
     }
 
-    public static class JettyHttpServerBuilder extends AbstractBuilder<JettyHttpServerBuilder> {
+    public static class Builder extends AbstractBuilder<Builder> {
         @Override
         public HttpServer build() {
             validate();
