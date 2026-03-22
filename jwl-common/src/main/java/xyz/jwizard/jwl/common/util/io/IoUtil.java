@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
+import java.util.function.Predicate;
 
 public class IoUtil {
     private static final Logger LOG = LoggerFactory.getLogger(IoUtil.class);
@@ -24,5 +25,14 @@ public class IoUtil {
 
     public static void closeQuietly(Closeable closeable) {
         closeQuietly(closeable, AutoCloseable::close);
+    }
+
+    public static <T> void closeQuietly(T resource, Predicate<T> predicate,
+                                        CloseAction<T> closeAction) {
+        closeQuietly(resource, r -> {
+            if (predicate.test(r)) {
+                closeAction.perform(r);
+            }
+        });
     }
 }
