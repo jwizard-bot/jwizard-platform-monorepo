@@ -4,6 +4,8 @@ import tools.jackson.core.JacksonException;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
+import xyz.jwizard.jwl.common.serialization.MessageSerializerException;
+import xyz.jwizard.jwl.common.serialization.SerializerFormat;
 
 import java.io.InputStream;
 
@@ -26,6 +28,16 @@ public class JacksonSerializer implements JsonSerializer {
         return new JacksonSerializer(mapper);
     }
 
+    // for loosely coupled service as queues (RabbitMQ, Kafka)
+    public static JacksonSerializer createLenientForMessaging() {
+        final ObjectMapper mapper = JsonMapper.builder()
+            .enable(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES)
+            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+            .enable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+            .build();
+        return new JacksonSerializer(mapper);
+    }
+
     @Override
     public String serialize(Object value) {
         try {
@@ -42,6 +54,29 @@ public class JacksonSerializer implements JsonSerializer {
         } catch (JacksonException ex) {
             throw new JsonSerializerException(getCleanMessage(ex), ex);
         }
+    }
+
+    @Override
+    public byte[] serializeToBytes(Object value) {
+        try {
+            return objectMapper.writeValueAsBytes(value);
+        } catch (JacksonException ex) {
+            throw new MessageSerializerException(getCleanMessage(ex), ex);
+        }
+    }
+
+    @Override
+    public <T> T deserializeFromBytes(byte[] bytes, Class<T> type) {
+        try {
+            return objectMapper.readValue(bytes, type);
+        } catch (JacksonException ex) {
+            throw new MessageSerializerException(getCleanMessage(ex), ex);
+        }
+    }
+
+    @Override
+    public SerializerFormat format() {
+        return SerializerFormat.JSON;
     }
 
     private String getCleanMessage(JacksonException ex) {
