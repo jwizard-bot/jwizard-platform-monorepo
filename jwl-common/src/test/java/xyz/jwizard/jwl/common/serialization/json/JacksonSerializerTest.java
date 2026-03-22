@@ -8,7 +8,7 @@ import java.io.ByteArrayInputStream;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class JacksonSerializerTest {
-    private final JacksonSerializer serializer = new JacksonSerializer();
+    private final JacksonSerializer serializer = JacksonSerializer.createDefaultStrictMapper();
 
     @Test
     @DisplayName("should throw clean exception message on malformed JSON")
