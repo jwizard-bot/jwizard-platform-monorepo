@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import xyz.jwizard.jwl.common.reflect.ClassScanner;
+import xyz.jwizard.jwl.common.reflect.TypeReference;
 
 import java.util.Collection;
 import java.util.Set;
@@ -21,7 +22,12 @@ class DependencyInjectionTest {
         // given
         final ClassScanner scanner = mock(ClassScanner.class);
         when(scanner.getTypesAnnotatedWith(Singleton.class))
-            .thenReturn(Set.of(MarkedComponent.class, SimpleComponent.class));
+            .thenReturn(Set.of(
+                MarkedComponent.class,
+                SimpleComponent.class,
+                TestInterfaceComponent.class,
+                SecondTestInterfaceComponent.class
+            ));
         final ApplicationContext context = new ApplicationContext(scanner);
         componentProvider = context.getComponentProvider();
     }
@@ -57,6 +63,23 @@ class DependencyInjectionTest {
         // then
         assertThat(found).isEmpty();
     }
+
+    @Test
+    @DisplayName("should find all instances by TypeReference")
+    void shouldFindInstancesByTypeReference() {
+        // given
+        final TypeReference<TestInterface> pluginType = new TypeReference<>() {
+        };
+        // when
+        final Collection<TestInterface> plugins = componentProvider.getInstancesOf(pluginType);
+        // then
+        assertThat(plugins)
+            .hasSize(2)
+            .hasOnlyElementsOfTypes(
+                TestInterfaceComponent.class,
+                SecondTestInterfaceComponent.class
+            );
+    }
 }
 
 @Singleton
@@ -66,4 +89,12 @@ class MarkedComponent {
 
 @Singleton
 class SimpleComponent {
+}
+
+@Singleton
+class TestInterfaceComponent implements TestInterface {
+}
+
+@Singleton
+class SecondTestInterfaceComponent implements TestInterface {
 }
