@@ -6,7 +6,7 @@ import java.util.LinkedHashSet;
 public class CollectionUtil {
     private CollectionUtil() {
     }
-    
+
     @SafeVarargs
     public static <T> LinkedHashSet<T> linkedSetOf(T... elements) {
         return new LinkedHashSet<>(Arrays.asList(elements));
