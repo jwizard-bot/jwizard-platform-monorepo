@@ -1,0 +1,65 @@
+package xyz.jwizard.jwl.common.util.thread;
+
+import org.jspecify.annotations.NonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+public class TaskExecutor implements Executor, Closeable {
+    private static final Logger LOG = LoggerFactory.getLogger(TaskExecutor.class);
+
+    private final ExecutorService delegate;
+    private final String name;
+    private final long timeout;
+    private final TimeUnit unit;
+
+    public TaskExecutor(String name, long timeout, TimeUnit unit) {
+        this.delegate = Executors.newVirtualThreadPerTaskExecutor();
+        this.name = name;
+        this.timeout = timeout;
+        this.unit = unit;
+        LOG.debug("Initialized virtual thread executor: {}", name);
+    }
+
+    public TaskExecutor(String name) {
+        this(name, 30, TimeUnit.SECONDS);
+    }
+
+    public ExecutorService getDelegate() {
+        return delegate;
+    }
+
+    @Override
+    public void execute(@NonNull Runnable command) {
+        delegate.execute(command);
+    }
+
+    @Override
+    public void close() throws IOException {
+        if (delegate == null || delegate.isShutdown()) {
+            return;
+        }
+        LOG.debug("Initiating graceful shutdown of executor: {}", name);
+        delegate.shutdown();
+        try {
+            if (!delegate.awaitTermination(timeout, unit)) {
+                LOG.warn("Executor '{}' did not terminate in time. forcing shutdown...", name);
+                delegate.shutdownNow();
+                if (!delegate.awaitTermination(timeout, unit)) {
+                    LOG.error("Executor '{}' did not terminate even after forcing.", name);
+                }
+            }
+        } catch (InterruptedException ignored) {
+            LOG.error("Shutdown of executor '{}' interrupted", name);
+            delegate.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
+        LOG.debug("Executor '{}' has been shut down", name);
+    }
+}
