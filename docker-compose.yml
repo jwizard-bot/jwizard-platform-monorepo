@@ -33,7 +33,7 @@ services:
     ports:
       - "${JW_REDIS_PANEL_PORT:-8081}:8081"
     environment:
-      - REDIS_HOSTS=local:jwizard-redis:6379
+      REDIS_HOSTS: local:jwizard-redis:6379
     depends_on:
       - jwizard-redis
     networks:
