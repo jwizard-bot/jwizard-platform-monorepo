@@ -1,4 +1,4 @@
-package xyz.jwizard.jwl.kv.jedis.jedis;
+package xyz.jwizard.jwl.kv.jedis;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -10,9 +10,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import redis.clients.jedis.RedisClusterClient;
 import redis.clients.jedis.params.SetParams;
 import xyz.jwizard.jwl.kv.KvClusterNode;
-import xyz.jwizard.jwl.kv.jedis.JedisServer;
 import xyz.jwizard.jwl.kv.jedis.factory.JedisClientFactory;
-import xyz.jwizard.jwl.kv.jedis.key.TestKvKey;
+import xyz.jwizard.jwl.kv.key.TestKvKey;
 
 import java.util.Set;
 

@@ -1,4 +1,4 @@
-package xyz.jwizard.jwl.kv.jedis.jedis;
+package xyz.jwizard.jwl.kv.jedis;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,12 +10,11 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 import xyz.jwizard.jwl.common.util.io.IoUtil;
 import xyz.jwizard.jwl.kv.KvClusterNode;
-import xyz.jwizard.jwl.kv.jedis.JedisServer;
 import xyz.jwizard.jwl.kv.jedis.factory.FactoryType;
-import xyz.jwizard.jwl.kv.jedis.key.TestKvChannel;
-import xyz.jwizard.jwl.kv.jedis.key.TestKvKey;
 import xyz.jwizard.jwl.kv.key.KvChannel;
 import xyz.jwizard.jwl.kv.key.KvKey;
+import xyz.jwizard.jwl.kv.key.TestKvChannel;
+import xyz.jwizard.jwl.kv.key.TestKvKey;
 
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;

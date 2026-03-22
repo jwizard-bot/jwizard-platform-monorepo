@@ -1,6 +1,4 @@
-package xyz.jwizard.jwl.kv.jedis.key;
-
-import xyz.jwizard.jwl.kv.key.KvKey;
+package xyz.jwizard.jwl.kv.key;
 
 public enum TestKvKey implements KvKey {
     USER_PROFILE("user:%s:name", 0),

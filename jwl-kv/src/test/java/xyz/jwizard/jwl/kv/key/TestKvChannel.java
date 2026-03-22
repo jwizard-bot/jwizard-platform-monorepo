@@ -1,6 +1,4 @@
-package xyz.jwizard.jwl.kv.jedis.key;
-
-import xyz.jwizard.jwl.kv.key.KvChannel;
+package xyz.jwizard.jwl.kv.key;
 
 public enum TestKvChannel implements KvChannel {
     TEST_EVENTS("test:channel:events"),
