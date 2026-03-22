@@ -9,7 +9,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 import xyz.jwizard.jwl.common.util.io.IoUtil;
-import xyz.jwizard.jwl.kv.KvClusterNode;
+import xyz.jwizard.jwl.common.util.net.HostPort;
 import xyz.jwizard.jwl.kv.jedis.factory.FactoryType;
 import xyz.jwizard.jwl.kv.key.KvChannel;
 import xyz.jwizard.jwl.kv.key.KvKey;
@@ -40,7 +40,7 @@ class JedisServerIntegrationTest {
         final String host = redisContainer.getHost();
         final int port = redisContainer.getMappedPort(REDIS_PORT);
         jedisServer = JedisServer.builder()
-            .nodes(Set.of(new KvClusterNode(host, port)))
+            .nodes(Set.of(new HostPort(host, port)))
             .withFactory(FactoryType.SINGLE_NODE)
             .build();
         jedisServer.start();

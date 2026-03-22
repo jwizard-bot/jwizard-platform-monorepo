@@ -9,7 +9,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import redis.clients.jedis.RedisClusterClient;
 import redis.clients.jedis.params.SetParams;
-import xyz.jwizard.jwl.kv.KvClusterNode;
+import xyz.jwizard.jwl.common.util.net.HostPort;
 import xyz.jwizard.jwl.kv.jedis.factory.JedisClientFactory;
 import xyz.jwizard.jwl.kv.key.TestKvKey;
 
@@ -34,7 +34,7 @@ class JedisServerTest {
         // given
         Mockito.when(factory.create(any(), any())).thenReturn(redisClient);
         jedisServer = JedisServer.builder()
-            .nodes(Set.of(new KvClusterNode("localhost", 6379)))
+            .nodes(Set.of(new HostPort("localhost", 6379)))
             .withFactory(factory)
             .build();
         jedisServer.start();

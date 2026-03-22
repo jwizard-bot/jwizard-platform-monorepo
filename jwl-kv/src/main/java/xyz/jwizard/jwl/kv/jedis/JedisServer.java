@@ -6,8 +6,8 @@ import redis.clients.jedis.JedisClientConfig;
 import redis.clients.jedis.UnifiedJedis;
 import redis.clients.jedis.params.SetParams;
 import xyz.jwizard.jwl.common.util.io.IoUtil;
+import xyz.jwizard.jwl.common.util.net.HostPort;
 import xyz.jwizard.jwl.common.util.thread.ThreadUtil;
-import xyz.jwizard.jwl.kv.KvClusterNode;
 import xyz.jwizard.jwl.kv.KvServer;
 import xyz.jwizard.jwl.kv.jedis.factory.ClusterJedisClientFactory;
 import xyz.jwizard.jwl.kv.jedis.factory.FactoryType;
@@ -26,7 +26,7 @@ public class JedisServer extends KvServer {
     private final JedisClientFactory clientFactory;
     private UnifiedJedis redisClient;
 
-    protected JedisServer(Set<KvClusterNode> kvClusterNodes, String password,
+    protected JedisServer(Set<HostPort> kvClusterNodes, String password,
                           JedisClientFactory clientFactory) {
         super(kvClusterNodes, password);
         this.clientFactory = clientFactory;

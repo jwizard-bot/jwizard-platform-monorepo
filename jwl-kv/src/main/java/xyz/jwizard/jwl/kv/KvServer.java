@@ -3,6 +3,7 @@ package xyz.jwizard.jwl.kv;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.jwizard.jwl.common.bootstrap.CriticalBootstrapException;
+import xyz.jwizard.jwl.common.util.net.HostPort;
 import xyz.jwizard.jwl.common.util.net.NetworkUtil;
 
 import java.io.Closeable;
@@ -13,10 +14,10 @@ import java.util.stream.Collectors;
 public abstract class KvServer implements KeyValueStore, PubSubBroadcaster, Closeable {
     protected final Logger LOG = LoggerFactory.getLogger(getClass());
 
-    protected final Set<KvClusterNode> kvClusterNodes;
+    protected final Set<HostPort> kvClusterNodes;
     protected final String password;
 
-    protected KvServer(Set<KvClusterNode> kvClusterNodes, String password) {
+    protected KvServer(Set<HostPort> kvClusterNodes, String password) {
         this.kvClusterNodes = kvClusterNodes;
         this.password = password;
     }
@@ -37,7 +38,7 @@ public abstract class KvServer implements KeyValueStore, PubSubBroadcaster, Clos
     protected abstract void onStart();
 
     public abstract static class Builder<B extends Builder<B, T>, T extends KvServer> {
-        protected Set<KvClusterNode> nodes = new HashSet<>();
+        protected Set<HostPort> nodes = new HashSet<>();
         protected String password;
 
         @SuppressWarnings("unchecked")
@@ -45,7 +46,7 @@ public abstract class KvServer implements KeyValueStore, PubSubBroadcaster, Clos
             return (B) this;
         }
 
-        public B nodes(Set<KvClusterNode> nodes) {
+        public B nodes(Set<HostPort> nodes) {
             this.nodes = nodes;
             return self();
         }
@@ -54,7 +55,7 @@ public abstract class KvServer implements KeyValueStore, PubSubBroadcaster, Clos
         public B rawNodes(Set<String> rawNodes) {
             this.nodes = rawNodes.stream()
                 .map(NetworkUtil::parseHostPort)
-                .map(hp -> new KvClusterNode(hp.host(), hp.port()))
+                .map(hp -> new HostPort(hp.host(), hp.port()))
                 .collect(Collectors.toSet());
             return self();
         }
