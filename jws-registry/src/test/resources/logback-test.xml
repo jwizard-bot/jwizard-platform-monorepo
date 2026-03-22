@@ -1,0 +1,4 @@
+<configuration>
+  <property name="SERVICE_OR_LIBRARY_NAME" value="jws-registry"/>
+  <include resource="logback-test-base.xml"/>
+</configuration>
