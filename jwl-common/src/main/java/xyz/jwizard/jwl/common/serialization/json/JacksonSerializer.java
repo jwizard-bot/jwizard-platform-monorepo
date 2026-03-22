@@ -1,4 +1,4 @@
-package xyz.jwizard.jwl.common.json;
+package xyz.jwizard.jwl.common.serialization.json;
 
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.DeserializationFeature;

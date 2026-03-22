@@ -1,4 +1,4 @@
-package xyz.jwizard.jwl.common.json;
+package xyz.jwizard.jwl.common.serialization.json;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ class JacksonSerializerTest {
         final ByteArrayInputStream in = new ByteArrayInputStream(badJson.getBytes());
 
         assertThatThrownBy(() -> serializer.deserialize(in, Simple.class))
-            .isInstanceOf(JsonException.class);
+            .isInstanceOf(JsonSerializerException.class);
     }
 
     record Simple(String name) {

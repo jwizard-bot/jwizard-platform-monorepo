@@ -1,6 +1,6 @@
 package xyz.jwizard.jwl.http.resolver;
 
-import xyz.jwizard.jwl.common.json.JsonSerializer;
+import xyz.jwizard.jwl.common.serialization.json.JsonSerializer;
 import xyz.jwizard.jwl.http.HttpRequest;
 import xyz.jwizard.jwl.http.annotation.Body;
 import xyz.jwizard.jwl.http.exception.RouteValidationException;
