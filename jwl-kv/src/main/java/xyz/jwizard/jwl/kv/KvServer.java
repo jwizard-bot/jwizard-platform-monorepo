@@ -70,11 +70,10 @@ public abstract class KvServer implements KeyValueStore, PubSubBroadcaster, Clos
 
         // as host:port
         public B rawNodes(Set<String> rawNodes) {
-            this.nodes = rawNodes.stream()
+            return nodes(rawNodes.stream()
                 .map(NetworkUtil::parseHostPort)
                 .map(hp -> new HostPort(hp.host(), hp.port()))
-                .collect(Collectors.toSet());
-            return self();
+                .collect(Collectors.toSet()));
         }
 
         // might be null

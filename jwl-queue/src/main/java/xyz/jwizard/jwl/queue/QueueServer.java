@@ -161,11 +161,10 @@ public abstract class QueueServer implements MessagePublisher, Closeable {
 
         // as host:port
         public B rawNodes(Set<String> rawNodes) {
-            this.nodes = rawNodes.stream()
+            return nodes(rawNodes.stream()
                 .map(NetworkUtil::parseHostPort)
                 .map(hp -> new HostPort(hp.host(), hp.port()))
-                .collect(Collectors.toSet());
-            return self();
+                .collect(Collectors.toSet()));
         }
 
         public B username(String username) {
