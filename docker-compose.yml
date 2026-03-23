@@ -12,6 +12,7 @@ services:
       RABBITMQ_USERNAME: "guest"
       RABBITMQ_PASSWORD: "guest"
       RABBITMQ_MANAGEMENT_ALLOW_WEB_ACCESS: true
+      RABBITMQ_VHOST: "jwizard-main"
     volumes:
       - ./.volumes/rabbitmq/rabbitmq-volume:/bitnami/rabbitmq/mnesia
     networks:
