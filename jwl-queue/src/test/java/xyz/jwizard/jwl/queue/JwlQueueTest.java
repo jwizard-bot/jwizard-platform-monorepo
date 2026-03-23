@@ -1,4 +1,4 @@
-package xyz.jwizard.jwl.kv;
+package xyz.jwizard.jwl.queue;
 
 import xyz.jwizard.jwl.common.ModuleIdentityTest;
 
