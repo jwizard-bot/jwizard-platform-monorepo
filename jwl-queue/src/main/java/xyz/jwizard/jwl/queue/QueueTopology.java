@@ -1,5 +1,6 @@
 package xyz.jwizard.jwl.queue;
 
+import xyz.jwizard.jwl.queue.exchange.DefaultExchangeType;
 import xyz.jwizard.jwl.queue.exchange.ExchangeType;
 
 import java.util.Collections;
@@ -30,7 +31,7 @@ public record QueueTopology(
         private Map<String, Object> arguments = Collections.emptyMap();
 
         private String exchangeName;
-        private ExchangeType exchangeType;
+        private ExchangeType exchangeType = DefaultExchangeType.DIRECT;
         private String routingKey = "";
         private boolean useDeadLetter = false;
 
