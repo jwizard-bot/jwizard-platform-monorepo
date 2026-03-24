@@ -3,18 +3,16 @@ name: jwizard
 services:
   jwizard-rabbitmq:
     container_name: jwizard-rabbitmq
-    image: bitnami/rabbitmq:latest
+    image: rabbitmq:3-management
     ports:
       - '${JW_RABBITMQ_AMQP_PORT:-5672}:5672'
       - '${JW_RABBITMQ_PANEL_PORT:-15672}:15672'
     environment:
-      RABBITMQ_SECURE_PASSWORD: false
-      RABBITMQ_USERNAME: "guest"
-      RABBITMQ_PASSWORD: "guest"
-      RABBITMQ_MANAGEMENT_ALLOW_WEB_ACCESS: true
-      RABBITMQ_VHOST: "jwizard-main"
+      RABBITMQ_DEFAULT_USER: "guest"
+      RABBITMQ_DEFAULT_PASS: "guest"
+      RABBITMQ_DEFAULT_VHOST: "jwizard-main"
     volumes:
-      - ./.volumes/rabbitmq/rabbitmq-volume:/bitnami/rabbitmq/mnesia
+      - ./.volumes/rabbitmq/rabbitmq-volume:/var/lib/rabbitmq
     networks:
       - jwizard-network
 
