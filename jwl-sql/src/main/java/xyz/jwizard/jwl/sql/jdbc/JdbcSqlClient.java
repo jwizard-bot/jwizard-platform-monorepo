@@ -33,9 +33,7 @@ public class JdbcSqlClient extends GenericSqlClient {
             while (rs.next()) {
                 results.add(mapper.map(rs));
             }
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Query returned {} row(s)", results.size());
-            }
+            LOG.debug("Query returned {} row(s)", results.size());
             return results;
         } catch (SQLException e) {
             LOG.error("Failed to execute query: {}", sql, e);
@@ -63,10 +61,8 @@ public class JdbcSqlClient extends GenericSqlClient {
         }
         try (final Connection conn = getActiveDataSource().getConnection();
              final PreparedStatement stmt = prepareStatement(conn, sql, params)) {
-            int affectedRows = stmt.executeUpdate();
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Update affected {} row(s)", affectedRows);
-            }
+            final int affectedRows = stmt.executeUpdate();
+            LOG.debug("Update affected {} row(s)", affectedRows);
             return affectedRows;
         } catch (SQLException e) {
             LOG.error("Failed to execute update: {}", sql, e);

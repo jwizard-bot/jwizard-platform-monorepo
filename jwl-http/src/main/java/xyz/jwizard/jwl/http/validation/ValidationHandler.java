@@ -33,7 +33,7 @@ public class ValidationHandler {
         final List<ValidationStep> steps = classPlanCache.computeIfAbsent(clazz,
             this::buildValidationPlan);
         // isDebugEnabled for prevent string concatenation overhead when debug is disabled
-        if (LOG.isDebugEnabled() && !steps.isEmpty()) {
+        if (!steps.isEmpty()) {
             LOG.debug("Executing {} validation step(s) for object of class: {}", steps.size(),
                 clazz.getSimpleName());
         }

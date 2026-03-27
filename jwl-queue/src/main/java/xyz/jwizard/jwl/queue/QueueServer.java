@@ -78,10 +78,8 @@ public abstract class QueueServer implements MessagePublisher, Closeable {
         final String logExchange = (exchange == null || exchange.isBlank()) ? "<default>"
             : exchange;
         try {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Publishing message to exchange '{}' with routing key '{}'", logExchange,
-                    routingKey);
-            }
+            LOG.trace("Publishing message to exchange '{}' with routing key '{}'", logExchange,
+                routingKey);
             final byte[] body = serializerRegistry.get(format).serializeToBytes(payload);
             onPublish(exchange, routingKey, body);
         } catch (Exception ex) {
@@ -109,10 +107,7 @@ public abstract class QueueServer implements MessagePublisher, Closeable {
         final Class<T> targetType = listener.getMessageType();
         final T payload = serializerRegistry.get(listener.getFormat())
             .deserializeFromBytes(body, targetType);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Processing message from queue '{}': {}", listener.getQueueName(),
-                payload);
-        }
+        LOG.debug("Processing message from queue '{}': {}", listener.getQueueName(), payload);
         listener.onMessage(payload);
     }
 
