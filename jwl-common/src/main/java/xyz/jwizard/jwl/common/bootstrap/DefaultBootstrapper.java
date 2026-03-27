@@ -2,6 +2,9 @@ package xyz.jwizard.jwl.common.bootstrap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import xyz.jwizard.jwl.common.bootstrap.lifecycle.KahnLifecycleGraph;
+import xyz.jwizard.jwl.common.bootstrap.lifecycle.LifecycleGraph;
+import xyz.jwizard.jwl.common.bootstrap.lifecycle.LifecycleHook;
 import xyz.jwizard.jwl.common.di.ApplicationContext;
 import xyz.jwizard.jwl.common.reflect.ClassGraphScanner;
 import xyz.jwizard.jwl.common.reflect.ClassScanner;
@@ -14,6 +17,7 @@ public class DefaultBootstrapper {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultBootstrapper.class);
 
     private static final CountDownLatch SHUTDOWN_LATCH = new CountDownLatch(1);
+    private static final LifecycleGraph LIFECYCLE_GRAPH = new KahnLifecycleGraph();
     private static final String JWL_SUFFIX = ".jwl";
 
     private DefaultBootstrapper() {
@@ -46,10 +50,11 @@ public class DefaultBootstrapper {
 
     private static List<? extends LifecycleHook> discoverAndSortHooks(ClassScanner scanner,
                                                                       ApplicationContext context) {
-        return scanner.getSubtypesOf(LifecycleHook.class).stream()
-            .map(clazz -> context.getComponentProvider().getInstance(clazz))
-            .sorted(Comparator.comparingInt(LifecycleHook::priority))
+        final List<LifecycleHook> rawHooks = scanner.getSubtypesOf(LifecycleHook.class).stream()
+            .map(clazz -> (LifecycleHook) context.getComponentProvider().getInstance(clazz))
             .toList();
+        LIFECYCLE_GRAPH.addNodes(rawHooks);
+        return LIFECYCLE_GRAPH.resolve();
     }
 
     private static void registerShutdownHook(List<? extends LifecycleHook> hooks) {
@@ -62,7 +67,7 @@ public class DefaultBootstrapper {
         for (final LifecycleHook hook : hooks) {
             final String name = hook.getClass().getSimpleName();
             try {
-                LOG.debug("Starting lifecycle hook: {} (priority: {})", name, hook.priority());
+                LOG.debug("Starting lifecycle hook: {}", name);
                 hook.onStart(context.getComponentProvider());
             } catch (Exception ex) {
                 throw new CriticalBootstrapException("Failed to start hook: " + name, ex);

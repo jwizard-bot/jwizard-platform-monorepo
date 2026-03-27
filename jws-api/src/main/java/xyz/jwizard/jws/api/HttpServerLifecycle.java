@@ -2,13 +2,14 @@ package xyz.jwizard.jws.api;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import xyz.jwizard.jwl.common.bootstrap.LifecycleHook;
+import xyz.jwizard.jwl.common.bootstrap.lifecycle.LifecycleHook;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.serialization.json.JacksonSerializer;
 import xyz.jwizard.jwl.common.util.io.IoUtil;
 import xyz.jwizard.jwl.http.HttpServer;
 import xyz.jwizard.jwl.http.jetty.JettyHttpServer;
 
+import java.util.List;
 import java.util.Set;
 
 @Singleton
@@ -25,10 +26,12 @@ class HttpServerLifecycle implements LifecycleHook {
             .build();
     }
 
-    // init last, destroy first
     @Override
-    public int priority() {
-        return Integer.MAX_VALUE;
+    public List<Class<? extends LifecycleHook>> dependsOn() {
+        return List.of(
+            KvServerLifecycle.class,
+            SqlClientLifecycle.class
+        );
     }
 
     @Override

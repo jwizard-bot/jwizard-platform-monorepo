@@ -1,12 +1,14 @@
 package xyz.jwizard.jws.api;
 
 import jakarta.inject.Singleton;
-import xyz.jwizard.jwl.common.bootstrap.LifecycleHook;
+import xyz.jwizard.jwl.common.bootstrap.lifecycle.LifecycleHook;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.sql.config.SqlDatabaseConfig;
 import xyz.jwizard.jwl.sql.config.SqlDatabaseDialect;
 import xyz.jwizard.jwl.sql.pool.hikaricp.HikariConnectionPoolFactory;
 import xyz.jwizard.jwl.sql.registry.SqlDatabaseRegistry;
+
+import java.util.List;
 
 @Singleton
 class SqlClientLifecycle implements LifecycleHook {
@@ -31,8 +33,8 @@ class SqlClientLifecycle implements LifecycleHook {
     }
 
     @Override
-    public int priority() {
-        return 100;
+    public List<Class<? extends LifecycleHook>> dependsOn() {
+        return List.of(KvServerLifecycle.class);
     }
 
     @Override

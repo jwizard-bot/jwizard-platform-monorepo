@@ -2,7 +2,7 @@ package xyz.jwizard.jws.translator;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import xyz.jwizard.jwl.common.bootstrap.LifecycleHook;
+import xyz.jwizard.jwl.common.bootstrap.lifecycle.LifecycleHook;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.serialization.json.JacksonSerializer;
 import xyz.jwizard.jwl.common.util.io.IoUtil;
@@ -23,12 +23,6 @@ public class HttpServerLifecycle implements LifecycleHook {
             .ignoredPaths(Set.of())
             .port(9093) /*TODO: incoming from config server*/
             .build();
-    }
-
-    // init last, destroy first
-    @Override
-    public int priority() {
-        return Integer.MAX_VALUE;
     }
 
     @Override

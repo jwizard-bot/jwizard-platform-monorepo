@@ -3,7 +3,7 @@ package xyz.jwizard.jws.gateway;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import xyz.jwizard.jwl.common.bootstrap.LifecycleHook;
+import xyz.jwizard.jwl.common.bootstrap.lifecycle.LifecycleHook;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.serialization.SerializerRegistry;
 import xyz.jwizard.jwl.common.serialization.json.JacksonSerializer;
@@ -44,11 +44,6 @@ class QueueServerLifecycle implements LifecycleHook {
     @Override
     public void onStop() {
         IoUtil.closeQuietly(queueServer);
-    }
-
-    @Override
-    public int priority() {
-        return Integer.MAX_VALUE;
     }
 
     @Produces

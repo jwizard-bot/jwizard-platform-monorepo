@@ -2,7 +2,7 @@ package xyz.jwizard.jws.api;
 
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Singleton;
-import xyz.jwizard.jwl.common.bootstrap.LifecycleHook;
+import xyz.jwizard.jwl.common.bootstrap.lifecycle.LifecycleHook;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.util.io.IoUtil;
 import xyz.jwizard.jwl.kv.KeyValueStore;
@@ -33,11 +33,6 @@ class KvServerLifecycle implements LifecycleHook {
     @Override
     public void onStop() {
         IoUtil.closeQuietly(kvServer);
-    }
-
-    @Override
-    public int priority() {
-        return 1000;
     }
 
     @Produces
