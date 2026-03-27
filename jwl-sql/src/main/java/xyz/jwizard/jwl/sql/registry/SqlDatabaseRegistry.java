@@ -62,7 +62,7 @@ public class SqlDatabaseRegistry {
             client.close();
         }
         clients.clear();
-        LOG.info("All SQL clients has been stopped");
+        LOG.info("SQL client(s) has been stopped");
     }
 
     public static class Builder {
