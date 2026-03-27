@@ -45,14 +45,13 @@ public abstract class KvServer implements KeyValueStore, PubSubBroadcaster, Clos
     @Override
     public final void close() {
         if (running.compareAndSet(true, false)) {
-            onEnd();
-            LOG.info("KV server has been stopped");
+            onStop();
         }
     }
 
     protected abstract void onStart() throws Exception;
 
-    protected abstract void onEnd();
+    protected abstract void onStop();
 
     public abstract static class AbstractBuilder<B extends AbstractBuilder<B>> {
         protected Set<HostPort> nodes = new HashSet<>();

@@ -52,7 +52,7 @@ public class JedisServer extends KvServer {
     }
 
     @Override
-    protected void onEnd() {
+    protected void onStop() {
         IoUtil.closeQuietly(redisClient, UnifiedJedis::close);
     }
 
