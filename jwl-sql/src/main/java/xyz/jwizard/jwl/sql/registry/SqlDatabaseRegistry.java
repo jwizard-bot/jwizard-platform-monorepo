@@ -54,7 +54,7 @@ public class SqlDatabaseRegistry {
         for (final SqlClientLifecycle client : clients.values()) {
             client.start();
         }
-        LOG.info("Started {} SQL clients", clients.size());
+        LOG.info("Started {} SQL client(s)", clients.size());
     }
 
     public void closeAll() {
