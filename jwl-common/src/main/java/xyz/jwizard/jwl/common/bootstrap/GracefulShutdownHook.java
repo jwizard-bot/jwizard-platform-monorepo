@@ -15,6 +15,7 @@ public class GracefulShutdownHook extends Thread {
     private final CountDownLatch shutdownLatch;
 
     public GracefulShutdownHook(List<? extends LifecycleHook> hooks, CountDownLatch shutdownLatch) {
+        super("shutdown-t");
         this.hooks = hooks;
         this.shutdownLatch = shutdownLatch;
     }

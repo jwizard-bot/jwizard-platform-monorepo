@@ -31,7 +31,7 @@ public class JettyHttpServer extends HttpServer {
 
         final QueuedThreadPool queuedThreadPool = new QueuedThreadPool();
         queuedThreadPool.setVirtualThreadsExecutor(Executors.newVirtualThreadPerTaskExecutor());
-        queuedThreadPool.setName("jwl-vt-pool");
+        queuedThreadPool.setName("http-vt-pool");
 
         server = new Server(queuedThreadPool);
         connector = new ServerConnector(server);
