@@ -48,7 +48,7 @@ public class DefaultBootstrapper {
                                                                       ApplicationContext context) {
         return scanner.getSubtypesOf(LifecycleHook.class).stream()
             .map(clazz -> context.getComponentProvider().getInstance(clazz))
-            .sorted(Comparator.comparingInt(LifecycleHook::priority).reversed())
+            .sorted(Comparator.comparingInt(LifecycleHook::priority))
             .toList();
     }
 
