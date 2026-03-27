@@ -58,6 +58,9 @@ public class JettyHttpServer extends HttpServer {
     }
 
     public static class Builder extends AbstractBuilder<Builder> {
+        private Builder() {
+        }
+
         @Override
         public HttpServer build() {
             validate();

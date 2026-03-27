@@ -137,6 +137,9 @@ public class RabbitMqServer extends QueueServer {
         private RabbitMqConnector connector = new RabbitMqClusterConnector();
         private String virtualHost;
 
+        private Builder() {
+        }
+
         public Builder withConnector(ConnectorType connectorType) {
             connector = connectorType.getConnector();
             return this;

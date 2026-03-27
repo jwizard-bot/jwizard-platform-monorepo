@@ -130,6 +130,9 @@ public class JedisServer extends KvServer {
     public static class Builder extends KvServer.AbstractBuilder<Builder> {
         private JedisClientFactory factory = new ClusterJedisClientFactory();
 
+        private Builder() {
+        }
+
         public Builder withFactory(FactoryType factoryType) {
             factory = factoryType.getFactory();
             return this;

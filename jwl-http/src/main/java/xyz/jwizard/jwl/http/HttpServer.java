@@ -127,6 +127,9 @@ public abstract class HttpServer implements Closeable {
         protected JsonSerializer jsonSerializer;
         protected int port = 8080;
 
+        protected AbstractBuilder() {
+        }
+
         @SuppressWarnings("unchecked")
         protected B self() {
             return (B) this;

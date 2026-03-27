@@ -149,6 +149,9 @@ public abstract class QueueServer implements MessagePublisher, Closeable {
         protected SerializerRegistry serializerRegistry;
         protected ComponentProvider componentProvider;
 
+        protected AbstractBuilder() {
+        }
+
         @SuppressWarnings("unchecked")
         protected B self() {
             return (B) this;
