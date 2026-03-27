@@ -28,7 +28,7 @@ public class JettyHttpServer extends HttpServer {
     }
 
     @Override
-    public void start() {
+    public final void start() {
         final HttpRequestHandler httpRequestHandler = prepareRequestHandler();
 
         final QueuedThreadPool queuedThreadPool = new QueuedThreadPool();
@@ -54,13 +54,13 @@ public class JettyHttpServer extends HttpServer {
     }
 
     @Override
-    public int getLocalPort() {
+    public final int getLocalPort() {
         Assert.state(connector != null && connector.isRunning(), "Connector is not running!");
         return connector.getLocalPort();
     }
 
     @Override
-    public void close() {
+    public final void close() {
         IoUtil.closeQuietly(server, AbstractLifeCycle::stop);
     }
 
