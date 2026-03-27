@@ -63,7 +63,6 @@ public abstract class QueueServer implements MessagePublisher, Closeable {
     public final void close() {
         if (running.compareAndSet(true, false)) {
             onStop();
-            LOG.info("Queue server has been stopped");
         }
     }
 
