@@ -81,8 +81,7 @@ public class DefaultBootstrapper {
     }
 
     private static void handleCriticalError(CriticalBootstrapException ex) {
-        LOG.error("FATAL ERROR DURING APPLICATION STARTUP:");
-        LOG.error(ex.getMessage(), ex);
+        LOG.error("FATAL ERROR DURING APPLICATION STARTUP: {}", ex.getMessage(), ex);
         System.exit(1);
     }
 
