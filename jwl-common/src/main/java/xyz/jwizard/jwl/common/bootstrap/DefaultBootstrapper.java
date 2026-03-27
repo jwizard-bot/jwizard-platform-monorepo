@@ -34,9 +34,11 @@ public class DefaultBootstrapper {
             awaitTermination(startTime);
 
         } catch (CriticalBootstrapException ex) {
-            handleCriticalError(ex);
+            LOG.error("FATAL ERROR DURING APPLICATION STARTUP: {}", ex.getMessage(), ex);
+            System.exit(1);
         } catch (InterruptedException ex) {
-            handleInterruption();
+            LOG.warn("Main thread interrupted, initiating shutdown");
+            Thread.currentThread().interrupt(); // restore interrupt flag
         } catch (Exception ex) {
             LOG.error("Error during startup: ", ex);
         }
@@ -78,16 +80,6 @@ public class DefaultBootstrapper {
             LOG.debug("Could not close System.in", e);
         }
         SHUTDOWN_LATCH.await();
-    }
-
-    private static void handleCriticalError(CriticalBootstrapException ex) {
-        LOG.error("FATAL ERROR DURING APPLICATION STARTUP: {}", ex.getMessage(), ex);
-        System.exit(1);
-    }
-
-    private static void handleInterruption() {
-        LOG.warn("Main thread interrupted, initiating shutdown");
-        Thread.currentThread().interrupt(); // restore interrupt flag
     }
 
     private static String[] getPackagesToScan(Class<?> primarySource) {
