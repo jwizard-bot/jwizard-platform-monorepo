@@ -14,6 +14,8 @@ import xyz.jwizard.jwl.http.jetty.adapter.JettyHttpRequestHandlerAdapter;
 import java.util.concurrent.Executors;
 
 public class JettyHttpServer extends HttpServer {
+    private static final long SHUTDOWN_TIMEOUT_MS = 10000;
+
     private Server server;
     private ServerConnector connector;
 
@@ -34,13 +36,18 @@ public class JettyHttpServer extends HttpServer {
         queuedThreadPool.setName("http-vt-pool");
 
         server = new Server(queuedThreadPool);
+        server.setStopTimeout(SHUTDOWN_TIMEOUT_MS);
+        server.setStopAtShutdown(false);
+
         connector = new ServerConnector(server);
         connector.setPort(port);
-        server.addConnector(connector);
 
+        server.addConnector(connector);
         server.setHandler(new JettyHttpRequestHandlerAdapter(httpRequestHandler));
         try {
             server.start();
+            LOG.info("HTTP server started successfully with {}ms shutdown timeout",
+                SHUTDOWN_TIMEOUT_MS);
         } catch (Exception ex) {
             throw new CriticalBootstrapException("HTTP server startup failed", ex);
         }
