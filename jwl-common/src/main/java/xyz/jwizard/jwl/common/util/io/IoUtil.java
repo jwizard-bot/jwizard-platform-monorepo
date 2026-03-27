@@ -27,6 +27,10 @@ public class IoUtil {
         closeQuietly(closeable, AutoCloseable::close);
     }
 
+    public static void closeQuietly(Runnable runnable) {
+        closeQuietly(runnable, Runnable::run);
+    }
+
     public static <T> void closeQuietly(T resource, Predicate<T> predicate,
                                         CloseAction<T> closeAction) {
         closeQuietly(resource, r -> {
