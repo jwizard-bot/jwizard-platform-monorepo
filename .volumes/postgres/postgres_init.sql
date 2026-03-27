@@ -1,0 +1,2 @@
+CREATE DATABASE jw_main;
+CREATE DATABASE jw_telemetry;

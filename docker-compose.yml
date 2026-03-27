@@ -38,6 +38,41 @@ services:
     networks:
       - jwizard-network
 
+  jwizard-postgres:
+    container_name: jwizard-postgres
+    image: postgres:16-alpine
+    ports:
+      - "${JW_POSTGRES_DB_PORT:-5432}:5432"
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "root"
+      POSTGRES_DB: "postgres"
+    volumes:
+      - ./.volumes/postgres/postgres_init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./.volumes/postgres/postgres-volume:/var/lib/postgresql/data
+    networks:
+      - jwizard-network
+
+  jwizard-postgres-ui:
+    container_name: jwizard-postgres-ui
+    build:
+      context: ./.volumes/pgadmin
+    pull_policy: build
+    ports:
+      - "${JW_POSTGRES_PANEL_PORT:-8082}:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "dev@jwizard.xyz"
+      PGADMIN_DEFAULT_PASSWORD: "root"
+      PGADMIN_CONFIG_ENHANCED_COOKIE_PROTECTION: "False"
+    entrypoint: /usr/local/bin/entrypoint-wrapper
+    volumes:
+      - ./.volumes/pgadmin/servers.json:/pgadmin4/servers.json:ro
+      - ./.volumes/pgadmin/pgpassfile:/tmp/mountpoint.pgpass
+    depends_on:
+      - jwizard-postgres
+    networks:
+      - jwizard-network
+
 networks:
   jwizard-network:
     driver: bridge

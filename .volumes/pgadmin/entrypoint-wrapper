@@ -1,0 +1,18 @@
+#!/bin/sh
+set -e
+
+USER_DIR=$(echo "$PGADMIN_DEFAULT_EMAIL" | tr '@' '_')
+
+STORAGE_PATH="/var/lib/pgadmin/storage/${USER_DIR}"
+PGPASS_SOURCE="/tmp/mountpoint.pgpass"
+PGPASS_DEST="${STORAGE_PATH}/.pgpass"
+
+if [ -f "$PGPASS_SOURCE" ]; then
+    mkdir -p "$STORAGE_PATH"
+    cp "$PGPASS_SOURCE" "$PGPASS_DEST"
+
+    chown pgadmin:root "$PGPASS_DEST"
+    chmod 600 "$PGPASS_DEST"
+fi
+
+exec /entrypoint.sh
