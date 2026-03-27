@@ -1,4 +1,4 @@
 <configuration>
-  <property name="SERVICE_OR_LIBRARY_NAME" value="jwl-persistence"/>
+  <property name="SERVICE_OR_LIBRARY_NAME" value="jwl-sql"/>
   <include resource="logback-test-base.xml"/>
 </configuration>

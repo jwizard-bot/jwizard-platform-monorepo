@@ -1,0 +1,72 @@
+package xyz.jwizard.jwl.sql.registry;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import xyz.jwizard.jwl.sql.SqlClient;
+import xyz.jwizard.jwl.sql.config.SqlDatabaseConfig;
+import xyz.jwizard.jwl.sql.config.SqlDatabaseDialect;
+import xyz.jwizard.jwl.sql.pool.ConnectionPoolFactory;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+@ExtendWith(MockitoExtension.class)
+class SqlDatabaseRegistryTest {
+    @Mock
+    private ConnectionPoolFactory mockPoolFactory;
+
+    @Test
+    @DisplayName("should register and retrieve SQL client successfully")
+    void shouldRegisterAndRetrieveClient() {
+        // given
+        final SqlDatabaseConfig config = SqlDatabaseConfig.builder()
+            .dialect(SqlDatabaseDialect.POSTGRESQL)
+            .address("localhost:5432")
+            .credentials("user", "pass")
+            .databaseName("test_db")
+            .build();
+        final SqlDatabaseRegistry registry = SqlDatabaseRegistry.builder()
+            .poolFactory(mockPoolFactory)
+            .register(config)
+            .build();
+        // when
+        final SqlClient client = registry.get("test_db");
+        // then
+        assertNotNull(client);
+    }
+
+    @Test
+    @DisplayName("should throw exception when registering duplicate database name")
+    void shouldThrowExceptionWhenRegisteringDuplicateDatabase() {
+        // given
+        final SqlDatabaseConfig config = SqlDatabaseConfig.builder()
+            .dialect(SqlDatabaseDialect.POSTGRESQL)
+            .address("localhost:5432")
+            .credentials("user", "pass")
+            .databaseName("duplicate_db")
+            .build();
+        // when & then
+        final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+            () -> SqlDatabaseRegistry.builder()
+                .poolFactory(mockPoolFactory)
+                .register(config)
+                .register(config)
+                .build());
+        assertTrue(exception.getMessage().contains("already registered"));
+    }
+
+    @Test
+    @DisplayName("should throw exception when getting non-existent database client")
+    void shouldThrowExceptionWhenGettingNonExistentDatabase() {
+        // given
+        final SqlDatabaseRegistry registry = SqlDatabaseRegistry.builder()
+            .poolFactory(mockPoolFactory)
+            .build();
+        // when & then
+        final IllegalStateException exception = assertThrows(IllegalStateException.class,
+            () -> registry.get("ghost_db"));
+        assertTrue(exception.getMessage().contains("No SQL client registered"));
+    }
+}
