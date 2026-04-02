@@ -45,7 +45,7 @@ class JdbcSqlClientIntegrationTest {
 
         registry = SqlDatabaseRegistry.builder()
             .poolFactory(HikariConnectionPoolFactory.create())
-            .register(config)
+            .register(config, JdbcSqlClient::new)
             .build();
 
         registry.startAll();

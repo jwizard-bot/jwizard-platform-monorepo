@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import xyz.jwizard.jwl.sql.SqlClient;
 import xyz.jwizard.jwl.sql.config.SqlDatabaseConfig;
 import xyz.jwizard.jwl.sql.config.SqlDatabaseDialect;
+import xyz.jwizard.jwl.sql.jdbc.JdbcSqlClient;
 import xyz.jwizard.jwl.sql.pool.ConnectionPoolFactory;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,7 +30,7 @@ class SqlDatabaseRegistryTest {
             .build();
         final SqlDatabaseRegistry registry = SqlDatabaseRegistry.builder()
             .poolFactory(mockPoolFactory)
-            .register(config)
+            .register(config, JdbcSqlClient::new)
             .build();
         // when
         final SqlClient client = registry.get("test_db");
@@ -51,8 +52,8 @@ class SqlDatabaseRegistryTest {
         final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
             () -> SqlDatabaseRegistry.builder()
                 .poolFactory(mockPoolFactory)
-                .register(config)
-                .register(config)
+                .register(config, JdbcSqlClient::new)
+                .register(config, JdbcSqlClient::new)
                 .build());
         assertTrue(exception.getMessage().contains("already registered"));
     }

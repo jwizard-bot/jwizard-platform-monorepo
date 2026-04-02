@@ -5,9 +5,9 @@ import org.slf4j.LoggerFactory;
 import xyz.jwizard.jwl.common.util.Assert;
 import xyz.jwizard.jwl.sql.GenericSqlClient;
 import xyz.jwizard.jwl.sql.SqlClient;
+import xyz.jwizard.jwl.sql.SqlClientFactory;
 import xyz.jwizard.jwl.sql.SqlClientLifecycle;
 import xyz.jwizard.jwl.sql.config.SqlDatabaseConfig;
-import xyz.jwizard.jwl.sql.jdbc.JdbcSqlClient;
 import xyz.jwizard.jwl.sql.pool.ConnectionPoolFactory;
 
 import java.util.ArrayList;
@@ -19,24 +19,13 @@ public class SqlDatabaseRegistry {
     private static final Logger LOG = LoggerFactory.getLogger(SqlDatabaseRegistry.class);
 
     private final Map<String, GenericSqlClient> clients = new ConcurrentHashMap<>();
-    private final ConnectionPoolFactory poolFactory;
 
-    private SqlDatabaseRegistry(Builder builder) {
-        poolFactory = builder.poolFactory;
+    private SqlDatabaseRegistry(Map<String, GenericSqlClient> builtClients) {
+        clients.putAll(builtClients);
     }
 
     public static Builder builder() {
         return new Builder();
-    }
-
-    public void register(SqlDatabaseConfig config) {
-        final String dbName = config.databaseName();
-        if (clients.containsKey(dbName)) {
-            throw new IllegalArgumentException("Database '" + dbName + "' is already registered!");
-        }
-        LOG.debug("Registering SQL client for database: '{}'", dbName);
-        final JdbcSqlClient sqlClient = new JdbcSqlClient(config, poolFactory);
-        clients.put(dbName, sqlClient);
     }
 
     // return simple SqlClient for hide lifecycle methods
@@ -65,7 +54,8 @@ public class SqlDatabaseRegistry {
     }
 
     public static class Builder {
-        private final List<SqlDatabaseConfig> configs = new ArrayList<>();
+        private final List<Runnable> registrationTasks = new ArrayList<>();
+        private final Map<String, GenericSqlClient> finalClients = new ConcurrentHashMap<>();
         private ConnectionPoolFactory poolFactory;
 
         private Builder() {
@@ -76,19 +66,28 @@ public class SqlDatabaseRegistry {
             return this;
         }
 
-        public Builder register(SqlDatabaseConfig config) {
-            this.configs.add(config);
+        public Builder register(SqlDatabaseConfig config, SqlClientFactory factory) {
+            registrationTasks.add(() -> {
+                final String dbName = config.databaseName();
+                if (finalClients.containsKey(dbName)) {
+                    throw new IllegalArgumentException("Database '" + dbName +
+                        "' is already registered!");
+                }
+                LOG.debug("Building SQL client for database: '{}'", dbName);
+                final GenericSqlClient sqlClient = factory.create(config, this.poolFactory);
+                finalClients.put(dbName, sqlClient);
+            });
             return this;
         }
 
         public SqlDatabaseRegistry build() {
             Assert.notNull(poolFactory, "PoolFactory cannot be null");
-            final SqlDatabaseRegistry registry = new SqlDatabaseRegistry(this);
-            for (final SqlDatabaseConfig config : configs) {
-                registry.register(config);
+            for (final Runnable task : registrationTasks) {
+                task.run();
             }
-            LOG.info("Registered {} database definition(s), not yet started", configs.size());
-            return registry;
+            LOG.info("Registered and built {} database definition(s), not yet started",
+                finalClients.size());
+            return new SqlDatabaseRegistry(finalClients);
         }
     }
 }

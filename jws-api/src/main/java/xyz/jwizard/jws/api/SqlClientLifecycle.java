@@ -5,6 +5,7 @@ import xyz.jwizard.jwl.common.bootstrap.lifecycle.LifecycleHook;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.sql.config.SqlDatabaseConfig;
 import xyz.jwizard.jwl.sql.config.SqlDatabaseDialect;
+import xyz.jwizard.jwl.sql.jdbc.JdbcSqlClient;
 import xyz.jwizard.jwl.sql.pool.hikaricp.HikariConnectionPoolFactory;
 import xyz.jwizard.jwl.sql.registry.SqlDatabaseRegistry;
 
@@ -22,13 +23,13 @@ class SqlClientLifecycle implements LifecycleHook {
                 .address("localhost:9195" /*TODO: incoming from config server*/)
                 .credentials("postgres", "root" /*TODO: incoming from config server*/)
                 .databaseName("jw_main" /*TODO: incoming from config server*/)
-                .build())
+                .build(), JdbcSqlClient::new)
             .register(SqlDatabaseConfig.builder()
                 .dialect(SqlDatabaseDialect.POSTGRESQL /*TODO: incoming from config server*/)
                 .address("localhost:9195" /*TODO: incoming from config server*/)
                 .credentials("postgres", "root" /*TODO: incoming from config server*/)
                 .databaseName("jw_telemetry" /*TODO: incoming from config server*/)
-                .build())
+                .build(), JdbcSqlClient::new)
             .build();
     }
 
