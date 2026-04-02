@@ -31,13 +31,13 @@ class TaskExecutorTest {
     private TaskExecutor executor;
 
     @AfterEach
-    void tearDown() throws IOException {
+    void tearDown() {
         IoUtil.closeQuietly(executor);
     }
 
     @Test
     @DisplayName("should execute task using virtual threads")
-    void shouldExecuteTask() throws IOException, InterruptedException {
+    void shouldExecuteTask() throws InterruptedException {
         // given
         executor = new TaskExecutor("test-executor");
         final CountDownLatch latch = new CountDownLatch(1);
