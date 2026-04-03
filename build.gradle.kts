@@ -21,7 +21,7 @@ import xyz.jwizard.buildconfig.getPluginId
 import xyz.jwizard.buildconfig.require
 
 plugins {
-    id("java")
+    alias(libs.plugins.java)
     alias(libs.plugins.shadow) apply false
 }
 
@@ -35,7 +35,7 @@ allprojects {
 }
 
 subprojects {
-    apply(plugin = "java-library")
+    apply(plugin = getPluginId(rootProject.libs.plugins.java.library))
 
     java {
         toolchain.languageVersion.set(JavaLanguageVersion.of(21))

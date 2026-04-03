@@ -44,5 +44,8 @@ testcontainers-postgresql = { module = "org.testcontainers:testcontainers-postgr
 testcontainers-rabbitmq = { module = "org.testcontainers:rabbitmq", version.ref = "testcontainersRabbitMQ" }
 
 [plugins]
+java = { id = "java" }
+java-library = { id = "java-library" }
+test-fixtures = { id = "java-test-fixtures" }
 shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
 kotlin-dsl = { id = "org.gradle.kotlin.kotlin-dsl", version.ref = "kotlinDsl" }
