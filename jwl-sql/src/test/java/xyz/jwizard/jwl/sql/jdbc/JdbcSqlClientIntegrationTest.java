@@ -196,10 +196,10 @@ class JdbcSqlClientIntegrationTest {
         assertEquals(jsonPayload, doc.get().payload());
         assertEquals(createdAt, doc.get().createdAt());
     }
+}
 
-    record User(int id, String username, int age) {
-    }
+record User(int id, String username, int age) {
+}
 
-    record Document(UUID id, String payload, LocalDateTime createdAt) {
-    }
+record Document(UUID id, String payload, LocalDateTime createdAt) {
 }
