@@ -41,6 +41,8 @@ public class RawByteSerializer implements MessageSerializer {
     }
 
     @Override
+    // unchecked satisfies javac, redundant suppression satisfies IntelliJ
+    @SuppressWarnings({"unchecked", "RedundantSuppression"})
     public <T> T deserializeFromBytes(byte[] bytes, Class<T> type) {
         if (type.isAssignableFrom(byte[].class)) {
             return (T) bytes;
