@@ -8,6 +8,7 @@
 .gradle/
 .volumes/**/*volume/
 build/
+buildSrc/.kotlin
 out/
 
 .env

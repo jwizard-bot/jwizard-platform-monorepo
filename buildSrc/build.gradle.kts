@@ -13,16 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import xyz.jwizard.buildconfig.ModuleProp
-import xyz.jwizard.buildconfig.set
 
-extra.set(ModuleProp.PACKAGE_SUFFIX, "translator")
-extra.set(ModuleProp.MAIN_CLASS, "JwsTranslatorMain")
+plugins {
+    alias(libs.plugins.kotlin.dsl)
+}
 
-dependencies {
-    implementation(project(":jwl-common"))
-    implementation(project(":jwl-http"))
-    implementation(project(":jwl-i18n"))
-
-    testImplementation(testFixtures(project(":jwl-common")))
+repositories {
+    mavenCentral()
 }

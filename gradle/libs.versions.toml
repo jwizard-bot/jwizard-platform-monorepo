@@ -11,6 +11,7 @@ jakartaInjectApi = "2.0.1"
 jedis = "7.4.0"
 jettyServer = "12.1.7"
 junit = "5.10.2"
+kotlinDsl = "5.2.0"
 logback = "1.5.32"
 mockito = "5.11.0"
 postgresql = "42.7.10"
@@ -44,3 +45,4 @@ testcontainers-rabbitmq = { module = "org.testcontainers:rabbitmq", version.ref 
 
 [plugins]
 shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
+kotlin-dsl = { id = "org.gradle.kotlin.kotlin-dsl", version.ref = "kotlinDsl" }

@@ -13,16 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import xyz.jwizard.buildconfig.ModuleProp
-import xyz.jwizard.buildconfig.set
+package xyz.jwizard.buildconfig
 
-extra.set(ModuleProp.PACKAGE_SUFFIX, "translator")
-extra.set(ModuleProp.MAIN_CLASS, "JwsTranslatorMain")
-
-dependencies {
-    implementation(project(":jwl-common"))
-    implementation(project(":jwl-http"))
-    implementation(project(":jwl-i18n"))
-
-    testImplementation(testFixtures(project(":jwl-common")))
+enum class ModuleProp(val key: String) {
+    PACKAGE_SUFFIX("manifestPackageSuffix"),
+    MAIN_CLASS("manifestClass")
 }

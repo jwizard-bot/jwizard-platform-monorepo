@@ -15,6 +15,10 @@
  */
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.tasks.testing.logging.TestLogEvent
+import xyz.jwizard.buildconfig.ModuleProp
+import xyz.jwizard.buildconfig.getEnv
+import xyz.jwizard.buildconfig.getPluginId
+import xyz.jwizard.buildconfig.require
 
 plugins {
     id("java")
@@ -64,17 +68,20 @@ subprojects {
             runtimeOnly(rootProject.libs.logback.classic)
         }
 
-        tasks.withType<ShadowJar> {
-            archiveFileName.set("${project.name}.jar")
-            destinationDirectory.set(layout.projectDirectory.dir(".bin"))
+        // wait for subproject to set 'extra' properties before validation and jar configuration
+        afterEvaluate {
+            val suffix = extra.require<String>(ModuleProp.PACKAGE_SUFFIX, project)
+            val clazz = extra.require<String>(ModuleProp.MAIN_CLASS, project)
+
+            tasks.withType<ShadowJar> {
+                archiveFileName.set("${project.name}.jar")
+                destinationDirectory.set(layout.projectDirectory.dir(".bin"))
+                manifest {
+                    attributes(
+                        mapOf("Main-Class" to "${project.group}.jws.$suffix.$clazz")
+                    )
+                }
+            }
         }
     }
-}
-
-fun getPluginId(accessor: Provider<PluginDependency>): String {
-    return accessor.get().pluginId
-}
-
-fun getEnv(name: String, defValue: String = ""): String {
-    return System.getenv("JW_$name") ?: defValue
 }

@@ -13,6 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import xyz.jwizard.buildconfig.ModuleProp
+import xyz.jwizard.buildconfig.set
+
+extra.set(ModuleProp.PACKAGE_SUFFIX, "gateway")
+extra.set(ModuleProp.MAIN_CLASS, "JwsGatewayMain")
 
 dependencies {
     implementation(project(":jwl-common"))

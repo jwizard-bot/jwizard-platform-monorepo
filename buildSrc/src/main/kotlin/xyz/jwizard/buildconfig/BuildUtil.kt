@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import xyz.jwizard.buildconfig.ModuleProp
-import xyz.jwizard.buildconfig.set
+package xyz.jwizard.buildconfig
 
-extra.set(ModuleProp.PACKAGE_SUFFIX, "translator")
-extra.set(ModuleProp.MAIN_CLASS, "JwsTranslatorMain")
+import org.gradle.api.provider.Provider
+import org.gradle.plugin.use.PluginDependency
 
-dependencies {
-    implementation(project(":jwl-common"))
-    implementation(project(":jwl-http"))
-    implementation(project(":jwl-i18n"))
+fun getPluginId(accessor: Provider<PluginDependency>): String {
+    return accessor.get().pluginId
+}
 
-    testImplementation(testFixtures(project(":jwl-common")))
+fun getEnv(name: String, defValue: String = ""): String {
+    return System.getenv("JW_$name") ?: defValue
 }
