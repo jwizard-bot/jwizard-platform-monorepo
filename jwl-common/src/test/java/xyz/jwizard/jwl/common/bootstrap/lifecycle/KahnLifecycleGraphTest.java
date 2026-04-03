@@ -123,125 +123,125 @@ class KahnLifecycleGraphTest {
         );
         assertTrue(exception.getMessage().contains("is already registered"));
     }
+}
 
-    static class HookA implements LifecycleHook {
-        @Override
-        public void onStart(ComponentProvider provider) {
-        }
+class HookA implements LifecycleHook {
+    @Override
+    public void onStart(ComponentProvider provider) {
+    }
+}
+
+class HookB implements LifecycleHook {
+    @Override
+    public List<Class<? extends LifecycleHook>> dependsOn() {
+        return List.of(HookA.class);
     }
 
-    static class HookB implements LifecycleHook {
-        @Override
-        public List<Class<? extends LifecycleHook>> dependsOn() {
-            return List.of(HookA.class);
-        }
+    @Override
+    public void onStart(ComponentProvider provider) {
+    }
+}
 
-        @Override
-        public void onStart(ComponentProvider provider) {
-        }
+class HookC implements LifecycleHook {
+    @Override
+    public List<Class<? extends LifecycleHook>> dependsOn() {
+        return List.of(HookB.class);
     }
 
-    static class HookC implements LifecycleHook {
-        @Override
-        public List<Class<? extends LifecycleHook>> dependsOn() {
-            return List.of(HookB.class);
-        }
+    @Override
+    public void onStart(ComponentProvider provider) {
+    }
+}
 
-        @Override
-        public void onStart(ComponentProvider provider) {
-        }
+// DAG
+class Root implements LifecycleHook {
+    @Override
+    public void onStart(ComponentProvider provider) {
+    }
+}
+
+class Branch1 implements LifecycleHook {
+    @Override
+    public List<Class<? extends LifecycleHook>> dependsOn() {
+        return List.of(Root.class);
     }
 
-    // DAG
-    static class Root implements LifecycleHook {
-        @Override
-        public void onStart(ComponentProvider provider) {
-        }
+    @Override
+    public void onStart(ComponentProvider provider) {
+    }
+}
+
+class Branch2 implements LifecycleHook {
+    @Override
+    public List<Class<? extends LifecycleHook>> dependsOn() {
+        return List.of(Root.class);
     }
 
-    static class Branch1 implements LifecycleHook {
-        @Override
-        public List<Class<? extends LifecycleHook>> dependsOn() {
-            return List.of(Root.class);
-        }
+    @Override
+    public void onStart(ComponentProvider provider) {
+    }
+}
 
-        @Override
-        public void onStart(ComponentProvider provider) {
-        }
+class Leaf implements LifecycleHook {
+    @Override
+    public List<Class<? extends LifecycleHook>> dependsOn() {
+        return List.of(Branch1.class, Branch2.class);
     }
 
-    static class Branch2 implements LifecycleHook {
-        @Override
-        public List<Class<? extends LifecycleHook>> dependsOn() {
-            return List.of(Root.class);
-        }
+    @Override
+    public void onStart(ComponentProvider provider) {
+    }
+}
 
-        @Override
-        public void onStart(ComponentProvider provider) {
-        }
+// cycles (errors)
+class CycleA implements LifecycleHook {
+    @Override
+    public List<Class<? extends LifecycleHook>> dependsOn() {
+        return List.of(CycleC.class);
     }
 
-    static class Leaf implements LifecycleHook {
-        @Override
-        public List<Class<? extends LifecycleHook>> dependsOn() {
-            return List.of(Branch1.class, Branch2.class);
-        }
+    @Override
+    public void onStart(ComponentProvider provider) {
+    }
+}
 
-        @Override
-        public void onStart(ComponentProvider provider) {
-        }
+class CycleB implements LifecycleHook {
+    @Override
+    public List<Class<? extends LifecycleHook>> dependsOn() {
+        return List.of(CycleA.class);
     }
 
-    // cycles (errors)
-    static class CycleA implements LifecycleHook {
-        @Override
-        public List<Class<? extends LifecycleHook>> dependsOn() {
-            return List.of(CycleC.class);
-        }
+    @Override
+    public void onStart(ComponentProvider provider) {
+    }
+}
 
-        @Override
-        public void onStart(ComponentProvider provider) {
-        }
+class CycleC implements LifecycleHook {
+    @Override
+    public List<Class<? extends LifecycleHook>> dependsOn() {
+        return List.of(CycleB.class);
     }
 
-    static class CycleB implements LifecycleHook {
-        @Override
-        public List<Class<? extends LifecycleHook>> dependsOn() {
-            return List.of(CycleA.class);
-        }
-
-        @Override
-        public void onStart(ComponentProvider provider) {
-        }
+    @Override
+    public void onStart(ComponentProvider provider) {
     }
+}
 
-    static class CycleC implements LifecycleHook {
-        @Override
-        public List<Class<? extends LifecycleHook>> dependsOn() {
-            return List.of(CycleB.class);
-        }
-
-        @Override
-        public void onStart(ComponentProvider provider) {
-        }
+// independent (no dependency)
+class IndependentHook1 implements LifecycleHook {
+    @Override
+    public void onStart(ComponentProvider provider) {
     }
+}
 
-    // independent (no dependency)
-    static class IndependentHook1 implements LifecycleHook {
-        @Override
-        public void onStart(ComponentProvider provider) {
-        }
+class IndependentHook2 implements LifecycleHook {
+    @Override
+    public void onStart(ComponentProvider provider) {
     }
+}
 
-    static class IndependentHook2 implements LifecycleHook {
-        @Override
-        public void onStart(ComponentProvider provider) {
-        }
-    }
-
-    static class IndependentHook3 implements LifecycleHook {
-        @Override
-        public void onStart(ComponentProvider provider) {
-        }
+class IndependentHook3 implements LifecycleHook {
+    @Override
+    public void onStart(ComponentProvider provider) {
     }
 }
