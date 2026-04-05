@@ -24,6 +24,7 @@ import xyz.jwizard.jwl.common.di.ApplicationContext;
 import xyz.jwizard.jwl.common.reflect.ClassGraphScanner;
 import xyz.jwizard.jwl.common.reflect.ClassScanner;
 import xyz.jwizard.jwl.common.util.ArrayUtil;
+import xyz.jwizard.jwl.common.util.io.IoUtil;
 
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
@@ -38,7 +39,17 @@ public class DefaultBootstrapper {
     private DefaultBootstrapper() {
     }
 
+    public static void runNonBlocking(Class<?> primarySource) {
+        run(primarySource, false);
+    }
+
     public static void run(Class<?> primarySource) {
+        run(primarySource, true);
+    }
+
+    public static void run(Class<?> primarySource, boolean wait) {
+        LOG.info("Application runtime mode: {}", wait ? "blocking" : "non-blocking");
+
         final String[] packagesToScan = getPackagesToScan(primarySource);
         LOG.info("Start bootstrapping application on package(s): {}",
             Arrays.asList(packagesToScan));
@@ -48,10 +59,9 @@ public class DefaultBootstrapper {
             final ApplicationContext context = new ApplicationContext(scanner);
 
             final List<? extends LifecycleHook> hooks = discoverAndSortHooks(scanner, context);
-            registerShutdownHook(hooks);
+            registerShutdownHook(hooks, wait);
             startHooks(hooks, context);
-            awaitTermination(startTime);
-
+            awaitTermination(startTime, wait);
         } catch (CriticalBootstrapException ex) {
             LOG.error("FATAL ERROR DURING APPLICATION STARTUP: {}", ex.getMessage(), ex);
             System.exit(1);
@@ -72,8 +82,9 @@ public class DefaultBootstrapper {
         return LIFECYCLE_GRAPH.resolve();
     }
 
-    private static void registerShutdownHook(List<? extends LifecycleHook> hooks) {
-        final GracefulShutdownHook shutdownThread = new GracefulShutdownHook(hooks, SHUTDOWN_LATCH);
+    private static void registerShutdownHook(List<? extends LifecycleHook> hooks, boolean wait) {
+        final GracefulShutdownHook shutdownThread = new GracefulShutdownHook(hooks,
+            SHUTDOWN_LATCH, wait);
         Runtime.getRuntime().addShutdownHook(shutdownThread);
     }
 
@@ -90,16 +101,14 @@ public class DefaultBootstrapper {
         }
     }
 
-    private static void awaitTermination(long startTime) throws InterruptedException {
+    private static void awaitTermination(long startTime, boolean wait) throws InterruptedException {
         final long durationMs = System.currentTimeMillis() - startTime;
         LOG.info("Bootstrapped and started successfully in {}s",
             String.format("%.3f", durationMs / 1000.0));
-        try {
-            System.in.close();
-        } catch (Exception e) {
-            LOG.debug("Could not close System.in", e);
+        IoUtil.thrownQuietly(System.in::close);
+        if (wait) {
+            SHUTDOWN_LATCH.await();
         }
-        SHUTDOWN_LATCH.await();
     }
 
     private static String[] getPackagesToScan(Class<?> primarySource) {

@@ -27,6 +27,17 @@ public class IoUtil {
     private IoUtil() {
     }
 
+    public static void thrownQuietly(RunnableWithException runnableWithException) {
+        if (runnableWithException == null) {
+            return;
+        }
+        try {
+            runnableWithException.run();
+        } catch (Exception ex) {
+            LOG.error("Cloud not perform action, cause: {}", ex.getMessage(), ex);
+        }
+    }
+
     public static <T> void closeQuietly(T resource, CloseAction<T> closeAction) {
         if (resource == null || closeAction == null) {
             return;
@@ -34,7 +45,7 @@ public class IoUtil {
         try {
             closeAction.perform(resource);
         } catch (Exception ex) {
-            LOG.warn("Failed to close resource safely", ex);
+            LOG.warn("Failed to close resource safely, cause: {}", ex.getMessage(), ex);
         }
     }
 

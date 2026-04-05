@@ -30,11 +30,14 @@ public class GracefulShutdownHook extends Thread {
 
     private final List<? extends LifecycleHook> hooks;
     private final CountDownLatch shutdownLatch;
+    private final boolean wait;
 
-    public GracefulShutdownHook(List<? extends LifecycleHook> hooks, CountDownLatch shutdownLatch) {
+    public GracefulShutdownHook(List<? extends LifecycleHook> hooks, CountDownLatch shutdownLatch,
+                                boolean wait) {
         super("shutdown-t");
         this.hooks = hooks;
         this.shutdownLatch = shutdownLatch;
+        this.wait = wait;
     }
 
     @Override
@@ -47,7 +50,9 @@ public class GracefulShutdownHook extends Thread {
             LOG.info("Stopping component: [{}]", hookName);
             IoUtil.closeQuietly(hook, LifecycleHook::onStop);
         }
-        LOG.info("Graceful shutdown sequence completed.");
-        shutdownLatch.countDown();
+        LOG.info("Graceful shutdown sequence completed");
+        if (wait) {
+            shutdownLatch.countDown();
+        }
     }
 }
