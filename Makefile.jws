@@ -1,0 +1,8 @@
+test-%:
+	./gradlew :jws-$*:test
+
+run-%:
+	./gradlew :jws-$*:run
+
+jar-%:
+	./gradlew :jws-$*:shadowJar
