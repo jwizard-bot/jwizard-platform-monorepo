@@ -15,10 +15,10 @@
  */
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.tasks.testing.logging.TestLogEvent
-import xyz.jwizard.buildconfig.ModuleProp
+import xyz.jwizard.buildconfig.JwServicePlugin
+import xyz.jwizard.buildconfig.JwizardExtension
 import xyz.jwizard.buildconfig.getEnv
 import xyz.jwizard.buildconfig.getPluginId
-import xyz.jwizard.buildconfig.require
 
 plugins {
     alias(libs.plugins.java)
@@ -61,26 +61,31 @@ subprojects {
         jvmArgs("-XX:+EnableDynamicAgentLoading", "-Xshare:off")
     }
 
-    if (name.startsWith("jws-")) {
+    // for services (with main class)
+    plugins.withType<JwServicePlugin> {
         apply(plugin = getPluginId(rootProject.libs.plugins.shadow))
+        apply(plugin = getPluginId(rootProject.libs.plugins.application))
 
         dependencies {
             runtimeOnly(rootProject.libs.logback.classic)
         }
 
-        // wait for subproject to set 'extra' properties before validation and jar configuration
-        afterEvaluate {
-            val suffix = extra.require<String>(ModuleProp.PACKAGE_SUFFIX, project)
-            val clazz = extra.require<String>(ModuleProp.MAIN_CLASS, project)
+        val jwizardExt = project.extensions.getByType<JwizardExtension>()
+        val mainClazz = jwizardExt.packageSuffix.zip(jwizardExt.mainClass) { suffix, clazz ->
+            "${project.group}.jws.$suffix.$clazz"
+        }
 
-            tasks.withType<ShadowJar> {
-                archiveFileName.set("${project.name}.jar")
-                destinationDirectory.set(layout.projectDirectory.dir(".bin"))
-                manifest {
-                    attributes(
-                        mapOf("Main-Class" to "${project.group}.jws.$suffix.$clazz")
-                    )
-                }
+        configure<JavaApplication> {
+            mainClass.set(mainClazz)
+        }
+
+        tasks.withType<ShadowJar> {
+            archiveFileName.set("${project.name}.jar")
+            destinationDirectory.set(layout.projectDirectory.dir(".bin"))
+            manifest {
+                attributes(
+                    mapOf("Main-Class" to mainClazz)
+                )
             }
         }
     }

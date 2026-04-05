@@ -13,20 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import xyz.jwizard.buildconfig.JwServicePlugin
-import xyz.jwizard.buildconfig.jwizard
+package xyz.jwizard.buildconfig
 
-apply<JwServicePlugin>()
+import org.gradle.api.Project
+import org.gradle.api.provider.Property
+import org.gradle.kotlin.dsl.configure
 
-jwizard {
-    packageSuffix.set("registry")
-    mainClass.set("JwsRegistryMain")
+interface JwizardExtension {
+    val packageSuffix: Property<String>
+    val mainClass: Property<String>
 }
 
-dependencies {
-    implementation(project(":jwl-common"))
-    implementation(project(":jwl-contracts"))
-    implementation(project(":jwl-http"))
-
-    testImplementation(testFixtures(project(":jwl-common")))
+fun Project.jwizard(action: JwizardExtension.() -> Unit) {
+    configure<JwizardExtension>(action)
 }

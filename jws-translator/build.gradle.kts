@@ -13,11 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import xyz.jwizard.buildconfig.ModuleProp
-import xyz.jwizard.buildconfig.set
+import xyz.jwizard.buildconfig.JwServicePlugin
+import xyz.jwizard.buildconfig.jwizard
 
-extra.set(ModuleProp.PACKAGE_SUFFIX, "translator")
-extra.set(ModuleProp.MAIN_CLASS, "JwsTranslatorMain")
+apply<JwServicePlugin>()
+
+jwizard {
+    packageSuffix.set("translator")
+    mainClass.set("JwsTranslatorMain")
+}
 
 dependencies {
     implementation(project(":jwl-common"))

@@ -16,8 +16,18 @@
 
 plugins {
     alias(libs.plugins.kotlin.dsl)
+    alias(libs.plugins.java.gradle.plugin)
 }
 
 repositories {
     mavenCentral()
+}
+
+gradlePlugin {
+    plugins {
+        create("jwServicePlugin") {
+            id = "xyz.jwizard.jw-service"
+            implementationClass = "xyz.jwizard.buildconfig.JwServicePlugin"
+        }
+    }
 }
