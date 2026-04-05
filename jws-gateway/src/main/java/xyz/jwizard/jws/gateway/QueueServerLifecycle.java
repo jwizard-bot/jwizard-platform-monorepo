@@ -38,7 +38,7 @@ class QueueServerLifecycle implements LifecycleHook {
     @Inject
     QueueServerLifecycle(ComponentProvider componentProvider) {
         queueServer = RabbitMqServer.builder()
-            .rawNodes(Set.of("localhost:9191") /*TODO: incoming from config server*/)
+            .rawNodes(Set.of("localhost:9111") /*TODO: incoming from config server*/)
             .withConnector(ConnectorType.SINGLE_NODE)
             .username("guest" /*TODO: incoming from config server*/)
             .password("guest" /*TODO: incoming from config server*/)

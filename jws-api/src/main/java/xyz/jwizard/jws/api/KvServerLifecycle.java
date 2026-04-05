@@ -34,7 +34,7 @@ class KvServerLifecycle implements LifecycleHook {
 
     KvServerLifecycle() {
         kvServer = JedisServer.builder()
-            .rawNodes(Set.of("127.0.0.1:9193" /*TODO: getting from config server*/))
+            .rawNodes(Set.of("127.0.0.1:9113" /*TODO: getting from config server*/))
             .password(null /*TODO: getting from config server*/)
             .withFactory(FactoryType.SINGLE_NODE)
             .build();
