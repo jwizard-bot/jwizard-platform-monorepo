@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="(:9093) JWS TRANSLATOR" type="Application" factoryName="Application">
+  <configuration default="false" name="(:9094) JWS TRANSLATOR" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="xyz.jwizard.jws.translator.JwsTranslatorMain" />
     <module name="jwizard-platform-monorepo.jws-translator.main" />
     <extension name="coverage">

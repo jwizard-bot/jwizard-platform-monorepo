@@ -36,7 +36,7 @@ public class HttpServerLifecycle implements LifecycleHook {
             .componentProvider(componentProvider)
             .jsonSerializer(JacksonSerializer.createDefaultStrictMapper())
             .ignoredPaths(Set.of())
-            .port(9092) /*TODO: incoming from config server*/
+            .port(9093) /*TODO: incoming from config server*/
             .build();
     }
 
