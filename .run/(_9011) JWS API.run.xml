@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="(:9091) JWS API" type="Application" factoryName="Application">
+  <configuration default="false" name="(:9011) JWS API" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="xyz.jwizard.jws.api.JwsApiMain" />
     <module name="jwizard-platform-monorepo.jws-api.main" />
     <extension name="coverage">
