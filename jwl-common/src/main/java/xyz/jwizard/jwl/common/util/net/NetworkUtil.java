@@ -15,6 +15,9 @@
  */
 package xyz.jwizard.jwl.common.util.net;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 public class NetworkUtil {
     private NetworkUtil() {
     }
@@ -35,6 +38,23 @@ public class NetworkUtil {
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Invalid port number in address definition: '" +
                 address + "'", e);
+        }
+    }
+
+    public static URI parseToUri(NetworkProtocol networkProtocol, HostPort hostPort) {
+        if (networkProtocol == null || hostPort == null) {
+            return null;
+        }
+        final String scheme = networkProtocol.getScheme();
+        final String host = hostPort.host();
+        final int port = hostPort.port();
+        try {
+            return new URI(scheme, null, host, port, null, null, null);
+        } catch (URISyntaxException ex) {
+            throw new IllegalArgumentException(
+                "Cannot build valid URI for scheme '" + scheme + "' and address '" + host + ":" +
+                    port + "'", ex
+            );
         }
     }
 }
