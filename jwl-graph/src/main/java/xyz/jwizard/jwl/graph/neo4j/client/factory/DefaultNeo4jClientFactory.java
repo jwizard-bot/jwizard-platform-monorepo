@@ -62,7 +62,7 @@ public class DefaultNeo4jClientFactory implements GraphClientFactory<Neo4jConfig
             AuthTokens.basic(config.getUsername(), config.getPassword()),
             configBuilder.build()
         );
-        LOG.debug("Verifying connectivity to Neo4j...");
+        LOG.debug("Verifying connectivity to Neo4j");
         try {
             driver.verifyConnectivity();
             LOG.info("Successfully connected to Neo4j at {}", uri);

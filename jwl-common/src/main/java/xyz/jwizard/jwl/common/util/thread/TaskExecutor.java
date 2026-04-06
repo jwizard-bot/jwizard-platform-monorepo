@@ -64,7 +64,7 @@ public class TaskExecutor implements Executor, Closeable {
         delegate.shutdown();
         try {
             if (!delegate.awaitTermination(timeout, unit)) {
-                LOG.warn("Executor '{}' did not terminate in time. forcing shutdown...", name);
+                LOG.warn("Executor '{}' did not terminate in time. forcing shutdown", name);
                 delegate.shutdownNow();
                 if (!delegate.awaitTermination(timeout, unit)) {
                     LOG.error("Executor '{}' did not terminate even after forcing.", name);
