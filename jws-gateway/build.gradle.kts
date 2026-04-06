@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 import xyz.jwizard.buildconfig.JwServicePlugin
-import xyz.jwizard.buildconfig.jwizard
+import xyz.jwizard.buildconfig.jwService
 
 apply<JwServicePlugin>()
 
-jwizard {
+jwService {
     packageSuffix.set("gateway")
     mainClass.set("JwsGatewayMain")
 }

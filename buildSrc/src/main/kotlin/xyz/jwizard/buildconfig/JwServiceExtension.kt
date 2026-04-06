@@ -19,11 +19,11 @@ import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.gradle.kotlin.dsl.configure
 
-interface JwizardExtension {
+interface JwServiceExtension {
     val packageSuffix: Property<String>
     val mainClass: Property<String>
 }
 
-fun Project.jwizard(action: JwizardExtension.() -> Unit) {
-    configure<JwizardExtension>(action)
+fun Project.jwService(action: JwServiceExtension.() -> Unit) {
+    configure<JwServiceExtension>(action)
 }

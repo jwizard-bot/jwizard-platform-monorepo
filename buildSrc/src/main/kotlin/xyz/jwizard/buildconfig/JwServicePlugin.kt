@@ -23,15 +23,15 @@ import kotlin.reflect.KProperty1
 
 class JwServicePlugin : Plugin<Project> {
     override fun apply(target: Project) {
-        val extension = target.extensions.create("jwizard", JwizardExtension::class.java)
+        val extension = target.extensions.create("jwService", JwServiceExtension::class.java)
         target.afterEvaluate {
-            extension.require(JwizardExtension::packageSuffix, target.name)
-            extension.require(JwizardExtension::mainClass, target.name)
+            extension.require(JwServiceExtension::packageSuffix, target.name)
+            extension.require(JwServiceExtension::mainClass, target.name)
         }
     }
 
-    private fun JwizardExtension.require(
-        propertyRef: KProperty1<JwizardExtension, Property<*>>,
+    private fun JwServiceExtension.require(
+        propertyRef: KProperty1<JwServiceExtension, Property<*>>,
         projectName: String,
     ) {
         if (!propertyRef.get(this).isPresent) {
