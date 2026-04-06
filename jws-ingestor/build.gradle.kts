@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import xyz.jwizard.buildconfig.JwServicePlugin
+import xyz.jwizard.buildconfig.jwizard
 
-rootProject.name = "jwizard-platform-monorepo"
+apply<JwServicePlugin>()
 
-include("jwl-common")
-include("jwl-contracts")
-include("jwl-graph")
-include("jwl-http")
-include("jwl-i18n")
-include("jwl-kv")
-include("jwl-queue")
-include("jwl-sql")
-include("jws-api")
-include("jws-gateway")
-include("jws-ingestor")
-include("jws-registry")
-include("jws-translator")
-include("jws-worker")
+jwizard {
+    packageSuffix.set("ingestor")
+    mainClass.set("JwsIngestorMain")
+}
+
+dependencies {
+    implementation(project(":jwl-common"))
+    implementation(project(":jwl-graph"))
+    implementation(project(":jwl-http"))
+
+    testImplementation(testFixtures(project(":jwl-common")))
+}

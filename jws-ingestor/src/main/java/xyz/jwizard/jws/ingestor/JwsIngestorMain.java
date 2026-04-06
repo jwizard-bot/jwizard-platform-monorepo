@@ -13,20 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package xyz.jwizard.jws.ingestor;
 
-rootProject.name = "jwizard-platform-monorepo"
+import xyz.jwizard.jwl.common.bootstrap.AppBootstrapper;
+import xyz.jwizard.jwl.common.bootstrap.DefaultBootstrapper;
 
-include("jwl-common")
-include("jwl-contracts")
-include("jwl-graph")
-include("jwl-http")
-include("jwl-i18n")
-include("jwl-kv")
-include("jwl-queue")
-include("jwl-sql")
-include("jws-api")
-include("jws-gateway")
-include("jws-ingestor")
-include("jws-registry")
-include("jws-translator")
-include("jws-worker")
+@AppBootstrapper
+public class JwsIngestorMain {
+    public static void main(String[] args) {
+        DefaultBootstrapper.run(JwsIngestorMain.class);
+    }
+}
