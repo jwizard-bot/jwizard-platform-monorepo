@@ -15,6 +15,8 @@
  */
 package xyz.jwizard.jwl.http.validation;
 
+import xyz.jwizard.jwl.common.util.CastUtil;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
@@ -23,11 +25,10 @@ class ConstraintStep implements ValidationStep {
     private final Annotation annotation;
     private final AnnotationValidator<Annotation> validator;
 
-    @SuppressWarnings("unchecked")
     ConstraintStep(Field field, Annotation annotation, AnnotationValidator<?> validator) {
         this.field = field;
         this.annotation = annotation;
-        this.validator = (AnnotationValidator<Annotation>) validator;
+        this.validator = CastUtil.unsafeCast(validator);
     }
 
     @Override

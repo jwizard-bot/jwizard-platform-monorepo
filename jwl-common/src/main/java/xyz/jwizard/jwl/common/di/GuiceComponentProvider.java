@@ -20,6 +20,7 @@ import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import jakarta.inject.Inject;
 import xyz.jwizard.jwl.common.reflect.TypeReference;
+import xyz.jwizard.jwl.common.util.CastUtil;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
@@ -50,7 +51,6 @@ public class GuiceComponentProvider implements ComponentProvider {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <T> Collection<T> getInstancesOf(Class<T> type) {
         return injector.getAllBindings().keySet().stream()
             .filter(key -> {
@@ -59,16 +59,15 @@ public class GuiceComponentProvider implements ComponentProvider {
                     && !boundRawType.isInterface()
                     && !Modifier.isAbstract(boundRawType.getModifiers());
             })
-            .map(key -> (T) injector.getInstance(key))
+            .map(key -> CastUtil.<T>unsafeCast(injector.getInstance(key)))
             .collect(Collectors.toSet());
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <T> Collection<T> getInstancesOf(TypeReference<T> typeReference) {
-        final TypeLiteral<T> guiceTypeLiteral = (TypeLiteral<T>) TypeLiteral
-            .get(typeReference.getType());
-        final Class<T> rawType = (Class<T>) guiceTypeLiteral.getRawType();
+        final TypeLiteral<T> guiceTypeLiteral = CastUtil.unsafeCast(TypeLiteral
+            .get(typeReference.getType()));
+        final Class<T> rawType = CastUtil.unsafeCast(guiceTypeLiteral.getRawType());
         return getInstancesOf(rawType);
     }
 }

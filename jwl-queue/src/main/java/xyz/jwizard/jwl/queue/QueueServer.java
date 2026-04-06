@@ -22,6 +22,7 @@ import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.reflect.TypeReference;
 import xyz.jwizard.jwl.common.serialization.SerializerRegistry;
 import xyz.jwizard.jwl.common.util.Assert;
+import xyz.jwizard.jwl.common.util.CastUtil;
 import xyz.jwizard.jwl.common.util.net.HostPort;
 import xyz.jwizard.jwl.common.util.net.NetworkUtil;
 
@@ -138,9 +139,8 @@ public abstract class QueueServer implements Closeable {
         protected AbstractBuilder() {
         }
 
-        @SuppressWarnings("unchecked")
         protected B self() {
-            return (B) this;
+            return CastUtil.unsafeCast(this);
         }
 
         public B nodes(Set<HostPort> nodes) {

@@ -24,6 +24,7 @@ import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.jwizard.jwl.common.reflect.ClassScanner;
+import xyz.jwizard.jwl.common.util.CastUtil;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -57,13 +58,12 @@ class AutoScanModule extends AbstractModule {
         LOG.info("Successfully bound {} component(s)", boundedComponents);
     }
 
-    @SuppressWarnings("unchecked")
     private void registerBeans(Class<?> clazz, Provider<Injector> injectorProvider) {
         for (final Method method : clazz.getDeclaredMethods()) {
             if (!method.isAnnotationPresent(Produces.class)) {
                 continue;
             }
-            final Class<Object> returnType = (Class<Object>) method.getReturnType();
+            final Class<Object> returnType = CastUtil.unsafeCast(method.getReturnType());
             if (returnType.equals(void.class)) {
                 throw new IllegalStateException("@Produces method cannot return void: " +
                     method.getName());

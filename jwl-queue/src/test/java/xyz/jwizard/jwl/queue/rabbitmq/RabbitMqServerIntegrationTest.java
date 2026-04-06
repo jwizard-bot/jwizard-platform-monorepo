@@ -33,6 +33,7 @@ import xyz.jwizard.jwl.common.serialization.SerializerFormat;
 import xyz.jwizard.jwl.common.serialization.SerializerRegistry;
 import xyz.jwizard.jwl.common.serialization.json.JacksonSerializer;
 import xyz.jwizard.jwl.common.serialization.raw.RawByteSerializer;
+import xyz.jwizard.jwl.common.util.CastUtil;
 import xyz.jwizard.jwl.common.util.io.IoUtil;
 import xyz.jwizard.jwl.common.util.net.HostPort;
 import xyz.jwizard.jwl.queue.*;
@@ -161,9 +162,10 @@ public class RabbitMqServerIntegrationTest {
         return factory.newConnection();
     }
 
-    @SuppressWarnings("unchecked")
     private void mockListenerRegistration(QueueListener<?> listener) {
-        when(componentProvider.getInstancesOf(any(TypeReference.class)))
-            .thenReturn(Collections.singletonList(listener));
+        when(componentProvider.getInstancesOf(CastUtil
+                .<TypeReference<QueueListener<?>>>unsafeCast(any(TypeReference.class))
+            )
+        ).thenReturn(Collections.singletonList(listener));
     }
 }

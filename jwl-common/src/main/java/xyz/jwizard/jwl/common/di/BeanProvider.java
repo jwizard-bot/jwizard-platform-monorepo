@@ -18,6 +18,7 @@ package xyz.jwizard.jwl.common.di;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 import xyz.jwizard.jwl.common.bootstrap.CriticalBootstrapException;
+import xyz.jwizard.jwl.common.util.CastUtil;
 
 import java.lang.reflect.Method;
 
@@ -34,7 +35,6 @@ class BeanProvider<T> implements Provider<T> {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public T get() {
         try {
             final Injector injector = injectorProvider.get();
@@ -44,7 +44,7 @@ class BeanProvider<T> implements Provider<T> {
             for (int i = 0; i < paramTypes.length; i++) {
                 args[i] = injector.getInstance(paramTypes[i]);
             }
-            return (T) method.invoke(configInstance, args);
+            return CastUtil.unsafeCast(method.invoke(configInstance, args));
         } catch (Exception ex) {
             throw new CriticalBootstrapException(
                 "Failed to instantiate @Bean method: " + method.getName() + " in " +

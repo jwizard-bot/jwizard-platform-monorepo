@@ -18,6 +18,7 @@ package xyz.jwizard.jwl.common.serialization.raw;
 import xyz.jwizard.jwl.common.serialization.MessageSerializer;
 import xyz.jwizard.jwl.common.serialization.MessageSerializerException;
 import xyz.jwizard.jwl.common.serialization.SerializerFormat;
+import xyz.jwizard.jwl.common.util.CastUtil;
 
 public class RawByteSerializer implements MessageSerializer {
     private RawByteSerializer() {
@@ -41,11 +42,9 @@ public class RawByteSerializer implements MessageSerializer {
     }
 
     @Override
-    // unchecked satisfies javac, redundant suppression satisfies IntelliJ
-    @SuppressWarnings({"unchecked", "RedundantSuppression"})
     public <T> T deserializeFromBytes(byte[] bytes, Class<T> type) {
         if (type.isAssignableFrom(byte[].class)) {
-            return (T) bytes;
+            return CastUtil.unsafeCast(bytes);
         }
         throw new MessageSerializerException(
             "RawByteSerializer can only deserialize to byte[].class, but requested: " +

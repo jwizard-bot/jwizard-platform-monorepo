@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.serialization.json.JsonSerializer;
 import xyz.jwizard.jwl.common.util.Assert;
+import xyz.jwizard.jwl.common.util.CastUtil;
 import xyz.jwizard.jwl.common.util.CollectionUtil;
 import xyz.jwizard.jwl.http.annotation.Validator;
 import xyz.jwizard.jwl.http.exception.handler.AnnotatedExceptionHandler;
@@ -145,9 +146,8 @@ public abstract class HttpServer implements Closeable {
         protected AbstractBuilder() {
         }
 
-        @SuppressWarnings("unchecked")
         protected B self() {
-            return (B) this;
+            return CastUtil.unsafeCast(this);
         }
 
         public B componentProvider(ComponentProvider componentProvider) {

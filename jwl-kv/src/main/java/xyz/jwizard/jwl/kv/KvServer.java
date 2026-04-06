@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.jwizard.jwl.common.bootstrap.CriticalBootstrapException;
 import xyz.jwizard.jwl.common.util.Assert;
+import xyz.jwizard.jwl.common.util.CastUtil;
 import xyz.jwizard.jwl.common.util.net.HostPort;
 import xyz.jwizard.jwl.common.util.net.NetworkUtil;
 
@@ -75,9 +76,8 @@ public abstract class KvServer implements KeyValueStore, PubSubBroadcaster, Clos
         protected AbstractBuilder() {
         }
 
-        @SuppressWarnings("unchecked")
         protected B self() {
-            return (B) this;
+            return CastUtil.unsafeCast(this);
         }
 
         public B nodes(Set<HostPort> nodes) {
