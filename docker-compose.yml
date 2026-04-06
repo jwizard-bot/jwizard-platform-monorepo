@@ -73,6 +73,25 @@ services:
     networks:
       - jwizard-network
 
+  jwizard-neo4j:
+    container_name: jwizard-neo4j
+    image: neo4j:5.12.0
+    ports:
+      - "${JW_NEO4J_PANEL_PORT:-7474}:7474"
+      - "${JW_NEO4J_DB_PORT:-7687}:7687"
+    volumes:
+      - ./.volumes/neo4j/neo4j-volume/data:/data
+      - ./.volumes/neo4j/neo4j-volume/plugins:/plugins
+    environment:
+      NEO4J_AUTH: neo4j/root
+      NEO4J_initial_dbms_default__database: jw-oss
+      NEO4J_dbms_security_auth__minimum__password__length: 3
+      NEO4J_server_memory_heap_initial__size: 512m
+      NEO4J_server_memory_heap_max__size: 1G
+      NEO4J_server_memory_pagecache_size: 512m
+    networks:
+      - jwizard-network
+
 networks:
   jwizard-network:
     driver: bridge
