@@ -13,9 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.buildconfig
+package xyz.jwizard.jwl.ci;
 
-enum class ModuleProp(val key: String) {
-    PACKAGE_SUFFIX("manifestPackageSuffix"),
-    MAIN_CLASS("manifestClass")
+import xyz.jwizard.jwl.common.ModuleIdentityTest;
+
+class JwlCiIdentityTest extends ModuleIdentityTest {
+    @Override
+    protected String getModuleName() {
+        return "jwl-ci";
+    }
 }
