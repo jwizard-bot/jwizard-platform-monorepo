@@ -15,8 +15,7 @@
  */
 package xyz.jwizard.jwl.sql;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import xyz.jwizard.jwl.common.bootstrap.lifecycle.IdempotentService;
 import xyz.jwizard.jwl.common.util.io.IoUtil;
 import xyz.jwizard.jwl.sql.config.SqlDatabaseConfig;
 import xyz.jwizard.jwl.sql.pool.ConnectionPoolFactory;
@@ -24,9 +23,8 @@ import xyz.jwizard.jwl.sql.pool.ManagedDataSource;
 
 import javax.sql.DataSource;
 
-public abstract class GenericSqlClient implements SqlClient, SqlClientLifecycle {
-    protected final Logger LOG = LoggerFactory.getLogger(getClass());
-
+public abstract class GenericSqlClient extends IdempotentService implements SqlClient,
+    SqlClientLifecycle {
     private final SqlDatabaseConfig config;
     private final ConnectionPoolFactory poolFactory;
 
@@ -39,7 +37,7 @@ public abstract class GenericSqlClient implements SqlClient, SqlClientLifecycle 
     }
 
     @Override
-    public final void start() {
+    protected final void onStart() {
         if (dataSource != null) {
             LOG.warn("Database client for '{}' is already started.", config.databaseName());
             return;
@@ -51,7 +49,7 @@ public abstract class GenericSqlClient implements SqlClient, SqlClientLifecycle 
     }
 
     @Override
-    public final void close() {
+    protected final void onStop() {
         IoUtil.closeQuietly(closeAction);
     }
 

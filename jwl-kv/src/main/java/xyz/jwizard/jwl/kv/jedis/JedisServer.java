@@ -51,7 +51,7 @@ public class JedisServer extends KvServer {
     }
 
     @Override
-    protected void onStart() {
+    protected final void onKvServerStart() {
         final JedisClientConfig config = DefaultJedisClientConfig.builder()
             .password(password != null && !password.isBlank() ? password : null)
             .build();
@@ -67,7 +67,7 @@ public class JedisServer extends KvServer {
     }
 
     @Override
-    protected void onStop() {
+    protected final void onStop() {
         IoUtil.closeQuietly(redisClient, UnifiedJedis::close);
     }
 

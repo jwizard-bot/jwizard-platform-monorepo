@@ -15,9 +15,7 @@
  */
 package xyz.jwizard.jwl.graph;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import xyz.jwizard.jwl.common.bootstrap.CriticalBootstrapException;
+import xyz.jwizard.jwl.common.bootstrap.lifecycle.IdempotentService;
 import xyz.jwizard.jwl.common.util.Assert;
 import xyz.jwizard.jwl.common.util.CastUtil;
 import xyz.jwizard.jwl.common.util.io.IoUtil;
@@ -27,20 +25,14 @@ import xyz.jwizard.jwl.graph.client.factory.GraphClientFactory;
 import xyz.jwizard.jwl.graph.client.factory.GraphConfig;
 import xyz.jwizard.jwl.graph.repository.GraphRepository;
 
-import java.io.Closeable;
 import java.net.URI;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
-public abstract class GraphServer<C extends GraphConfig> implements Closeable {
-    protected final Logger LOG = LoggerFactory.getLogger(getClass());
-
+public abstract class GraphServer<C extends GraphConfig> extends IdempotentService {
     protected final URI uri;
     protected final C config;
     protected final GraphClientFactory<C> clientFactory;
     protected final Function<GraphClient, GraphRepository> repositoryFactory;
-
-    private final AtomicBoolean running = new AtomicBoolean(false);
 
     protected GraphClient graphClient;
     protected GraphRepository graphRepository;
@@ -52,24 +44,16 @@ public abstract class GraphServer<C extends GraphConfig> implements Closeable {
         repositoryFactory = builder.repositoryFactory;
     }
 
-    public void start() {
-        try {
-            if (!running.compareAndSet(false, true)) {
-                return;
-            }
-            LOG.info("Connecting to graph server on: {}", uri.toString());
-            graphClient = clientFactory.createAndInitClient(config);
-            graphRepository = repositoryFactory.apply(graphClient);
-        } catch (Exception ex) {
-            throw new CriticalBootstrapException("Graph server connection failed", ex);
-        }
+    @Override
+    protected final void onStart() {
+        LOG.info("Connecting to graph server on: {}", uri.toString());
+        graphClient = clientFactory.createAndInitClient(config);
+        graphRepository = repositoryFactory.apply(graphClient);
     }
 
     @Override
-    public final void close() {
-        if (running.compareAndSet(true, false)) {
-            IoUtil.closeQuietly(graphClient);
-        }
+    protected final void onStop() {
+        IoUtil.closeQuietly(graphClient);
     }
 
     public GraphClient getClient() {

@@ -15,9 +15,8 @@
  */
 package xyz.jwizard.jwl.queue;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import xyz.jwizard.jwl.common.bootstrap.CriticalBootstrapException;
+import xyz.jwizard.jwl.common.bootstrap.lifecycle.IdempotentService;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.reflect.TypeReference;
 import xyz.jwizard.jwl.common.serialization.SerializerRegistry;
@@ -26,24 +25,19 @@ import xyz.jwizard.jwl.common.util.CastUtil;
 import xyz.jwizard.jwl.common.util.net.HostPort;
 import xyz.jwizard.jwl.common.util.net.NetworkUtil;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-public abstract class QueueServer implements Closeable {
-    protected final Logger LOG = LoggerFactory.getLogger(getClass());
-
+public abstract class QueueServer extends IdempotentService {
     protected final String username;
     protected final String password;
     protected final Set<HostPort> nodes;
     protected final SerializerRegistry serializerRegistry;
     protected final ComponentProvider componentProvider;
 
-    private final AtomicBoolean running = new AtomicBoolean(false);
     private final QueuePublisher queuePublisher = new QueuePublisher(this);
 
     protected QueueServer(AbstractBuilder<?> builder) {
@@ -54,25 +48,19 @@ public abstract class QueueServer implements Closeable {
         componentProvider = builder.componentProvider;
     }
 
-    public void start() {
-        try {
-            if (!running.compareAndSet(false, true)) {
-                return;
-            }
-            if (nodes.isEmpty()) {
-                LOG.warn("Not providing any nodes, skipping configuration");
-                return;
-            }
-            final Set<QueueListener<?>> listeners = new HashSet<>(componentProvider
-                .getInstancesOf(new TypeReference<>() {
-                }));
-            LOG.info("Found {} queue listener(s)", listeners.size());
-            LOG.info("Queue server start initializing with {} node(s)", nodes.size());
-            onStart();
-            registerListeners(listeners);
-        } catch (Exception ex) {
-            throw new CriticalBootstrapException("Queue server connection(s) failed", ex);
+    @Override
+    protected final void onStart() throws Exception {
+        if (nodes.isEmpty()) {
+            LOG.warn("Not providing any nodes, skipping configuration");
+            return;
         }
+        final Set<QueueListener<?>> listeners = new HashSet<>(componentProvider
+            .getInstancesOf(new TypeReference<>() {
+            }));
+        LOG.info("Found {} queue listener(s)", listeners.size());
+        LOG.info("Queue server start initializing with {} node(s)", nodes.size());
+        onQueueServerStart();
+        registerListeners(listeners);
     }
 
     SerializerRegistry getSerializerRegistry() {
@@ -81,13 +69,6 @@ public abstract class QueueServer implements Closeable {
 
     public QueuePublisher getQueuePublisher() {
         return queuePublisher;
-    }
-
-    @Override
-    public final void close() {
-        if (running.compareAndSet(true, false)) {
-            onStop();
-        }
     }
 
     protected <T> void processDelivery(QueueListener<T> listener, byte[] body) {
@@ -103,9 +84,7 @@ public abstract class QueueServer implements Closeable {
         listener.onMessage(payload);
     }
 
-    protected abstract void onStart() throws Exception;
-
-    protected abstract void onStop();
+    protected abstract void onQueueServerStart() throws Exception;
 
     protected abstract void onPublish(String exchange, String routingKey, byte[] body)
         throws Exception;

@@ -53,7 +53,7 @@ public class RabbitMqServer extends QueueServer {
     }
 
     @Override
-    protected void onStart() throws Exception {
+    protected final void onQueueServerStart() throws Exception {
         if (connection != null) {
             return;
         }
@@ -78,7 +78,7 @@ public class RabbitMqServer extends QueueServer {
     }
 
     @Override
-    protected void onStop() {
+    protected final void onStop() {
         IoUtil.closeQuietly(channel, ShutdownNotifier::isOpen, Channel::close);
         IoUtil.closeQuietly(connection, ShutdownNotifier::isOpen, Connection::close);
         IoUtil.closeQuietly(taskExecutor);

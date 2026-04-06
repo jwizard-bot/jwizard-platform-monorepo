@@ -15,8 +15,7 @@
  */
 package xyz.jwizard.jwl.http;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import xyz.jwizard.jwl.common.bootstrap.lifecycle.IdempotentService;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.serialization.json.JsonSerializer;
 import xyz.jwizard.jwl.common.util.Assert;
@@ -38,16 +37,13 @@ import xyz.jwizard.jwl.http.validation.AnnotationValidator;
 import xyz.jwizard.jwl.http.validation.ValidationHandler;
 import xyz.jwizard.jwl.http.writer.*;
 
-import java.io.Closeable;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public abstract class HttpServer implements Closeable {
-    protected final Logger LOG = LoggerFactory.getLogger(getClass());
-
+public abstract class HttpServer extends IdempotentService {
     protected final ComponentProvider componentProvider;
     protected final Router router;
     protected final Set<String> ignoredPaths;
@@ -129,12 +125,7 @@ public abstract class HttpServer implements Closeable {
         return all;
     }
 
-    public abstract void start();
-
     public abstract int getLocalPort();
-
-    @Override
-    public abstract void close();
 
     protected abstract static class AbstractBuilder<B extends AbstractBuilder<B>> {
         protected final Set<String> ignoredPaths = new HashSet<>();

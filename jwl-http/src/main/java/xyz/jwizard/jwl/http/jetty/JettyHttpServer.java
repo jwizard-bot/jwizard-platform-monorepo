@@ -19,7 +19,6 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
-import xyz.jwizard.jwl.common.bootstrap.CriticalBootstrapException;
 import xyz.jwizard.jwl.common.util.Assert;
 import xyz.jwizard.jwl.common.util.io.IoUtil;
 import xyz.jwizard.jwl.http.HttpRequestHandler;
@@ -43,7 +42,7 @@ public class JettyHttpServer extends HttpServer {
     }
 
     @Override
-    public final void start() {
+    protected final void onStart() throws Exception {
         final HttpRequestHandler httpRequestHandler = prepareRequestHandler();
 
         final QueuedThreadPool queuedThreadPool = new QueuedThreadPool();
@@ -59,24 +58,21 @@ public class JettyHttpServer extends HttpServer {
 
         server.addConnector(connector);
         server.setHandler(new JettyHttpRequestHandlerAdapter(httpRequestHandler));
-        try {
-            server.start();
-            LOG.info("HTTP server started successfully with {}ms shutdown timeout",
-                SHUTDOWN_TIMEOUT_MS);
-        } catch (Exception ex) {
-            throw new CriticalBootstrapException("HTTP server startup failed", ex);
-        }
+
+        server.start();
+        LOG.info("HTTP server started successfully with {}ms shutdown timeout",
+            SHUTDOWN_TIMEOUT_MS);
+    }
+
+    @Override
+    protected final void onStop() {
+        IoUtil.closeQuietly(server, AbstractLifeCycle::stop);
     }
 
     @Override
     public final int getLocalPort() {
         Assert.state(connector != null && connector.isRunning(), "Connector is not running!");
         return connector.getLocalPort();
-    }
-
-    @Override
-    public final void close() {
-        IoUtil.closeQuietly(server, AbstractLifeCycle::stop);
     }
 
     public static class Builder extends AbstractBuilder<Builder> {
