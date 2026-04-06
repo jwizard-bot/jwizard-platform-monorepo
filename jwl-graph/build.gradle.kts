@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-rootProject.name = "jwizard-platform-monorepo"
+dependencies {
+    implementation(libs.neo4j.driver)
+    implementation(libs.slf4j.jdk.platform) // for neo4j logger
+    implementation(project(":jwl-common"))
 
-include("jwl-common")
-include("jwl-contracts")
-include("jwl-graph")
-include("jwl-http")
-include("jwl-i18n")
-include("jwl-kv")
-include("jwl-queue")
-include("jwl-sql")
-include("jws-api")
-include("jws-gateway")
-include("jws-registry")
-include("jws-translator")
-include("jws-worker")
+    testImplementation(libs.testcontainers)
+    testImplementation(libs.testcontainers.jupyter)
+    testImplementation(libs.testcontainers.neo4j)
+    testImplementation(testFixtures(project(":jwl-common")))
+}

@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package xyz.jwizard.jwl.graph;
 
-rootProject.name = "jwizard-platform-monorepo"
+import xyz.jwizard.jwl.graph.model.GraphEdge;
+import xyz.jwizard.jwl.graph.model.GraphNode;
 
-include("jwl-common")
-include("jwl-contracts")
-include("jwl-graph")
-include("jwl-http")
-include("jwl-i18n")
-include("jwl-kv")
-include("jwl-queue")
-include("jwl-sql")
-include("jws-api")
-include("jws-gateway")
-include("jws-registry")
-include("jws-translator")
-include("jws-worker")
+import java.util.List;
+
+public interface GraphWriter {
+    GraphNode saveNode(GraphNode node);
+
+    GraphEdge saveEdge(GraphEdge edge);
+
+    void upsertNodes(List<GraphNode> nodes);
+
+    void createEdges(List<GraphEdge> edges);
+}

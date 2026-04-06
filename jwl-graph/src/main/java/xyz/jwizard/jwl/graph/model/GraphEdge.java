@@ -13,19 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package xyz.jwizard.jwl.graph.model;
 
-rootProject.name = "jwizard-platform-monorepo"
+import java.util.Map;
 
-include("jwl-common")
-include("jwl-contracts")
-include("jwl-graph")
-include("jwl-http")
-include("jwl-i18n")
-include("jwl-kv")
-include("jwl-queue")
-include("jwl-sql")
-include("jws-api")
-include("jws-gateway")
-include("jws-registry")
-include("jws-translator")
-include("jws-worker")
+public record GraphEdge(String type, String fromId, String toId, Map<String, Object> props) {
+}
