@@ -63,8 +63,13 @@ public class DefaultNeo4jClientFactory implements GraphClientFactory<Neo4jConfig
             configBuilder.build()
         );
         LOG.debug("Verifying connectivity to Neo4j...");
-        driver.verifyConnectivity();
-        LOG.info("Successfully connected to Neo4j at {}", uri);
+        try {
+            driver.verifyConnectivity();
+            LOG.info("Successfully connected to Neo4j at {}", uri);
+        } catch (Exception ex) {
+            driver.close();
+            throw ex;
+        }
         return new Neo4jClient(driver);
     }
 }
