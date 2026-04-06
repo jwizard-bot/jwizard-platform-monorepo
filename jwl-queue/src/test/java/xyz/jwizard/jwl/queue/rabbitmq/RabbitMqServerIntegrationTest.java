@@ -23,9 +23,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.containers.RabbitMQContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.rabbitmq.RabbitMQContainer;
+import org.testcontainers.utility.DockerImageName;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.reflect.TypeReference;
 import xyz.jwizard.jwl.common.serialization.SerializerFormat;
@@ -50,7 +51,9 @@ import static org.mockito.Mockito.when;
 @Testcontainers
 public class RabbitMqServerIntegrationTest {
     @Container
-    static final RabbitMQContainer rabbitMQ = new RabbitMQContainer("rabbitmq:3-management");
+    static final RabbitMQContainer rabbitMQ = new RabbitMQContainer(
+        DockerImageName.parse("rabbitmq:3-management")
+    );
 
     private QueueServer server;
     private MessagePublisher messagePublisher;
