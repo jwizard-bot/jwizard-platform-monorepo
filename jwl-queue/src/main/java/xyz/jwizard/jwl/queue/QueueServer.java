@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import xyz.jwizard.jwl.common.bootstrap.CriticalBootstrapException;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.reflect.TypeReference;
-import xyz.jwizard.jwl.common.serialization.SerializerFormat;
 import xyz.jwizard.jwl.common.serialization.SerializerRegistry;
 import xyz.jwizard.jwl.common.util.Assert;
 import xyz.jwizard.jwl.common.util.net.HostPort;
@@ -34,7 +33,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-public abstract class QueueServer implements MessagePublisher, Closeable {
+public abstract class QueueServer implements Closeable {
     protected final Logger LOG = LoggerFactory.getLogger(getClass());
 
     protected final String username;
@@ -44,6 +43,7 @@ public abstract class QueueServer implements MessagePublisher, Closeable {
     protected final ComponentProvider componentProvider;
 
     private final AtomicBoolean running = new AtomicBoolean(false);
+    private final QueuePublisher queuePublisher = new QueuePublisher(this);
 
     protected QueueServer(AbstractBuilder<?> builder) {
         username = builder.username;
@@ -74,42 +74,19 @@ public abstract class QueueServer implements MessagePublisher, Closeable {
         }
     }
 
+    SerializerRegistry getSerializerRegistry() {
+        return serializerRegistry;
+    }
+
+    public QueuePublisher getQueuePublisher() {
+        return queuePublisher;
+    }
+
     @Override
     public final void close() {
         if (running.compareAndSet(true, false)) {
             onStop();
         }
-    }
-
-    @Override
-    public <T> void publish(String exchange, String routingKey, T payload) {
-        publish(exchange, routingKey, payload, SerializerFormat.JSON);
-    }
-
-    @Override
-    public <T> void publish(String exchange, String routingKey, T payload,
-                            SerializerFormat format) {
-        final String logExchange = (exchange == null || exchange.isBlank()) ? "<default>"
-            : exchange;
-        try {
-            LOG.trace("Publishing message to exchange '{}' with routing key '{}'", logExchange,
-                routingKey);
-            final byte[] body = serializerRegistry.get(format).serializeToBytes(payload);
-            onPublish(exchange, routingKey, body);
-        } catch (Exception ex) {
-            LOG.error("Failed to publish message to exchange '{}' with routing key '{}'",
-                logExchange, routingKey, ex);
-        }
-    }
-
-    @Override
-    public <T> void publishToQueue(String queueName, T payload) {
-        publish("", queueName, payload);
-    }
-
-    @Override
-    public <T> void publishToQueue(String queueName, T payload, SerializerFormat format) {
-        publish("", queueName, payload, format);
     }
 
     protected <T> void processDelivery(QueueListener<T> listener, byte[] body) {

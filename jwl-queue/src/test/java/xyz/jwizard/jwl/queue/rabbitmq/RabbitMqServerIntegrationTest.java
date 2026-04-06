@@ -53,6 +53,7 @@ public class RabbitMqServerIntegrationTest {
     static final RabbitMQContainer rabbitMQ = new RabbitMQContainer("rabbitmq:3-management");
 
     private QueueServer server;
+    private MessagePublisher messagePublisher;
     private ComponentProvider componentProvider;
     private SerializerRegistry serializerRegistry;
 
@@ -81,7 +82,7 @@ public class RabbitMqServerIntegrationTest {
         startServer();
         // when
         final byte[] payload = "Hello RabbitMQ!".getBytes(StandardCharsets.UTF_8);
-        server.publishToQueue("test.happy.queue", payload, SerializerFormat.RAW);
+        messagePublisher.publishToQueue("test.happy.queue", payload, SerializerFormat.RAW);
 
         // then
         final boolean received = listener.getLatch().await(5, TimeUnit.SECONDS);
@@ -100,7 +101,7 @@ public class RabbitMqServerIntegrationTest {
         startServer();
         // when
         final byte[] poisonPill = "Poison Pill".getBytes(StandardCharsets.UTF_8);
-        server.publishToQueue("test.fail.queue", poisonPill, SerializerFormat.RAW);
+        messagePublisher.publishToQueue("test.fail.queue", poisonPill, SerializerFormat.RAW);
         // then
         Thread.sleep(500);
         try (final Connection conn = createDirectConnection();
@@ -124,7 +125,7 @@ public class RabbitMqServerIntegrationTest {
         final PlayTrackCommand command = new PlayTrackCommand("123456789",
             "https://youtube.com/watch?v=123");
         // when
-        server.publishToQueue("test.json.queue", command);
+        messagePublisher.publishToQueue("test.json.queue", command);
         // then
         final boolean received = listener.getLatch().await(5, TimeUnit.SECONDS);
         assertThat(received).as("JSON message should be received").isTrue();
@@ -144,6 +145,7 @@ public class RabbitMqServerIntegrationTest {
             .componentProvider(componentProvider)
             .serializerRegistry(serializerRegistry)
             .build();
+        messagePublisher = server.getQueuePublisher();
         server.start();
     }
 
