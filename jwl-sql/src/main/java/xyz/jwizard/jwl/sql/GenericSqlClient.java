@@ -57,7 +57,7 @@ public abstract class GenericSqlClient implements SqlClient, SqlClientLifecycle 
 
     protected DataSource getActiveDataSource() {
         if (dataSource == null) {
-            throw new IllegalStateException("Database client is not started, call start() first");
+            throw new IllegalStateException("Database client is not started");
         }
         return dataSource;
     }
