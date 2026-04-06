@@ -18,7 +18,6 @@ package xyz.jwizard.jwl.common.reflect;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
-@SuppressWarnings("unused")
 public abstract class TypeReference<T> {
     private final Type type;
 
