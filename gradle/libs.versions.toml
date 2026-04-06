@@ -18,6 +18,7 @@ postgresql = "42.7.10"
 shadow = "8.3.0"
 slf4j = "2.0.17"
 testcontainers = "2.0.4"
+testcontainersRedis = "2.2.4"
 
 [libraries]
 ampq-client = { module = "com.rabbitmq:amqp-client", version.ref = "amqpClient" }
@@ -41,6 +42,7 @@ testcontainers = { module = "org.testcontainers:testcontainers", version.ref = "
 testcontainers-jupyter = { module = "org.testcontainers:testcontainers-junit-jupiter", version.ref = "testcontainers" }
 testcontainers-postgresql = { module = "org.testcontainers:testcontainers-postgresql", version.ref = "testcontainers" }
 testcontainers-rabbitmq = { module = "org.testcontainers:testcontainers-rabbitmq", version.ref = "testcontainers" }
+testcontainers-redis = { module = "com.redis:testcontainers-redis", version.ref = "testcontainersRedis" }
 
 [plugins]
 application = { id = "application" }

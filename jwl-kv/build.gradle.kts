@@ -20,5 +20,6 @@ dependencies {
 
     testImplementation(libs.testcontainers)
     testImplementation(libs.testcontainers.jupyter)
+    testImplementation(libs.testcontainers.redis)
     testImplementation(testFixtures(project(":jwl-common")))
 }

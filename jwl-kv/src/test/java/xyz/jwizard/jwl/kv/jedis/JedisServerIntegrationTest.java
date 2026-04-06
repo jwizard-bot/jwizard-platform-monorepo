@@ -15,11 +15,11 @@
  */
 package xyz.jwizard.jwl.kv.jedis;
 
+import com.redis.testcontainers.RedisContainer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
@@ -43,10 +43,9 @@ class JedisServerIntegrationTest {
     private static final int REDIS_PORT = 6379;
 
     @Container
-    @SuppressWarnings("resource")
-    static GenericContainer<?> redisContainer
-        = new GenericContainer<>(DockerImageName.parse("redis:7.2-alpine"))
-        .withExposedPorts(REDIS_PORT);
+    static RedisContainer redisContainer = new RedisContainer(
+        DockerImageName.parse("redis:7.2-alpine")
+    ).withExposedPorts(REDIS_PORT);
 
     private JedisServer jedisServer;
 
