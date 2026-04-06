@@ -13,22 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package xyz.jwizard.jws.cli;
 
-rootProject.name = "jwizard-platform-monorepo"
+import xyz.jwizard.jwl.common.ModuleIdentityTest;
 
-include("jwl-ci")
-include("jwl-common")
-include("jwl-contracts")
-include("jwl-graph")
-include("jwl-http")
-include("jwl-i18n")
-include("jwl-kv")
-include("jwl-queue")
-include("jwl-sql")
-include("jws-api")
-include("jws-cli")
-include("jws-gateway")
-include("jws-ingestor")
-include("jws-registry")
-include("jws-translator")
-include("jws-worker")
+class JwsCliIdentityTest extends ModuleIdentityTest {
+    @Override
+    protected String getModuleName() {
+        return "jws-cli";
+    }
+}
