@@ -19,20 +19,13 @@ import jakarta.inject.Singleton;
 import xyz.jwizard.jwl.http.HttpRequest;
 import xyz.jwizard.jwl.http.HttpResponse;
 import xyz.jwizard.jwl.http.HttpStatus;
-import xyz.jwizard.jwl.http.Secured;
 import xyz.jwizard.jwl.http.header.TestHttpHeaderName;
 import xyz.jwizard.jwl.http.header.TestHttpHeaderValue;
-import xyz.jwizard.jwl.http.route.Route;
 
 import static xyz.jwizard.jwl.http.HttpServerIntegrationTest.TEST_PASSWORD;
 
 @Singleton
-public class AnnotationSecurityFilter implements HttpFilter {
-    @Override
-    public boolean supports(Route route) {
-        return route.method().isAnnotationPresent(Secured.class);
-    }
-
+public class AnnotationSecurityFilter extends SecureRouteFilter {
     @Override
     public boolean preHandle(HttpRequest req, HttpResponse res) {
         final String token = req.getHeader(TestHttpHeaderName.AUTHORIZATION);

@@ -83,7 +83,7 @@ class IntegrationTestController {
         return ResponseEntity.ok("public data");
     }
 
-    @Secured
+    @SecuredRoute
     @RequestMapping(value = "/api/private", method = HttpMethod.GET)
     ResponseEntity<String> secureEndpoint() {
         return ResponseEntity.ok("secret data");
