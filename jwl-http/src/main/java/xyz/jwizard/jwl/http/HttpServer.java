@@ -135,7 +135,7 @@ public abstract class HttpServer implements Closeable {
     @Override
     public abstract void close();
 
-    public abstract static class AbstractBuilder<B extends AbstractBuilder<B>> {
+    protected abstract static class AbstractBuilder<B extends AbstractBuilder<B>> {
         protected final Set<String> ignoredPaths = new HashSet<>();
 
         protected ComponentProvider componentProvider;

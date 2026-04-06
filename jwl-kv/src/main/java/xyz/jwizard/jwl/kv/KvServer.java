@@ -68,7 +68,7 @@ public abstract class KvServer implements KeyValueStore, PubSubBroadcaster, Clos
 
     protected abstract void onStop();
 
-    public abstract static class AbstractBuilder<B extends AbstractBuilder<B>> {
+    protected abstract static class AbstractBuilder<B extends AbstractBuilder<B>> {
         protected Set<HostPort> nodes = new HashSet<>();
         protected String password;
 

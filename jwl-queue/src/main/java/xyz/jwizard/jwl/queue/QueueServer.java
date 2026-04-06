@@ -151,7 +151,7 @@ public abstract class QueueServer implements MessagePublisher, Closeable {
         LOG.info("Registered {} queue listener(s)", registeredListeners);
     }
 
-    public static abstract class AbstractBuilder<B extends AbstractBuilder<B>> {
+    protected static abstract class AbstractBuilder<B extends AbstractBuilder<B>> {
         protected String username;
         protected String password;
         protected Set<HostPort> nodes = new HashSet<>();
