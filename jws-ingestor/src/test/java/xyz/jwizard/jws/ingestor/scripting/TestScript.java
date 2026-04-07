@@ -16,10 +16,12 @@
 package xyz.jwizard.jws.ingestor.scripting;
 
 public enum TestScript implements ScriptFile {
-    PRELOAD("scripting/test-preload.js"),
-    EXECUTE("scripting/test-execute.js"),
-    VARS("scripting/test-vars.js"),
     CLEANUP("scripting/test-check-cleanup.js"),
+    CHECK_SIDE_EFFECT("scripting/test-check-side-effect.js"),
+    EXECUTE("scripting/test-execute.js"),
+    PRELOAD("scripting/test-preload.js"),
+    SIDE_EFFECT("scripting/test-side-effect.js"),
+    VARS("scripting/test-vars.js"),
     ;
 
     private final String key;
