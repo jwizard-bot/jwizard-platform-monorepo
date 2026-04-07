@@ -32,10 +32,10 @@ import xyz.jwizard.jwl.graph.neo4j.client.factory.Neo4jConfig;
 import xyz.jwizard.jwl.graph.neo4j.repository.Neo4jGraphRepository;
 
 @Singleton
-public class GraphServerLifecycle implements LifecycleHook {
+class GraphServerLifecycle implements LifecycleHook {
     private final GraphServer<Neo4jConfig> graphServer;
 
-    public GraphServerLifecycle() {
+    GraphServerLifecycle() {
         graphServer = Neo4jServer.builder()
             .config(Neo4jConfig.builder()
                 .protocol(Neo4jGraphProtocol.BOLT) /*TODO: incoming from config server*/
