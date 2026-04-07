@@ -1,0 +1,115 @@
+/*
+ * Copyright 2026 by JWizard
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package xyz.jwizard.buildconfig
+
+import com.github.gradle.node.NodeExtension
+import com.github.gradle.node.NodePlugin
+import com.github.gradle.node.npm.task.NpmTask
+import com.github.gradle.node.npm.task.NpxTask
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+import org.gradle.api.tasks.SourceSetContainer
+import org.gradle.kotlin.dsl.apply
+import org.gradle.kotlin.dsl.getByType
+import org.gradle.kotlin.dsl.register
+
+import org.gradle.plugins.ide.idea.model.IdeaModel
+
+
+class JwPolyglotJsPlugin : Plugin<Project> {
+    override fun apply(target: Project) {
+        target.apply<NodePlugin>()
+        target.pluginManager.apply("idea")
+
+        val extension = target.extensions.create("polyglotJs", JwPolyglotJsExtension::class.java)
+        val nodeExtension = target.extensions.getByType(NodeExtension::class.java)
+
+        nodeExtension.version.set("20.11.0")
+        nodeExtension.download.set(true)
+        nodeExtension.nodeProjectDir.set(target.file("src/main/js"))
+
+        target.afterEvaluate {
+            registerTasks(project, extension)
+            configureSourceSets(project)
+        }
+    }
+
+    private fun registerTasks(project: Project, extension: JwPolyglotJsExtension) {
+        val npmInstall = project.tasks.register<NpmTask>("npmInstallDeps") {
+            val deps = mutableListOf("install")
+            deps.addAll(extension.npmDependencies.get())
+
+            args.set(deps)
+            inputs.file("src/main/js/package.json")
+            outputs.dir("src/main/js/node_modules")
+        }
+        val bundleTask = project.tasks.register<NpxTask>("bundleJs") {
+            dependsOn(npmInstall)
+
+            val outputDir = project.layout.projectDirectory.dir("src/main/generated/js")
+
+            inputs.dir("src/main/js").withPropertyName("sourceDir")
+            inputs.dir("src/main/js/node_modules").withPropertyName("nodeModules")
+            outputs.dir(outputDir).withPropertyName("outputDir")
+
+            doFirst {
+                val outDirFile = outputDir.asFile
+                if (!outDirFile.exists()) {
+                    outDirFile.mkdirs()
+                }
+            }
+            command.set("esbuild")
+
+            val esbuildArgs = mutableListOf<String>()
+            extension.entryPoints.get().forEach { (alias, srcPath) ->
+                val absoluteSrc = project.file("src/main/js/$srcPath").absolutePath
+                esbuildArgs.add("$alias=$absoluteSrc")
+            }
+            esbuildArgs.addAll(
+                listOf(
+                    "--bundle",
+                    "--format=iife",
+                    "--minify",
+                    "--outdir=${outputDir.asFile.absolutePath}"
+                )
+            )
+            args.set(esbuildArgs)
+        }
+        project.tasks.named("processResources") {
+            dependsOn(bundleTask)
+        }
+    }
+
+    private fun configureSourceSets(project: Project) {
+        val sourceSets = project.extensions.getByType<SourceSetContainer>()
+        val generatedJsDir = project.file("src/main/generated/js")
+        val jsSourceDir = project.file("src/main/js")
+
+        sourceSets.named("main") {
+            resources.srcDir(generatedJsDir)
+        }
+        project.plugins.withId("idea") {
+            val idea = project.extensions.getByType<IdeaModel>()
+            with(idea.module) {
+                excludeDirs.remove(project.file("src/main/generated"))
+                excludeDirs.remove(generatedJsDir)
+                sourceDirs.add(jsSourceDir)
+                generatedSourceDirs.add(generatedJsDir)
+                sourceDirs.add(generatedJsDir)
+            }
+        }
+    }
+}

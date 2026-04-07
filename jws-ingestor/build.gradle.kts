@@ -13,17 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import xyz.jwizard.buildconfig.JwPolyglotJsPlugin
 import xyz.jwizard.buildconfig.JwServicePlugin
+import xyz.jwizard.buildconfig.jwPolyglotJs
 import xyz.jwizard.buildconfig.jwService
 
 apply<JwServicePlugin>()
+apply<JwPolyglotJsPlugin>()
 
 jwService {
     packageSuffix.set("ingestor")
     mainClass.set("JwsIngestorMain")
 }
 
+jwPolyglotJs {
+    entryPoints.put("yarn-parser.bundle", "node_modules/@yarnpkg/parsers/lib/index.js")
+    npmDependencies.add("@yarnpkg/parsers")
+}
+
 dependencies {
+    implementation(libs.graalvm.polyglot)
+    implementation(libs.graalvm.polyglot.js)
+    implementation(libs.gradle.tooling.api)
     implementation(project(":jwl-common"))
     implementation(project(":jwl-graph"))
     implementation(project(":jwl-http"))

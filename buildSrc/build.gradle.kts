@@ -20,7 +20,13 @@ plugins {
 }
 
 repositories {
+    gradlePluginPortal()
     mavenCentral()
+}
+
+dependencies {
+    implementation(libs.gradle.node.plugin)
+    implementation(gradleApi())
 }
 
 gradlePlugin {
@@ -28,6 +34,12 @@ gradlePlugin {
         create("jwServicePlugin") {
             id = "xyz.jwizard.jw-service"
             implementationClass = "xyz.jwizard.buildconfig.JwServicePlugin"
+        }
+    }
+    plugins {
+        create("jwPolyglotJs") {
+            id = "xyz.jwizard.jw-polyglot-js"
+            implementationClass = "xyz.jwizard.buildconfig.JwPolyglotJsPlugin"
         }
     }
 }
