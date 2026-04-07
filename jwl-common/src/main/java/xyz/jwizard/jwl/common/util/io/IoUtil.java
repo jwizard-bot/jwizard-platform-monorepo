@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
+import java.net.URL;
 import java.util.function.Predicate;
 
 public class IoUtil {
@@ -64,5 +65,20 @@ public class IoUtil {
                 closeAction.perform(r);
             }
         });
+    }
+
+    public static String removeTrailingSlash(String path) {
+        return path.startsWith("/") ? path.substring(1) : path;
+    }
+
+    // works safety between different modules without flat fat-jar structure
+    public static URL getRequiredResourceUrl(String rawPath) {
+        final String path = removeTrailingSlash(rawPath);
+        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        final URL resourceUrl = classLoader.getResource(path);
+        if (resourceUrl == null) {
+            throw new IllegalArgumentException("Unable to find file on classpath: " + rawPath);
+        }
+        return resourceUrl;
     }
 }

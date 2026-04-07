@@ -15,44 +15,37 @@
  */
 package xyz.jwizard.jws.ingestor;
 
-import jakarta.inject.Inject;
+import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Singleton;
 import xyz.jwizard.jwl.common.bootstrap.lifecycle.LifecycleHook;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
-import xyz.jwizard.jwl.common.serialization.json.JacksonSerializer;
 import xyz.jwizard.jwl.common.util.io.IoUtil;
-import xyz.jwizard.jwl.http.HttpServer;
-import xyz.jwizard.jwl.http.jetty.JettyHttpServer;
-
-import java.util.List;
-import java.util.Set;
+import xyz.jwizard.jws.ingestor.config.scripting.IngestorScript;
+import xyz.jwizard.jws.ingestor.scripting.JsEngine;
+import xyz.jwizard.jws.ingestor.scripting.graal.GraalJsEngine;
 
 @Singleton
-public class HttpServerLifecycle implements LifecycleHook {
-    private final HttpServer httpServer;
+class JsEngineLifecycle implements LifecycleHook {
+    private final GraalJsEngine jsEngine;
 
-    @Inject
-    HttpServerLifecycle(ComponentProvider componentProvider) {
-        httpServer = JettyHttpServer.builder()
-            .componentProvider(componentProvider)
-            .jsonSerializer(JacksonSerializer.createDefaultStrictMapper())
-            .ignoredPaths(Set.of())
-            .port(9092) /*TODO: incoming from config server*/
+    JsEngineLifecycle() {
+        jsEngine = GraalJsEngine.builder()
+            .withLibrary(IngestorScript.YARN_PARSER)
             .build();
     }
 
     @Override
     public void onStart(ComponentProvider componentProvider) {
-        httpServer.start();
+        jsEngine.start();
     }
 
     @Override
     public void onStop() {
-        IoUtil.closeQuietly(httpServer);
+        IoUtil.closeQuietly(jsEngine);
     }
 
-    @Override
-    public List<Class<? extends LifecycleHook>> dependsOn() {
-        return List.of(GraphServerLifecycle.class, JsEngineLifecycle.class);
+    @Produces
+    JsEngine jsEngine() {
+        return jsEngine;
     }
 }

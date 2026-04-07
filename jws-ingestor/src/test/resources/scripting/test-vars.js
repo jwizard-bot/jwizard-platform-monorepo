@@ -1,0 +1,2 @@
+injectedA + injectedB;
+

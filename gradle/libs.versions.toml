@@ -4,6 +4,7 @@ assertj = "3.27.7"
 clazzGraph = "4.8.184"
 guava = "33.5.0-jre"
 guice = "7.0.0"
+graalvm = "25.0.2"
 gradleNodePlugin = "7.1.0"
 gradleToolingApi = "9.2.1"
 hikariCP = "7.0.2"
@@ -29,6 +30,8 @@ assertj-core = { module = "org.assertj:assertj-core", version.ref = "assertj" }
 clazz-graph = { module = "io.github.classgraph:classgraph", version.ref = "clazzGraph" }
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
 guice = { module = "com.google.inject:guice", version.ref = "guice" }
+graalvm-polyglot = { module = "org.graalvm.polyglot:polyglot", version.ref = "graalvm" }
+graalvm-polyglot-js = { module = "org.graalvm.polyglot:js", version.ref = "graalvm" }
 gradle-node-plugin = { module = "com.github.node-gradle:gradle-node-plugin", version.ref = "gradleNodePlugin" }
 gradle-tooling-api = { module = "org.gradle:gradle-tooling-api", version.ref = "gradleToolingApi" }
 hikari-cp = { module = "com.zaxxer:HikariCP", version.ref = "hikariCP" }

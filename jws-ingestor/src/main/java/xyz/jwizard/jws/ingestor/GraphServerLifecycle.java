@@ -31,6 +31,8 @@ import xyz.jwizard.jwl.graph.neo4j.client.factory.DefaultNeo4jClientFactory;
 import xyz.jwizard.jwl.graph.neo4j.client.factory.Neo4jConfig;
 import xyz.jwizard.jwl.graph.neo4j.repository.Neo4jGraphRepository;
 
+import java.util.List;
+
 @Singleton
 class GraphServerLifecycle implements LifecycleHook {
     private final GraphServer<Neo4jConfig> graphServer;
@@ -57,6 +59,11 @@ class GraphServerLifecycle implements LifecycleHook {
     @Override
     public void onStop() {
         IoUtil.closeQuietly(graphServer);
+    }
+
+    @Override
+    public List<Class<? extends LifecycleHook>> dependsOn() {
+        return List.of(JsEngineLifecycle.class);
     }
 
     @Produces
