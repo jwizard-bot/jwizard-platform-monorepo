@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
+import java.io.IOException;
 import java.net.URL;
 import java.util.function.Predicate;
 
@@ -72,12 +73,12 @@ public class IoUtil {
     }
 
     // works safety between different modules without flat fat-jar structure
-    public static URL getRequiredResourceUrl(String rawPath) {
+    public static URL getRequiredResourceUrl(String rawPath) throws IOException {
         final String path = removeTrailingSlash(rawPath);
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final URL resourceUrl = classLoader.getResource(path);
         if (resourceUrl == null) {
-            throw new IllegalArgumentException("Unable to find file on classpath: " + rawPath);
+            throw new IOException("Unable to find file on classpath: " + rawPath);
         }
         return resourceUrl;
     }
