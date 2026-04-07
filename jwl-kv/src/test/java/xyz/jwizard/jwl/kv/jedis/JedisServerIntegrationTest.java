@@ -77,7 +77,7 @@ class JedisServerIntegrationTest {
         String actualValue = jedisServer.get(key, userId);
         // then
         assertEquals(expectedValue, actualValue,
-            "Value retrieved from Redis should match the one we set.");
+            "Value retrieved from Redis should match the one we set");
     }
 
     @Test
@@ -91,7 +91,7 @@ class JedisServerIntegrationTest {
         // then
         assertEquals("temporary-data", jedisServer.get(key));
         Thread.sleep((ttl * 2) * 1000 + ttl);
-        assertNull(jedisServer.get(key), "Key should have expired and been removed.");
+        assertNull(jedisServer.get(key), "Key should have expired and been removed");
     }
 
     @Test
@@ -103,14 +103,14 @@ class JedisServerIntegrationTest {
         final String expectedValue = "Data_to_be_deleted";
         jedisServer.set(key, expectedValue, userId);
         final String valueBeforeDeletion = jedisServer.get(key, userId);
-        assertNotNull(valueBeforeDeletion, "Key should exist before deletion.");
+        assertNotNull(valueBeforeDeletion, "Key should exist before deletion");
         assertEquals(expectedValue, valueBeforeDeletion,
-            "Retrieved value should match what was set.");
+            "Retrieved value should match what was set");
         // when
         jedisServer.del(key, userId);
         // then
         final String valueAfterDeletion = jedisServer.get(key, userId);
-        assertNull(valueAfterDeletion, "Key should return null after being deleted.");
+        assertNull(valueAfterDeletion, "Key should return null after being deleted");
     }
 
     @Test
@@ -118,7 +118,7 @@ class JedisServerIntegrationTest {
     void shouldPublishAndReceiveMessage() throws InterruptedException {
         // given
         final KvChannel channel = TestKvChannel.TEST_EVENTS;
-        final String expectedMessage = "Hello_PubSub!";
+        final String expectedMessage = "Hello_PubSub";
         final CountDownLatch messageReceivedLatch = new CountDownLatch(1);
         final AtomicReference<String> receivedMessageRef = new AtomicReference<>();
         // when
@@ -130,9 +130,9 @@ class JedisServerIntegrationTest {
         // when
         jedisServer.publish(channel, expectedMessage);
         final boolean messageArrived = messageReceivedLatch.await(3, TimeUnit.SECONDS);
-        assertTrue(messageArrived, "Did not receive Pub/Sub message within timeout.");
+        assertTrue(messageArrived, "Did not receive Pub/Sub message within timeout");
         assertEquals(expectedMessage, receivedMessageRef.get(),
-            "Received message does not match published message.");
+            "Received message does not match published message");
     }
 
     @Test
@@ -141,7 +141,7 @@ class JedisServerIntegrationTest {
         // given
         final KvChannel channel = TestKvChannel.USER_NOTIFICATIONS;
         final String userId = "jwizard_123";
-        final String expectedMessage = "You have a new alert!";
+        final String expectedMessage = "You have a new alert";
         final CountDownLatch latch = new CountDownLatch(1);
         final AtomicReference<String> receivedRef = new AtomicReference<>();
         // when
@@ -153,9 +153,9 @@ class JedisServerIntegrationTest {
         jedisServer.publish(channel, expectedMessage, userId);
         // then
         final boolean messageArrived = latch.await(3, TimeUnit.SECONDS);
-        assertTrue(messageArrived, "Did not receive parameterized Pub/Sub message within timeout.");
+        assertTrue(messageArrived, "Did not receive parameterized Pub/Sub message within timeout");
         assertEquals(expectedMessage, receivedRef.get(),
-            "Received message does not match published message.");
+            "Received message does not match published message");
     }
 
     @Test
@@ -176,9 +176,9 @@ class JedisServerIntegrationTest {
         jedisServer.publishBinary(channel, expectedPayload);
         // then
         final boolean messageArrived = latch.await(3, TimeUnit.SECONDS);
-        assertTrue(messageArrived, "Did not receive binary Pub/Sub message within timeout.");
-        assertNotNull(receivedRef.get(), "Received binary message should not be null.");
+        assertTrue(messageArrived, "Did not receive binary Pub/Sub message within timeout");
+        assertNotNull(receivedRef.get(), "Received binary message should not be null");
         assertArrayEquals(expectedPayload, receivedRef.get(),
-            "Received binary payload does not match the published payload.");
+            "Received binary payload does not match the published payload");
     }
 }

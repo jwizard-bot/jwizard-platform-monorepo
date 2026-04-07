@@ -86,7 +86,7 @@ public class SqlDatabaseRegistry {
                 final String dbName = config.databaseName();
                 if (finalClients.containsKey(dbName)) {
                     throw new IllegalArgumentException("Database '" + dbName +
-                        "' is already registered!");
+                        "' is already registered");
                 }
                 LOG.debug("Building SQL client for database: '{}'", dbName);
                 final GenericSqlClient sqlClient = factory.create(config, this.poolFactory);

@@ -24,7 +24,7 @@ public class NetworkUtil {
 
     public static HostPort parseHostPort(String address) {
         if (address == null || address.isBlank()) {
-            throw new IllegalArgumentException("Address string cannot be null or empty.");
+            throw new IllegalArgumentException("Address string cannot be null or empty");
         }
         final String[] parts = address.split(":");
         if (parts.length != 2) {

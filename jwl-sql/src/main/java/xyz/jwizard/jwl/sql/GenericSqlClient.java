@@ -39,7 +39,7 @@ public abstract class GenericSqlClient extends IdempotentService implements SqlC
     @Override
     protected final void onStart() {
         if (dataSource != null) {
-            LOG.warn("Database client for '{}' is already started.", config.databaseName());
+            LOG.warn("Database client for '{}' is already started", config.databaseName());
             return;
         }
         LOG.info("Starting database connection pool for: {}", config.databaseName());

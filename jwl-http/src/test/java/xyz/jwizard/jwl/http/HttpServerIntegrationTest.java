@@ -265,7 +265,7 @@ public class HttpServerIntegrationTest {
         final int countAfterSecondRequest = CacheSpyFilter.supportsCounter.get();
         // then
         assertThat(countAfterSecondRequest)
-            .withFailMessage("Filter supports() was called again! Cache is not working.")
+            .withFailMessage("Filter supports() was called again, cache is not working")
             .isEqualTo(1);
     }
 }

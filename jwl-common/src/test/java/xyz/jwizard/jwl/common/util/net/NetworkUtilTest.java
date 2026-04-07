@@ -29,9 +29,9 @@ public class NetworkUtilTest {
         // when
         final HostPort result = NetworkUtil.parseHostPort(address);
         // then
-        assertNotNull(result, "Parsed HostPort object should not be null.");
-        assertEquals("localhost", result.host(), "Parsed host should match the input.");
-        assertEquals(8080, result.port(), "Parsed port should match the input.");
+        assertNotNull(result, "Parsed HostPort object should not be null");
+        assertEquals("localhost", result.host(), "Parsed host should match the input");
+        assertEquals(8080, result.port(), "Parsed port should match the input");
     }
 
     @Test
@@ -42,9 +42,9 @@ public class NetworkUtilTest {
         // when
         final HostPort result = NetworkUtil.parseHostPort(address);
         // then
-        assertNotNull(result, "Parsed HostPort object should not be null.");
-        assertEquals("127.0.0.1", result.host(), "Host should be correctly trimmed.");
-        assertEquals(9090, result.port(), "Port should be correctly parsed after trimming.");
+        assertNotNull(result, "Parsed HostPort object should not be null");
+        assertEquals("127.0.0.1", result.host(), "Host should be correctly trimmed");
+        assertEquals(9090, result.port(), "Port should be correctly parsed after trimming");
     }
 
     @Test
@@ -53,8 +53,8 @@ public class NetworkUtilTest {
         // when & then
         final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
             () -> NetworkUtil.parseHostPort(null),
-            "Should throw IllegalArgumentException for null address.");
-        assertEquals("Address string cannot be null or empty.", exception.getMessage());
+            "Should throw IllegalArgumentException for null address");
+        assertEquals("Address string cannot be null or empty", exception.getMessage());
     }
 
     @Test
@@ -65,8 +65,8 @@ public class NetworkUtilTest {
         // when & then
         final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
             () -> NetworkUtil.parseHostPort(blankAddress),
-            "Should throw IllegalArgumentException for blank address.");
-        assertEquals("Address string cannot be null or empty.", exception.getMessage());
+            "Should throw IllegalArgumentException for blank address");
+        assertEquals("Address string cannot be null or empty", exception.getMessage());
     }
 
     @Test
@@ -77,9 +77,9 @@ public class NetworkUtilTest {
         // when & then
         final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
             () -> NetworkUtil.parseHostPort(address),
-            "Should throw exception when format does not contain a colon.");
+            "Should throw exception when format does not contain a colon");
         assertTrue(exception.getMessage().contains("Invalid address format"),
-            "Exception message should indicate invalid format.");
+            "Exception message should indicate invalid format");
     }
 
     @Test
@@ -90,9 +90,9 @@ public class NetworkUtilTest {
         // when & then
         final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
             () -> NetworkUtil.parseHostPort(address),
-            "Should throw exception when format contains more than one colon.");
+            "Should throw exception when format contains more than one colon");
         assertTrue(exception.getMessage().contains("Invalid address format"),
-            "Exception message should indicate invalid format.");
+            "Exception message should indicate invalid format");
     }
 
     @Test
@@ -103,11 +103,11 @@ public class NetworkUtilTest {
         // when & then
         final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
             () -> NetworkUtil.parseHostPort(address),
-            "Should throw exception when port part cannot be parsed to an integer.");
+            "Should throw exception when port part cannot be parsed to an integer");
         assertTrue(exception.getMessage().contains("Invalid port number"),
-            "Exception message should indicate invalid port number.");
-        assertNotNull(exception.getCause(), "Exception should contain the original cause.");
+            "Exception message should indicate invalid port number");
+        assertNotNull(exception.getCause(), "Exception should contain the original cause");
         assertEquals(NumberFormatException.class, exception.getCause().getClass(),
-            "Root cause should be NumberFormatException.");
+            "Root cause should be NumberFormatException");
     }
 }

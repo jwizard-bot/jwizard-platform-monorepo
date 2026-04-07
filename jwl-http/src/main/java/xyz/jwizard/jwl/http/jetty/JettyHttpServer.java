@@ -71,7 +71,7 @@ public class JettyHttpServer extends HttpServer {
 
     @Override
     public final int getLocalPort() {
-        Assert.state(connector != null && connector.isRunning(), "Connector is not running!");
+        Assert.state(connector != null && connector.isRunning(), "Connector is not running");
         return connector.getLocalPort();
     }
 

@@ -85,7 +85,7 @@ public class RabbitMqServerIntegrationTest {
         mockListenerRegistration(listener);
         startServer();
         // when
-        final byte[] payload = "Hello RabbitMQ!".getBytes(StandardCharsets.UTF_8);
+        final byte[] payload = "Hello RabbitMQ".getBytes(StandardCharsets.UTF_8);
         messagePublisher.publishToQueue("test.happy.queue", payload, SerializerFormat.RAW);
 
         // then
@@ -93,7 +93,7 @@ public class RabbitMqServerIntegrationTest {
         assertThat(received).as("Message should be received").isTrue();
         final String receivedStr = new String(listener.getReceivedMessage(),
             StandardCharsets.UTF_8);
-        assertThat(receivedStr).isEqualTo("Hello RabbitMQ!");
+        assertThat(receivedStr).isEqualTo("Hello RabbitMQ");
     }
 
     @Test
