@@ -31,6 +31,10 @@ allprojects {
 
     repositories {
         mavenCentral()
+        maven {
+            // for gradle tooling api
+            url = uri("https://repo.gradle.org/gradle/libs-releases")
+        }
     }
 }
 

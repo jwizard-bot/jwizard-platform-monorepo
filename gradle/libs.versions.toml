@@ -5,6 +5,7 @@ clazzGraph = "4.8.184"
 guava = "33.5.0-jre"
 guice = "7.0.0"
 gradleNodePlugin = "7.1.0"
+gradleToolingApi = "9.2.1"
 hikariCP = "7.0.2"
 jackson = "3.1.0"
 jakartaCdiApi = "5.0.0-M1"
@@ -29,6 +30,7 @@ clazz-graph = { module = "io.github.classgraph:classgraph", version.ref = "clazz
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
 guice = { module = "com.google.inject:guice", version.ref = "guice" }
 gradle-node-plugin = { module = "com.github.node-gradle:gradle-node-plugin", version.ref = "gradleNodePlugin" }
+gradle-tooling-api = { module = "org.gradle:gradle-tooling-api", version.ref = "gradleToolingApi" }
 hikari-cp = { module = "com.zaxxer:HikariCP", version.ref = "hikariCP" }
 jackson-databind = { module = "tools.jackson.core:jackson-databind", version.ref = "jackson" }
 jakarta-cdi-api = { module = "jakarta.enterprise:jakarta.enterprise.cdi-api", version.ref = "jakartaCdiApi" }
