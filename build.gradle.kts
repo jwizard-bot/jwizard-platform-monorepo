@@ -15,8 +15,8 @@
  */
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.tasks.testing.logging.TestLogEvent
+import xyz.jwizard.buildconfig.JwServiceExtension
 import xyz.jwizard.buildconfig.JwServicePlugin
-import xyz.jwizard.buildconfig.JwizardExtension
 import xyz.jwizard.buildconfig.getEnv
 import xyz.jwizard.buildconfig.getPluginId
 
@@ -74,7 +74,7 @@ subprojects {
             runtimeOnly(rootProject.libs.logback.classic)
         }
 
-        val jwizardExt = project.extensions.getByType<JwizardExtension>()
+        val jwizardExt = project.extensions.getByType<JwServiceExtension>()
         val mainClazz = jwizardExt.packageSuffix.zip(jwizardExt.mainClass) { suffix, clazz ->
             "${project.group}.jws.$suffix.$clazz"
         }
