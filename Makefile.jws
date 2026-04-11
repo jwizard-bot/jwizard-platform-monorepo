@@ -2,7 +2,7 @@ test-%:
 	./gradlew :jws-$*:test
 
 run-%:
-	./gradlew :jws-$*:run
+	./gradlew :jws-$*:run -q
 
 jar-%:
 	./gradlew :jws-$*:shadowJar
