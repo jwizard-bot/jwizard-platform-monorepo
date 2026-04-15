@@ -15,13 +15,14 @@
  */
 package xyz.jwizard.jwl.common.serialization.raw;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import xyz.jwizard.jwl.common.serialization.MessageSerializerException;
-import xyz.jwizard.jwl.common.serialization.SerializerFormat;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import xyz.jwizard.jwl.common.serialization.MessageSerializerException;
+import xyz.jwizard.jwl.common.serialization.SerializerFormat;
 
 class RawByteSerializerTest {
     private final RawByteSerializer serializer = RawByteSerializer.createDefault();

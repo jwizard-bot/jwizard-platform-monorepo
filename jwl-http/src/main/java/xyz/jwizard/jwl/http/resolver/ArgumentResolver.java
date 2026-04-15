@@ -15,12 +15,12 @@
  */
 package xyz.jwizard.jwl.http.resolver;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+
 import xyz.jwizard.jwl.http.HttpRequest;
 import xyz.jwizard.jwl.http.exception.RouteValidationException;
 import xyz.jwizard.jwl.http.route.MatchResult;
-
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 
 public interface ArgumentResolver {
     boolean supports(Parameter parameter);

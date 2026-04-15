@@ -15,12 +15,13 @@
  */
 package xyz.jwizard.jwl.http.filter;
 
-import jakarta.inject.Singleton;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import xyz.jwizard.jwl.http.HttpRequest;
 import xyz.jwizard.jwl.http.HttpResponse;
 import xyz.jwizard.jwl.http.route.Route;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import jakarta.inject.Singleton;
 
 @Singleton
 public class CacheSpyFilter implements HttpFilter {

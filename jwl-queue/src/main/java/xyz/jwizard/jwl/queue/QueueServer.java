@@ -15,6 +15,12 @@
  */
 package xyz.jwizard.jwl.queue;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import xyz.jwizard.jwl.common.bootstrap.CriticalBootstrapException;
 import xyz.jwizard.jwl.common.bootstrap.lifecycle.IdempotentService;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
@@ -24,12 +30,6 @@ import xyz.jwizard.jwl.common.util.Assert;
 import xyz.jwizard.jwl.common.util.CastUtil;
 import xyz.jwizard.jwl.common.util.net.HostPort;
 import xyz.jwizard.jwl.common.util.net.NetworkUtil;
-
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public abstract class QueueServer extends IdempotentService {
     protected final String username;

@@ -15,17 +15,18 @@
  */
 package xyz.jwizard.jwl.http.jetty;
 
+import java.util.concurrent.Executors;
+
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
+
 import xyz.jwizard.jwl.common.util.Assert;
 import xyz.jwizard.jwl.common.util.io.IoUtil;
 import xyz.jwizard.jwl.http.HttpRequestHandler;
 import xyz.jwizard.jwl.http.HttpServer;
 import xyz.jwizard.jwl.http.jetty.adapter.JettyHttpRequestHandlerAdapter;
-
-import java.util.concurrent.Executors;
 
 public class JettyHttpServer extends HttpServer {
     private static final long SHUTDOWN_TIMEOUT_MS = 10000;

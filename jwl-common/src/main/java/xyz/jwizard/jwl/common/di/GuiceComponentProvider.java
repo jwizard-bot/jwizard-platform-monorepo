@@ -15,17 +15,19 @@
  */
 package xyz.jwizard.jwl.common.di;
 
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
-import jakarta.inject.Inject;
-import xyz.jwizard.jwl.common.reflect.TypeReference;
-import xyz.jwizard.jwl.common.util.CastUtil;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.stream.Collectors;
+
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
+
+import xyz.jwizard.jwl.common.reflect.TypeReference;
+import xyz.jwizard.jwl.common.util.CastUtil;
+
+import jakarta.inject.Inject;
 
 public class GuiceComponentProvider implements ComponentProvider {
     private final Injector injector;

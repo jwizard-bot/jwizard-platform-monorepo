@@ -17,6 +17,7 @@ package xyz.jwizard.jwl.common.di;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+
 import xyz.jwizard.jwl.common.reflect.ClassScanner;
 
 public class ApplicationContext {

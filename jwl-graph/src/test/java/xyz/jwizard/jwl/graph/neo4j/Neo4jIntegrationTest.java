@@ -15,6 +15,11 @@
  */
 package xyz.jwizard.jwl.graph.neo4j;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.List;
+import java.util.Map;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,6 +28,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.neo4j.Neo4jContainer;
 import org.testcontainers.utility.DockerImageName;
+
 import xyz.jwizard.jwl.common.util.io.IoUtil;
 import xyz.jwizard.jwl.common.util.net.HostPort;
 import xyz.jwizard.jwl.graph.GraphServer;
@@ -33,11 +39,6 @@ import xyz.jwizard.jwl.graph.neo4j.client.factory.DefaultNeo4jClientFactory;
 import xyz.jwizard.jwl.graph.neo4j.client.factory.Neo4jConfig;
 import xyz.jwizard.jwl.graph.neo4j.repository.Neo4jGraphRepository;
 import xyz.jwizard.jwl.graph.repository.GraphRepository;
-
-import java.util.List;
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @Testcontainers
 class Neo4jIntegrationTest {

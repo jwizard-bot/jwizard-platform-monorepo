@@ -15,13 +15,13 @@
  */
 package xyz.jwizard.jwl.common.util.io;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.URL;
 import java.util.function.Predicate;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IoUtil {
     private static final Logger LOG = LoggerFactory.getLogger(IoUtil.class);

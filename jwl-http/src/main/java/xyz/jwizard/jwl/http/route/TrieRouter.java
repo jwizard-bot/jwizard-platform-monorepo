@@ -15,13 +15,13 @@
  */
 package xyz.jwizard.jwl.http.route;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TrieRouter implements Router {
     private static final Logger LOG = LoggerFactory.getLogger(TrieRouter.class);

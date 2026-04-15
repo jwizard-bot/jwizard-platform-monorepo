@@ -15,17 +15,18 @@
  */
 package xyz.jwizard.jwl.graph.neo4j.client;
 
+import java.util.List;
+import java.util.Map;
+
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Session;
 import org.neo4j.driver.types.MapAccessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import xyz.jwizard.jwl.common.util.io.IoUtil;
 import xyz.jwizard.jwl.graph.GraphDatabaseException;
 import xyz.jwizard.jwl.graph.client.GraphClient;
-
-import java.util.List;
-import java.util.Map;
 
 public class Neo4jClient implements GraphClient {
     private static final Logger LOG = LoggerFactory.getLogger(Neo4jClient.class);

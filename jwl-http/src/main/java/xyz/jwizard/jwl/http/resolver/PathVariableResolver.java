@@ -15,6 +15,10 @@
  */
 package xyz.jwizard.jwl.http.resolver;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.Set;
+
 import xyz.jwizard.jwl.common.util.PathUtil;
 import xyz.jwizard.jwl.http.HttpRequest;
 import xyz.jwizard.jwl.http.annotation.HttpController;
@@ -23,10 +27,6 @@ import xyz.jwizard.jwl.http.annotation.RequestMapping;
 import xyz.jwizard.jwl.http.exception.RouteValidationException;
 import xyz.jwizard.jwl.http.route.MatchResult;
 import xyz.jwizard.jwl.http.route.Router;
-
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.util.Set;
 
 public class PathVariableResolver implements ArgumentResolver {
     private final Router router;

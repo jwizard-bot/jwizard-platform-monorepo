@@ -15,20 +15,23 @@
  */
 package xyz.jwizard.jwl.common.di;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
-import jakarta.enterprise.inject.Produces;
-import jakarta.inject.Singleton;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import xyz.jwizard.jwl.common.reflect.ClassScanner;
 import xyz.jwizard.jwl.common.util.CastUtil;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.Set;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Singleton;
 
 class AutoScanModule extends AbstractModule {
     private static final Logger LOG = LoggerFactory.getLogger(AutoScanModule.class);

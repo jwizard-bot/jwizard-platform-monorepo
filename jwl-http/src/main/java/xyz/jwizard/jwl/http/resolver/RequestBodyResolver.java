@@ -15,17 +15,17 @@
  */
 package xyz.jwizard.jwl.http.resolver;
 
+import java.io.InputStream;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.Arrays;
+
 import xyz.jwizard.jwl.common.serialization.json.JsonSerializer;
 import xyz.jwizard.jwl.http.HttpRequest;
 import xyz.jwizard.jwl.http.annotation.Body;
 import xyz.jwizard.jwl.http.exception.RouteValidationException;
 import xyz.jwizard.jwl.http.route.MatchResult;
 import xyz.jwizard.jwl.http.validation.ValidationHandler;
-
-import java.io.InputStream;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.util.Arrays;
 
 public class RequestBodyResolver implements ArgumentResolver {
     private final JsonSerializer jsonSerializer;

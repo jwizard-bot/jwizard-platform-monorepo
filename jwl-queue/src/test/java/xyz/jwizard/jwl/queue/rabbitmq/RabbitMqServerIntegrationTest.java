@@ -15,10 +15,16 @@
  */
 package xyz.jwizard.jwl.queue.rabbitmq;
 
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.GetResponse;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -27,6 +33,12 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.rabbitmq.RabbitMQContainer;
 import org.testcontainers.utility.DockerImageName;
+
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.GetResponse;
+
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.reflect.TypeReference;
 import xyz.jwizard.jwl.common.serialization.SerializerFormat;
@@ -36,18 +48,14 @@ import xyz.jwizard.jwl.common.serialization.raw.RawByteSerializer;
 import xyz.jwizard.jwl.common.util.CastUtil;
 import xyz.jwizard.jwl.common.util.io.IoUtil;
 import xyz.jwizard.jwl.common.util.net.HostPort;
-import xyz.jwizard.jwl.queue.*;
+import xyz.jwizard.jwl.queue.FailingListener;
+import xyz.jwizard.jwl.queue.HappyPathListener;
+import xyz.jwizard.jwl.queue.JsonCommandListener;
+import xyz.jwizard.jwl.queue.MessagePublisher;
+import xyz.jwizard.jwl.queue.PlayTrackCommand;
+import xyz.jwizard.jwl.queue.QueueListener;
+import xyz.jwizard.jwl.queue.QueueServer;
 import xyz.jwizard.jwl.queue.rabbitmq.connector.ConnectorType;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @Testcontainers
 public class RabbitMqServerIntegrationTest {

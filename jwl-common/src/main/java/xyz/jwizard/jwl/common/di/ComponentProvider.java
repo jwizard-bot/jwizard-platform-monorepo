@@ -15,10 +15,10 @@
  */
 package xyz.jwizard.jwl.common.di;
 
-import xyz.jwizard.jwl.common.reflect.TypeReference;
-
 import java.lang.annotation.Annotation;
 import java.util.Collection;
+
+import xyz.jwizard.jwl.common.reflect.TypeReference;
 
 public interface ComponentProvider {
     <T> T getInstance(Class<T> clazz);

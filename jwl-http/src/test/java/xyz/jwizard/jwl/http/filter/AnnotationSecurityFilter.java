@@ -15,14 +15,15 @@
  */
 package xyz.jwizard.jwl.http.filter;
 
-import jakarta.inject.Singleton;
+import static xyz.jwizard.jwl.http.HttpServerIntegrationTest.TEST_PASSWORD;
+
 import xyz.jwizard.jwl.http.HttpRequest;
 import xyz.jwizard.jwl.http.HttpResponse;
 import xyz.jwizard.jwl.http.HttpStatus;
 import xyz.jwizard.jwl.http.header.TestHttpHeaderName;
 import xyz.jwizard.jwl.http.header.TestHttpHeaderValue;
 
-import static xyz.jwizard.jwl.http.HttpServerIntegrationTest.TEST_PASSWORD;
+import jakarta.inject.Singleton;
 
 @Singleton
 public class AnnotationSecurityFilter extends SecureRouteFilter {
@@ -41,5 +42,5 @@ public class AnnotationSecurityFilter extends SecureRouteFilter {
     public int order() {
         return -50;
     }
-
 }
+

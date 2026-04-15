@@ -15,11 +15,11 @@
  */
 package xyz.jwizard.jwl.http.resolver;
 
+import java.lang.reflect.Parameter;
+
 import xyz.jwizard.jwl.http.HttpRequest;
 import xyz.jwizard.jwl.http.annotation.RequestParam;
 import xyz.jwizard.jwl.http.route.MatchResult;
-
-import java.lang.reflect.Parameter;
 
 public class RequestParamResolver implements ArgumentResolver {
     @Override

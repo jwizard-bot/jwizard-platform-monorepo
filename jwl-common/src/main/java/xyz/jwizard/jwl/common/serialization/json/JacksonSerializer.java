@@ -15,14 +15,15 @@
  */
 package xyz.jwizard.jwl.common.serialization.json;
 
+import java.io.InputStream;
+
+import xyz.jwizard.jwl.common.serialization.MessageSerializerException;
+import xyz.jwizard.jwl.common.serialization.SerializerFormat;
+
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
-import xyz.jwizard.jwl.common.serialization.MessageSerializerException;
-import xyz.jwizard.jwl.common.serialization.SerializerFormat;
-
-import java.io.InputStream;
 
 public class JacksonSerializer implements JsonSerializer {
     private final ObjectMapper objectMapper;

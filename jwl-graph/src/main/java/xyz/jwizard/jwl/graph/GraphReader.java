@@ -15,10 +15,10 @@
  */
 package xyz.jwizard.jwl.graph;
 
+import java.util.List;
+
 import xyz.jwizard.jwl.graph.model.GraphEdge;
 import xyz.jwizard.jwl.graph.model.GraphNode;
-
-import java.util.List;
 
 public interface GraphReader {
     List<GraphNode> findAllNodes(String label);

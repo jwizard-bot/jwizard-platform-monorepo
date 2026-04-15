@@ -15,12 +15,6 @@
  */
 package xyz.jwizard.jwl.sql.jdbc;
 
-import xyz.jwizard.jwl.sql.GenericSqlClient;
-import xyz.jwizard.jwl.sql.SqlDatabaseException;
-import xyz.jwizard.jwl.sql.SqlRowMapper;
-import xyz.jwizard.jwl.sql.config.SqlDatabaseConfig;
-import xyz.jwizard.jwl.sql.pool.ConnectionPoolFactory;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -29,6 +23,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+
+import xyz.jwizard.jwl.sql.GenericSqlClient;
+import xyz.jwizard.jwl.sql.SqlDatabaseException;
+import xyz.jwizard.jwl.sql.SqlRowMapper;
+import xyz.jwizard.jwl.sql.config.SqlDatabaseConfig;
+import xyz.jwizard.jwl.sql.pool.ConnectionPoolFactory;
 
 public class JdbcSqlClient extends GenericSqlClient {
     public JdbcSqlClient(SqlDatabaseConfig config, ConnectionPoolFactory poolFactory) {

@@ -15,9 +15,9 @@
  */
 package xyz.jwizard.jwl.kv;
 
-import xyz.jwizard.jwl.kv.key.KvChannel;
-
 import java.util.function.Consumer;
+
+import xyz.jwizard.jwl.kv.key.KvChannel;
 
 public interface PubSubBroadcaster {
     void publish(KvChannel channel, String message, Object... channelParams);

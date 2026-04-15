@@ -15,8 +15,16 @@
  */
 package xyz.jwizard.jwl.common.bootstrap;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import xyz.jwizard.jwl.common.bootstrap.lifecycle.KahnLifecycleGraph;
 import xyz.jwizard.jwl.common.bootstrap.lifecycle.LifecycleGraph;
 import xyz.jwizard.jwl.common.bootstrap.lifecycle.LifecycleHook;
@@ -25,9 +33,6 @@ import xyz.jwizard.jwl.common.reflect.ClassGraphScanner;
 import xyz.jwizard.jwl.common.reflect.ClassScanner;
 import xyz.jwizard.jwl.common.util.ArrayUtil;
 import xyz.jwizard.jwl.common.util.io.IoUtil;
-
-import java.util.*;
-import java.util.concurrent.CountDownLatch;
 
 public class DefaultBootstrapper {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultBootstrapper.class);

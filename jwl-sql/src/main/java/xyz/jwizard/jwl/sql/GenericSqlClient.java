@@ -15,13 +15,13 @@
  */
 package xyz.jwizard.jwl.sql;
 
+import javax.sql.DataSource;
+
 import xyz.jwizard.jwl.common.bootstrap.lifecycle.IdempotentService;
 import xyz.jwizard.jwl.common.util.io.IoUtil;
 import xyz.jwizard.jwl.sql.config.SqlDatabaseConfig;
 import xyz.jwizard.jwl.sql.pool.ConnectionPoolFactory;
 import xyz.jwizard.jwl.sql.pool.ManagedDataSource;
-
-import javax.sql.DataSource;
 
 public abstract class GenericSqlClient extends IdempotentService implements SqlClient,
     SqlClientLifecycle {

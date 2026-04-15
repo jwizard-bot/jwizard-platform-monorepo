@@ -15,9 +15,15 @@
  */
 package xyz.jwizard.jwl.http;
 
-import xyz.jwizard.jwl.http.annotation.*;
-
 import java.util.Map;
+
+import xyz.jwizard.jwl.http.annotation.Body;
+import xyz.jwizard.jwl.http.annotation.HttpController;
+import xyz.jwizard.jwl.http.annotation.HttpMethod;
+import xyz.jwizard.jwl.http.annotation.PathVariable;
+import xyz.jwizard.jwl.http.annotation.RequestMapping;
+import xyz.jwizard.jwl.http.annotation.RequestParam;
+import xyz.jwizard.jwl.http.annotation.SecuredRoute;
 
 @HttpController
 class IntegrationTestController {

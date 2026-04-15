@@ -15,9 +15,9 @@
  */
 package xyz.jwizard.jwl.queue;
 
-import xyz.jwizard.jwl.common.serialization.SerializerFormat;
-
 import java.util.concurrent.CountDownLatch;
+
+import xyz.jwizard.jwl.common.serialization.SerializerFormat;
 
 public class HappyPathListener implements QueueListener<byte[]> {
     private final CountDownLatch latch = new CountDownLatch(1);

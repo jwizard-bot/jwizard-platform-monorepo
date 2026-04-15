@@ -15,8 +15,8 @@
  */
 package xyz.jwizard.jws.api;
 
-import jakarta.enterprise.inject.Produces;
-import jakarta.inject.Singleton;
+import java.util.Set;
+
 import xyz.jwizard.jwl.common.bootstrap.lifecycle.LifecycleHook;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.util.io.IoUtil;
@@ -26,7 +26,8 @@ import xyz.jwizard.jwl.kv.PubSubBroadcaster;
 import xyz.jwizard.jwl.kv.jedis.JedisServer;
 import xyz.jwizard.jwl.kv.jedis.factory.FactoryType;
 
-import java.util.Set;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Singleton;
 
 @Singleton
 class KvServerLifecycle implements LifecycleHook {

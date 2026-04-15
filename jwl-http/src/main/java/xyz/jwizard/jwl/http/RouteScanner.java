@@ -15,8 +15,13 @@
  */
 package xyz.jwizard.jwl.http;
 
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.util.PathUtil;
 import xyz.jwizard.jwl.http.annotation.HttpController;
@@ -25,10 +30,6 @@ import xyz.jwizard.jwl.http.annotation.RequestMapping;
 import xyz.jwizard.jwl.http.resolver.ArgumentResolver;
 import xyz.jwizard.jwl.http.route.Route;
 import xyz.jwizard.jwl.http.route.Router;
-
-import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.Set;
 
 class RouteScanner {
     private static final Logger LOG = LoggerFactory.getLogger(RouteScanner.class);

@@ -15,18 +15,21 @@
  */
 package xyz.jwizard.jwl.sql.registry;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import xyz.jwizard.jwl.sql.SqlClient;
 import xyz.jwizard.jwl.sql.config.SqlDatabaseConfig;
 import xyz.jwizard.jwl.sql.config.SqlDatabaseDialect;
 import xyz.jwizard.jwl.sql.jdbc.JdbcSqlClient;
 import xyz.jwizard.jwl.sql.pool.ConnectionPoolFactory;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class SqlDatabaseRegistryTest {

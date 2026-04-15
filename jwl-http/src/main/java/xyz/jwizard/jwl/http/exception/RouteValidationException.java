@@ -15,9 +15,9 @@
  */
 package xyz.jwizard.jwl.http.exception;
 
-import xyz.jwizard.jwl.common.bootstrap.CriticalBootstrapException;
-
 import java.lang.reflect.Method;
+
+import xyz.jwizard.jwl.common.bootstrap.CriticalBootstrapException;
 
 public class RouteValidationException extends CriticalBootstrapException {
     public RouteValidationException(Method method, String details) {

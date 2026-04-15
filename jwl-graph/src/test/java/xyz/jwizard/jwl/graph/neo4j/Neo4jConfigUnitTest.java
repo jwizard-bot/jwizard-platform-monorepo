@@ -15,14 +15,15 @@
  */
 package xyz.jwizard.jwl.graph.neo4j;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
 import xyz.jwizard.jwl.common.bootstrap.CriticalBootstrapException;
 import xyz.jwizard.jwl.common.util.net.HostPort;
 import xyz.jwizard.jwl.graph.neo4j.client.factory.Neo4jConfig;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 class Neo4jConfigUnitTest {
     @Test

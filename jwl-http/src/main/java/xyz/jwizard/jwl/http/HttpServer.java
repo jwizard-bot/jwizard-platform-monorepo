@@ -15,6 +15,12 @@
  */
 package xyz.jwizard.jwl.http;
 
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import xyz.jwizard.jwl.common.bootstrap.lifecycle.IdempotentService;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.serialization.json.JsonSerializer;
@@ -35,13 +41,11 @@ import xyz.jwizard.jwl.http.route.Router;
 import xyz.jwizard.jwl.http.route.TrieRouter;
 import xyz.jwizard.jwl.http.validation.AnnotationValidator;
 import xyz.jwizard.jwl.http.validation.ValidationHandler;
-import xyz.jwizard.jwl.http.writer.*;
-
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import xyz.jwizard.jwl.http.writer.JsonResponseWriter;
+import xyz.jwizard.jwl.http.writer.ResponseEntityResponseWriter;
+import xyz.jwizard.jwl.http.writer.ResponseWriter;
+import xyz.jwizard.jwl.http.writer.StringResponseWriter;
+import xyz.jwizard.jwl.http.writer.VoidResponseWriter;
 
 public abstract class HttpServer extends IdempotentService {
     protected final ComponentProvider componentProvider;

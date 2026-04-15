@@ -15,10 +15,12 @@
  */
 package xyz.jwizard.jwl.sql.pool.hikaricp;
 
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
 import xyz.jwizard.jwl.sql.config.SqlDatabaseConfig;
 import xyz.jwizard.jwl.sql.pool.ConnectionPoolFactory;
 import xyz.jwizard.jwl.sql.pool.ManagedDataSource;

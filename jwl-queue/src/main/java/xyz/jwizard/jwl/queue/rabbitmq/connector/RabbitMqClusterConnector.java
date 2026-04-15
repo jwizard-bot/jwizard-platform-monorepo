@@ -15,12 +15,13 @@
  */
 package xyz.jwizard.jwl.queue.rabbitmq.connector;
 
+import java.util.Set;
+
 import com.rabbitmq.client.Address;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
-import xyz.jwizard.jwl.common.util.net.HostPort;
 
-import java.util.Set;
+import xyz.jwizard.jwl.common.util.net.HostPort;
 
 public class RabbitMqClusterConnector implements RabbitMqConnector {
     @Override

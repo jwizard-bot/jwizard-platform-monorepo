@@ -15,14 +15,15 @@
  */
 package xyz.jwizard.jwl.common.serialization.json;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import xyz.jwizard.jwl.common.serialization.SerializerFormat;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.io.ByteArrayInputStream;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import xyz.jwizard.jwl.common.serialization.SerializerFormat;
 
 class JacksonSerializerTest {
     private final JacksonSerializer serializer = JacksonSerializer.createDefaultStrictMapper();

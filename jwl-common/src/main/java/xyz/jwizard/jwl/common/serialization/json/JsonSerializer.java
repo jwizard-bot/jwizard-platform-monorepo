@@ -15,9 +15,9 @@
  */
 package xyz.jwizard.jwl.common.serialization.json;
 
-import xyz.jwizard.jwl.common.serialization.MessageSerializer;
-
 import java.io.InputStream;
+
+import xyz.jwizard.jwl.common.serialization.MessageSerializer;
 
 public interface JsonSerializer extends MessageSerializer {
     // raw <-> data

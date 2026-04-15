@@ -15,15 +15,16 @@
  */
 package xyz.jwizard.jwl.common.bootstrap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import xyz.jwizard.jwl.common.bootstrap.lifecycle.LifecycleHook;
-import xyz.jwizard.jwl.common.util.io.IoUtil;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import xyz.jwizard.jwl.common.bootstrap.lifecycle.LifecycleHook;
+import xyz.jwizard.jwl.common.util.io.IoUtil;
 
 public class GracefulShutdownHook extends Thread {
     private static final Logger LOG = LoggerFactory.getLogger(GracefulShutdownHook.class);

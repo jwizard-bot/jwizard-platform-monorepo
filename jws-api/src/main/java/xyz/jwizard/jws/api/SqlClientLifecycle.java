@@ -15,7 +15,8 @@
  */
 package xyz.jwizard.jws.api;
 
-import jakarta.inject.Singleton;
+import java.util.List;
+
 import xyz.jwizard.jwl.common.bootstrap.lifecycle.LifecycleHook;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.sql.config.SqlDatabaseConfig;
@@ -24,7 +25,7 @@ import xyz.jwizard.jwl.sql.jdbc.JdbcSqlClient;
 import xyz.jwizard.jwl.sql.pool.hikaricp.HikariConnectionPoolFactory;
 import xyz.jwizard.jwl.sql.registry.SqlDatabaseRegistry;
 
-import java.util.List;
+import jakarta.inject.Singleton;
 
 @Singleton
 class SqlClientLifecycle implements LifecycleHook {

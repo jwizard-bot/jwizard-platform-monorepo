@@ -15,14 +15,15 @@
  */
 package xyz.jwizard.jws.ingestor;
 
-import jakarta.enterprise.inject.Produces;
-import jakarta.inject.Singleton;
 import xyz.jwizard.jwl.common.bootstrap.lifecycle.LifecycleHook;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.util.io.IoUtil;
 import xyz.jwizard.jws.ingestor.config.scripting.IngestorScript;
 import xyz.jwizard.jws.ingestor.scripting.JsEngine;
 import xyz.jwizard.jws.ingestor.scripting.graal.GraalJsEngine;
+
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Singleton;
 
 @Singleton
 class JsEngineLifecycle implements LifecycleHook {

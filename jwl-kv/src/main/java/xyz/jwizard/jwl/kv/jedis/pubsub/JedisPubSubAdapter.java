@@ -15,11 +15,12 @@
  */
 package xyz.jwizard.jwl.kv.jedis.pubsub;
 
+import java.util.function.Consumer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import redis.clients.jedis.JedisPubSub;
 
-import java.util.function.Consumer;
+import redis.clients.jedis.JedisPubSub;
 
 public class JedisPubSubAdapter extends JedisPubSub {
     private static final Logger LOG = LoggerFactory.getLogger(JedisPubSubAdapter.class);

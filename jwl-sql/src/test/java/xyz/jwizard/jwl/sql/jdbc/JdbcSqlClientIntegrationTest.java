@@ -15,6 +15,14 @@
  */
 package xyz.jwizard.jwl.sql.jdbc;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -23,20 +31,13 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.postgresql.PostgreSQLContainer;
 import org.testcontainers.utility.DockerImageName;
+
 import xyz.jwizard.jwl.common.util.io.IoUtil;
 import xyz.jwizard.jwl.sql.SqlClient;
 import xyz.jwizard.jwl.sql.config.SqlDatabaseConfig;
 import xyz.jwizard.jwl.sql.config.SqlDatabaseDialect;
 import xyz.jwizard.jwl.sql.pool.hikaricp.HikariConnectionPoolFactory;
 import xyz.jwizard.jwl.sql.registry.SqlDatabaseRegistry;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Testcontainers
 class JdbcSqlClientIntegrationTest {

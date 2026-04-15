@@ -15,8 +15,14 @@
  */
 package xyz.jwizard.jwl.sql.registry;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import xyz.jwizard.jwl.common.util.Assert;
 import xyz.jwizard.jwl.sql.GenericSqlClient;
 import xyz.jwizard.jwl.sql.SqlClient;
@@ -24,11 +30,6 @@ import xyz.jwizard.jwl.sql.SqlClientFactory;
 import xyz.jwizard.jwl.sql.SqlClientLifecycle;
 import xyz.jwizard.jwl.sql.config.SqlDatabaseConfig;
 import xyz.jwizard.jwl.sql.pool.ConnectionPoolFactory;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class SqlDatabaseRegistry {
     private static final Logger LOG = LoggerFactory.getLogger(SqlDatabaseRegistry.class);

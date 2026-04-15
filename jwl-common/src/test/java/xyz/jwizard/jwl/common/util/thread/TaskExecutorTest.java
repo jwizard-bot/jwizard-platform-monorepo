@@ -15,17 +15,18 @@
  */
 package xyz.jwizard.jwl.common.util.thread;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import xyz.jwizard.jwl.common.util.io.IoUtil;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import xyz.jwizard.jwl.common.util.io.IoUtil;
 
 class TaskExecutorTest {
     private TaskExecutor executor;

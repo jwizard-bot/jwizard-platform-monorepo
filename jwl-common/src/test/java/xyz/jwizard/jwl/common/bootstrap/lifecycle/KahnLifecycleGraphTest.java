@@ -15,15 +15,19 @@
  */
 package xyz.jwizard.jwl.common.bootstrap.lifecycle;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import xyz.jwizard.jwl.common.bootstrap.CriticalBootstrapException;
-import xyz.jwizard.jwl.common.di.ComponentProvider;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import xyz.jwizard.jwl.common.bootstrap.CriticalBootstrapException;
+import xyz.jwizard.jwl.common.di.ComponentProvider;
 
 class KahnLifecycleGraphTest {
     private KahnLifecycleGraph graph;

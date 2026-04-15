@@ -15,7 +15,17 @@
  */
 package xyz.jwizard.jwl.kv.jedis;
 
-import com.redis.testcontainers.RedisContainer;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,6 +33,9 @@ import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
+
+import com.redis.testcontainers.RedisContainer;
+
 import xyz.jwizard.jwl.common.util.io.IoUtil;
 import xyz.jwizard.jwl.common.util.net.HostPort;
 import xyz.jwizard.jwl.kv.jedis.factory.FactoryType;
@@ -30,13 +43,6 @@ import xyz.jwizard.jwl.kv.key.KvChannel;
 import xyz.jwizard.jwl.kv.key.KvKey;
 import xyz.jwizard.jwl.kv.key.TestKvChannel;
 import xyz.jwizard.jwl.kv.key.TestKvKey;
-
-import java.util.Set;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @Testcontainers
 class JedisServerIntegrationTest {

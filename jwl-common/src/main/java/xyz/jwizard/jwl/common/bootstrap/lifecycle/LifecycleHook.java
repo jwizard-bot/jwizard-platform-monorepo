@@ -15,10 +15,10 @@
  */
 package xyz.jwizard.jwl.common.bootstrap.lifecycle;
 
-import xyz.jwizard.jwl.common.di.ComponentProvider;
-
 import java.util.Collections;
 import java.util.List;
+
+import xyz.jwizard.jwl.common.di.ComponentProvider;
 
 public interface LifecycleHook {
     // defines hook classes witch must be started before this hook

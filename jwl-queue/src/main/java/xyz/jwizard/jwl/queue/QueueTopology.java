@@ -15,11 +15,11 @@
  */
 package xyz.jwizard.jwl.queue;
 
-import xyz.jwizard.jwl.queue.exchange.DefaultExchangeType;
-import xyz.jwizard.jwl.queue.exchange.ExchangeType;
-
 import java.util.Collections;
 import java.util.Map;
+
+import xyz.jwizard.jwl.queue.exchange.DefaultExchangeType;
+import xyz.jwizard.jwl.queue.exchange.ExchangeType;
 
 public record QueueTopology(
     boolean durable, // whether the queue should survive a broker restart (saved to disk)

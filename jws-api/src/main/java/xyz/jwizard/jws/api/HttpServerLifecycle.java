@@ -15,8 +15,9 @@
  */
 package xyz.jwizard.jws.api;
 
-import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
+import java.util.List;
+import java.util.Set;
+
 import xyz.jwizard.jwl.common.bootstrap.lifecycle.LifecycleHook;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.serialization.json.JacksonSerializer;
@@ -24,8 +25,8 @@ import xyz.jwizard.jwl.common.util.io.IoUtil;
 import xyz.jwizard.jwl.http.HttpServer;
 import xyz.jwizard.jwl.http.jetty.JettyHttpServer;
 
-import java.util.List;
-import java.util.Set;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 @Singleton
 class HttpServerLifecycle implements LifecycleHook {

@@ -15,9 +15,8 @@
  */
 package xyz.jwizard.jws.gateway;
 
-import jakarta.enterprise.inject.Produces;
-import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
+import java.util.Set;
+
 import xyz.jwizard.jwl.common.bootstrap.lifecycle.LifecycleHook;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.serialization.SerializerRegistry;
@@ -29,7 +28,9 @@ import xyz.jwizard.jwl.queue.QueueServer;
 import xyz.jwizard.jwl.queue.rabbitmq.RabbitMqServer;
 import xyz.jwizard.jwl.queue.rabbitmq.connector.ConnectorType;
 
-import java.util.Set;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 @Singleton
 class QueueServerLifecycle implements LifecycleHook {

@@ -15,14 +15,15 @@
  */
 package xyz.jwizard.jwl.http.jetty.adapter;
 
+import java.io.InputStream;
+
 import org.eclipse.jetty.io.Content;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.util.MultiMap;
 import org.eclipse.jetty.util.UrlEncoded;
+
 import xyz.jwizard.jwl.http.HttpRequest;
 import xyz.jwizard.jwl.http.header.HttpHeaderName;
-
-import java.io.InputStream;
 
 public class JettyHttpRequestAdapter implements HttpRequest {
     private final Request request;

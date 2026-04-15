@@ -15,6 +15,9 @@
  */
 package xyz.jwizard.jwl.graph;
 
+import java.net.URI;
+import java.util.function.Function;
+
 import xyz.jwizard.jwl.common.bootstrap.lifecycle.IdempotentService;
 import xyz.jwizard.jwl.common.util.Assert;
 import xyz.jwizard.jwl.common.util.CastUtil;
@@ -24,9 +27,6 @@ import xyz.jwizard.jwl.graph.client.GraphClient;
 import xyz.jwizard.jwl.graph.client.factory.GraphClientFactory;
 import xyz.jwizard.jwl.graph.client.factory.GraphConfig;
 import xyz.jwizard.jwl.graph.repository.GraphRepository;
-
-import java.net.URI;
-import java.util.function.Function;
 
 public abstract class GraphServer<C extends GraphConfig> extends IdempotentService {
     protected final URI uri;

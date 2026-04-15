@@ -15,14 +15,15 @@
  */
 package xyz.jwizard.jwl.http.writer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import xyz.jwizard.jwl.http.HttpResponse;
-import xyz.jwizard.jwl.http.ResponseEntity;
-
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import xyz.jwizard.jwl.http.HttpResponse;
+import xyz.jwizard.jwl.http.ResponseEntity;
 
 // implements cache, O(1) complexity
 public class ResponseEntityResponseWriter implements ResponseWriter {

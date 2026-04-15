@@ -15,10 +15,10 @@
  */
 package xyz.jwizard.jwl.http.validation;
 
-import xyz.jwizard.jwl.common.util.CastUtil;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+
+import xyz.jwizard.jwl.common.util.CastUtil;
 
 class ConstraintStep implements ValidationStep {
     private final Field field;

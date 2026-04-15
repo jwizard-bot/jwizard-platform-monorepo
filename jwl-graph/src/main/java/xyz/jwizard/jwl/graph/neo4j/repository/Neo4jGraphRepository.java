@@ -15,17 +15,18 @@
  */
 package xyz.jwizard.jwl.graph.neo4j.repository;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import xyz.jwizard.jwl.common.util.CastUtil;
 import xyz.jwizard.jwl.graph.client.GraphClient;
 import xyz.jwizard.jwl.graph.model.GraphEdge;
 import xyz.jwizard.jwl.graph.model.GraphNode;
 import xyz.jwizard.jwl.graph.repository.GraphRepository;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class Neo4jGraphRepository implements GraphRepository {
     private static final Logger LOG = LoggerFactory.getLogger(Neo4jGraphRepository.class);

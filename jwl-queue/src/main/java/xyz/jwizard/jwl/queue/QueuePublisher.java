@@ -17,6 +17,7 @@ package xyz.jwizard.jwl.queue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import xyz.jwizard.jwl.common.serialization.SerializerFormat;
 
 public class QueuePublisher implements MessagePublisher {

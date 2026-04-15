@@ -15,11 +15,11 @@
  */
 package xyz.jwizard.jwl.kv.jedis;
 
-import redis.clients.jedis.DefaultJedisClientConfig;
-import redis.clients.jedis.HostAndPort;
-import redis.clients.jedis.JedisClientConfig;
-import redis.clients.jedis.UnifiedJedis;
-import redis.clients.jedis.params.SetParams;
+import java.nio.charset.StandardCharsets;
+import java.util.Set;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+
 import xyz.jwizard.jwl.common.util.Assert;
 import xyz.jwizard.jwl.common.util.io.IoUtil;
 import xyz.jwizard.jwl.common.util.thread.ThreadUtil;
@@ -32,10 +32,11 @@ import xyz.jwizard.jwl.kv.jedis.pubsub.JedisPubSubAdapter;
 import xyz.jwizard.jwl.kv.key.KvChannel;
 import xyz.jwizard.jwl.kv.key.KvKey;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Set;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
+import redis.clients.jedis.DefaultJedisClientConfig;
+import redis.clients.jedis.HostAndPort;
+import redis.clients.jedis.JedisClientConfig;
+import redis.clients.jedis.UnifiedJedis;
+import redis.clients.jedis.params.SetParams;
 
 public class JedisServer extends KvServer {
     private final JedisClientFactory clientFactory;

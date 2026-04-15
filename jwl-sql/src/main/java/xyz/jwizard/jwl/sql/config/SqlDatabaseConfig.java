@@ -15,11 +15,11 @@
  */
 package xyz.jwizard.jwl.sql.config;
 
+import java.util.Map;
+
 import xyz.jwizard.jwl.common.util.Assert;
 import xyz.jwizard.jwl.common.util.net.HostPort;
 import xyz.jwizard.jwl.common.util.net.NetworkUtil;
-
-import java.util.Map;
 
 public record SqlDatabaseConfig(
     SqlDatabaseDialect dialect,

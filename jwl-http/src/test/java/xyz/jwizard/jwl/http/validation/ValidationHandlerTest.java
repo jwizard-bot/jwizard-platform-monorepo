@@ -15,19 +15,20 @@
  */
 package xyz.jwizard.jwl.http.validation;
 
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import java.util.Set;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
 import xyz.jwizard.jwl.http.TestEnvelope;
 import xyz.jwizard.jwl.http.TestUser;
 import xyz.jwizard.jwl.http.validation.validator.LengthValidator;
 import xyz.jwizard.jwl.http.validation.validator.NotNullValidator;
 import xyz.jwizard.jwl.http.validation.validator.RangeValidator;
-
-import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class ValidationHandlerTest {
     private ValidationHandler validationHandler;

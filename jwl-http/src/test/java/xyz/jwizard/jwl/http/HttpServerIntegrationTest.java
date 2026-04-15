@@ -15,10 +15,18 @@
  */
 package xyz.jwizard.jwl.http;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
 import xyz.jwizard.jwl.common.di.ApplicationContext;
 import xyz.jwizard.jwl.common.reflect.ClassGraphScanner;
 import xyz.jwizard.jwl.common.reflect.ClassScanner;
@@ -29,13 +37,6 @@ import xyz.jwizard.jwl.http.filter.CacheSpyFilter;
 import xyz.jwizard.jwl.http.header.TestHttpHeaderName;
 import xyz.jwizard.jwl.http.header.TestHttpHeaderValue;
 import xyz.jwizard.jwl.http.jetty.JettyHttpServer;
-
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class HttpServerIntegrationTest {
     public static final String TEST_PASSWORD = "SecretToken-123";

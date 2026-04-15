@@ -15,8 +15,8 @@
  */
 package xyz.jwizard.jws.ingestor;
 
-import jakarta.enterprise.inject.Produces;
-import jakarta.inject.Singleton;
+import java.util.List;
+
 import xyz.jwizard.jwl.common.bootstrap.lifecycle.LifecycleHook;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.util.io.IoUtil;
@@ -31,7 +31,8 @@ import xyz.jwizard.jwl.graph.neo4j.client.factory.DefaultNeo4jClientFactory;
 import xyz.jwizard.jwl.graph.neo4j.client.factory.Neo4jConfig;
 import xyz.jwizard.jwl.graph.neo4j.repository.Neo4jGraphRepository;
 
-import java.util.List;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Singleton;
 
 @Singleton
 class GraphServerLifecycle implements LifecycleHook {

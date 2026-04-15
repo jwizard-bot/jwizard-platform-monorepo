@@ -15,6 +15,12 @@
  */
 package xyz.jwizard.jwl.kv.jedis;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+
+import java.util.Set;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,17 +28,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import redis.clients.jedis.RedisClusterClient;
-import redis.clients.jedis.params.SetParams;
+
 import xyz.jwizard.jwl.common.util.net.HostPort;
 import xyz.jwizard.jwl.kv.jedis.factory.JedisClientFactory;
 import xyz.jwizard.jwl.kv.key.TestKvKey;
 
-import java.util.Set;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
+import redis.clients.jedis.RedisClusterClient;
+import redis.clients.jedis.params.SetParams;
 
 @ExtendWith(MockitoExtension.class)
 class JedisServerTest {

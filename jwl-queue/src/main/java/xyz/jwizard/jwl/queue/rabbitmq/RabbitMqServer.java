@@ -15,7 +15,18 @@
  */
 package xyz.jwizard.jwl.queue.rabbitmq;
 
-import com.rabbitmq.client.*;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
+import com.rabbitmq.client.BuiltinExchangeType;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.MessageProperties;
+import com.rabbitmq.client.ShutdownNotifier;
+
 import xyz.jwizard.jwl.common.util.io.IoUtil;
 import xyz.jwizard.jwl.common.util.thread.TaskExecutor;
 import xyz.jwizard.jwl.queue.QueueListener;
@@ -24,11 +35,6 @@ import xyz.jwizard.jwl.queue.QueueTopology;
 import xyz.jwizard.jwl.queue.rabbitmq.connector.ConnectorType;
 import xyz.jwizard.jwl.queue.rabbitmq.connector.RabbitMqClusterConnector;
 import xyz.jwizard.jwl.queue.rabbitmq.connector.RabbitMqConnector;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 public class RabbitMqServer extends QueueServer {
     // don't send more than 10 messages until finish processing previous

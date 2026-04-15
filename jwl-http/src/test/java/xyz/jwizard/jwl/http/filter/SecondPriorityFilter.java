@@ -15,11 +15,12 @@
  */
 package xyz.jwizard.jwl.http.filter;
 
-import jakarta.inject.Singleton;
 import xyz.jwizard.jwl.http.HttpRequest;
 import xyz.jwizard.jwl.http.HttpResponse;
 import xyz.jwizard.jwl.http.header.TestHttpHeaderName;
 import xyz.jwizard.jwl.http.route.Route;
+
+import jakarta.inject.Singleton;
 
 @Singleton
 public class SecondPriorityFilter implements HttpFilter {

@@ -15,19 +15,20 @@
  */
 package xyz.jwizard.jws.ingestor.scripting.graal;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import java.util.Map;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
 import xyz.jwizard.jwl.common.util.CastUtil;
 import xyz.jwizard.jwl.common.util.io.IoUtil;
 import xyz.jwizard.jws.ingestor.scripting.ScriptFile;
 import xyz.jwizard.jws.ingestor.scripting.TestScript;
-
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class GraalJsEngineTest {
     private GraalJsEngine engine;

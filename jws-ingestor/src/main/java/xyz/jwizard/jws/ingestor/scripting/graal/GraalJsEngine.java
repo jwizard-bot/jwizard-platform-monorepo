@@ -15,20 +15,21 @@
  */
 package xyz.jwizard.jws.ingestor.scripting.graal;
 
-import org.graalvm.polyglot.Context;
-import org.graalvm.polyglot.Source;
-import org.graalvm.polyglot.Value;
-import xyz.jwizard.jwl.common.bootstrap.lifecycle.IdempotentService;
-import xyz.jwizard.jwl.common.util.io.IoUtil;
-import xyz.jwizard.jws.ingestor.scripting.JsEngine;
-import xyz.jwizard.jws.ingestor.scripting.ScriptFile;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import org.graalvm.polyglot.Context;
+import org.graalvm.polyglot.Source;
+import org.graalvm.polyglot.Value;
+
+import xyz.jwizard.jwl.common.bootstrap.lifecycle.IdempotentService;
+import xyz.jwizard.jwl.common.util.io.IoUtil;
+import xyz.jwizard.jws.ingestor.scripting.JsEngine;
+import xyz.jwizard.jws.ingestor.scripting.ScriptFile;
 
 public class GraalJsEngine extends IdempotentService implements JsEngine {
     private final List<ScriptFile> librariesToPreload;

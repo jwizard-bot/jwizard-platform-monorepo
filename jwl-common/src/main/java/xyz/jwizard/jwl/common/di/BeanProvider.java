@@ -15,12 +15,13 @@
  */
 package xyz.jwizard.jwl.common.di;
 
+import java.lang.reflect.Method;
+
 import com.google.inject.Injector;
 import com.google.inject.Provider;
+
 import xyz.jwizard.jwl.common.bootstrap.CriticalBootstrapException;
 import xyz.jwizard.jwl.common.util.CastUtil;
-
-import java.lang.reflect.Method;
 
 class BeanProvider<T> implements Provider<T> {
     private final Class<?> configClass;
