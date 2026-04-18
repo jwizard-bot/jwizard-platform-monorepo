@@ -22,7 +22,6 @@ import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.serialization.SerializerRegistry;
 import xyz.jwizard.jwl.common.serialization.json.JacksonSerializer;
 import xyz.jwizard.jwl.common.serialization.raw.RawByteSerializer;
-import xyz.jwizard.jwl.common.util.io.IoUtil;
 import xyz.jwizard.jwl.queue.MessagePublisher;
 import xyz.jwizard.jwl.queue.QueueServer;
 import xyz.jwizard.jwl.queue.rabbitmq.RabbitMqServer;
@@ -59,7 +58,7 @@ class QueueServerLifecycle implements LifecycleHook {
 
     @Override
     public void onStop() {
-        IoUtil.closeQuietly(queueServer);
+        queueServer.close();
     }
 
     @Produces

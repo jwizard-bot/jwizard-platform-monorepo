@@ -46,7 +46,6 @@ import xyz.jwizard.jwl.common.serialization.SerializerRegistry;
 import xyz.jwizard.jwl.common.serialization.json.JacksonSerializer;
 import xyz.jwizard.jwl.common.serialization.raw.RawByteSerializer;
 import xyz.jwizard.jwl.common.util.CastUtil;
-import xyz.jwizard.jwl.common.util.io.IoUtil;
 import xyz.jwizard.jwl.common.util.net.HostPort;
 import xyz.jwizard.jwl.queue.FailingListener;
 import xyz.jwizard.jwl.queue.HappyPathListener;
@@ -82,7 +81,7 @@ public class RabbitMqServerIntegrationTest {
 
     @AfterEach
     void tearDown() {
-        IoUtil.closeQuietly(server);
+        server.close();
     }
 
     @Test

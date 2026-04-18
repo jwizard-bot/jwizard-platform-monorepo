@@ -19,7 +19,6 @@ import java.util.List;
 
 import xyz.jwizard.jwl.common.bootstrap.lifecycle.LifecycleHook;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
-import xyz.jwizard.jwl.common.util.io.IoUtil;
 import xyz.jwizard.jwl.common.util.net.HostPort;
 import xyz.jwizard.jwl.graph.GraphReader;
 import xyz.jwizard.jwl.graph.GraphServer;
@@ -59,7 +58,7 @@ class GraphServerLifecycle implements LifecycleHook {
 
     @Override
     public void onStop() {
-        IoUtil.closeQuietly(graphServer);
+        graphServer.close();
     }
 
     @Override

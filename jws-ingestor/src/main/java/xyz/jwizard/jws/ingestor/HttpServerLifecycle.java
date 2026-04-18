@@ -21,7 +21,6 @@ import java.util.Set;
 import xyz.jwizard.jwl.common.bootstrap.lifecycle.LifecycleHook;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.serialization.json.JacksonSerializer;
-import xyz.jwizard.jwl.common.util.io.IoUtil;
 import xyz.jwizard.jwl.http.HttpServer;
 import xyz.jwizard.jwl.http.jetty.JettyHttpServer;
 
@@ -49,7 +48,7 @@ public class HttpServerLifecycle implements LifecycleHook {
 
     @Override
     public void onStop() {
-        IoUtil.closeQuietly(httpServer);
+        httpServer.close();
     }
 
     @Override

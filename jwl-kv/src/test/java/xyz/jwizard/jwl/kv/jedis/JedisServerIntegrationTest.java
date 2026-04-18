@@ -36,7 +36,6 @@ import org.testcontainers.utility.DockerImageName;
 
 import com.redis.testcontainers.RedisContainer;
 
-import xyz.jwizard.jwl.common.util.io.IoUtil;
 import xyz.jwizard.jwl.common.util.net.HostPort;
 import xyz.jwizard.jwl.kv.jedis.factory.FactoryType;
 import xyz.jwizard.jwl.kv.key.KvChannel;
@@ -68,7 +67,7 @@ class JedisServerIntegrationTest {
 
     @AfterEach
     void tearDown() {
-        IoUtil.closeQuietly(jedisServer);
+        jedisServer.close();
     }
 
     @Test

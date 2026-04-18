@@ -32,7 +32,6 @@ import xyz.jwizard.jwl.common.reflect.ClassGraphScanner;
 import xyz.jwizard.jwl.common.reflect.ClassScanner;
 import xyz.jwizard.jwl.common.serialization.json.JacksonSerializer;
 import xyz.jwizard.jwl.common.serialization.json.JsonSerializer;
-import xyz.jwizard.jwl.common.util.io.IoUtil;
 import xyz.jwizard.jwl.http.filter.CacheSpyFilter;
 import xyz.jwizard.jwl.http.header.TestHttpHeaderName;
 import xyz.jwizard.jwl.http.header.TestHttpHeaderValue;
@@ -62,7 +61,7 @@ public class HttpServerIntegrationTest {
 
     @AfterAll
     static void stopServer() {
-        IoUtil.closeQuietly(httpServer);
+        httpServer.close();
     }
 
     private HttpResponse<String> get(String path) throws Exception {

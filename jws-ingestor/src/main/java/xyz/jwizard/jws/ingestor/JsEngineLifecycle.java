@@ -17,7 +17,6 @@ package xyz.jwizard.jws.ingestor;
 
 import xyz.jwizard.jwl.common.bootstrap.lifecycle.LifecycleHook;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
-import xyz.jwizard.jwl.common.util.io.IoUtil;
 import xyz.jwizard.jws.ingestor.config.scripting.IngestorScript;
 import xyz.jwizard.jws.ingestor.scripting.JsEngine;
 import xyz.jwizard.jws.ingestor.scripting.graal.GraalJsEngine;
@@ -42,7 +41,7 @@ class JsEngineLifecycle implements LifecycleHook {
 
     @Override
     public void onStop() {
-        IoUtil.closeQuietly(jsEngine);
+        jsEngine.close();
     }
 
     @Produces

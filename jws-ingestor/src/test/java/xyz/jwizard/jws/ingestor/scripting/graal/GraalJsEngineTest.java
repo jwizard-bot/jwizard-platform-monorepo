@@ -26,7 +26,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import xyz.jwizard.jwl.common.util.CastUtil;
-import xyz.jwizard.jwl.common.util.io.IoUtil;
 import xyz.jwizard.jws.ingestor.scripting.ScriptFile;
 import xyz.jwizard.jws.ingestor.scripting.TestScript;
 
@@ -42,7 +41,7 @@ class GraalJsEngineTest {
 
     @AfterEach
     void tearDown() {
-        IoUtil.closeQuietly(engine);
+        engine.close();
     }
 
     @Test

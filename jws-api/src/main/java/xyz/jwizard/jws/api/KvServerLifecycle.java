@@ -19,7 +19,6 @@ import java.util.Set;
 
 import xyz.jwizard.jwl.common.bootstrap.lifecycle.LifecycleHook;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
-import xyz.jwizard.jwl.common.util.io.IoUtil;
 import xyz.jwizard.jwl.kv.KeyValueStore;
 import xyz.jwizard.jwl.kv.KvServer;
 import xyz.jwizard.jwl.kv.PubSubBroadcaster;
@@ -48,7 +47,7 @@ class KvServerLifecycle implements LifecycleHook {
 
     @Override
     public void onStop() {
-        IoUtil.closeQuietly(kvServer);
+        kvServer.close();
     }
 
     @Produces
