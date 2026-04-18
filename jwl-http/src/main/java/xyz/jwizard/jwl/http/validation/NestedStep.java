@@ -29,7 +29,7 @@ class NestedStep implements ValidationStep {
     @Override
     public void execute(Object target) {
         try {
-            Object nestedObject = field.get(target);
+            final Object nestedObject = field.get(target);
             if (nestedObject != null) {
                 validationHandler.validate(nestedObject);
             }
