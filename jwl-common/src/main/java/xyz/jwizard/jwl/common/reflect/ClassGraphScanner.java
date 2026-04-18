@@ -23,6 +23,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import xyz.jwizard.jwl.common.util.io.IoUtil;
+
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
@@ -61,8 +63,6 @@ public class ClassGraphScanner implements ClassScanner {
 
     @Override
     public void close() {
-        if (scanResult != null) {
-            scanResult.close();
-        }
+        IoUtil.closeQuietly(scanResult);
     }
 }
