@@ -15,6 +15,6 @@
  */
 package xyz.jwizard.jwl.common;
 
-public interface Identifiable {
-    String getKey();
+public interface Identifiable<T> {
+    T getCode();
 }

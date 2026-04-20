@@ -20,14 +20,14 @@ public enum CommonHttpHeaderValue implements HttpHeaderValue {
     TEXT_PLAIN_UTF_8("text/plain; charset=utf-8"),
     ;
 
-    private final String key;
+    private final String code;
 
-    CommonHttpHeaderValue(String key) {
-        this.key = key;
+    CommonHttpHeaderValue(String code) {
+        this.code = code;
     }
 
     @Override
-    public String getKey() {
-        return key;
+    public String getCode() {
+        return code;
     }
 }

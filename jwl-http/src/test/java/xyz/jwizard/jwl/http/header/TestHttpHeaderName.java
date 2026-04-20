@@ -22,14 +22,14 @@ public enum TestHttpHeaderName implements HttpHeaderName {
     X_FILTER_ORDER("X-Filter-Order"),
     ;
 
-    private final String key;
+    private final String code;
 
-    TestHttpHeaderName(String key) {
-        this.key = key;
+    TestHttpHeaderName(String code) {
+        this.code = code;
     }
 
     @Override
-    public String getKey() {
-        return key;
+    public String getCode() {
+        return code;
     }
 }

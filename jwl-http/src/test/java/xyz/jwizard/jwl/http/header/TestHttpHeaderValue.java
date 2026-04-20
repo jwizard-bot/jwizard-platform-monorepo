@@ -20,14 +20,14 @@ public enum TestHttpHeaderValue implements HttpHeaderValue {
     EXECUTED("Executed"),
     ;
 
-    private final String key;
+    private final String code;
 
-    TestHttpHeaderValue(String key) {
-        this.key = key;
+    TestHttpHeaderValue(String code) {
+        this.code = code;
     }
 
     @Override
-    public String getKey() {
-        return key;
+    public String getCode() {
+        return code;
     }
 }

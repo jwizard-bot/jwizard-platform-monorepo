@@ -19,14 +19,14 @@ public enum CommonHttpHeaderName implements HttpHeaderName {
     CONTENT_TYPE("Content-Type"),
     ;
 
-    private final String key;
+    private final String code;
 
-    CommonHttpHeaderName(String key) {
-        this.key = key;
+    CommonHttpHeaderName(String code) {
+        this.code = code;
     }
 
     @Override
-    public String getKey() {
-        return key;
+    public String getCode() {
+        return code;
     }
 }

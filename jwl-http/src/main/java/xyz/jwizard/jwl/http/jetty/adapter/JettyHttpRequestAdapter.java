@@ -73,7 +73,7 @@ public class JettyHttpRequestAdapter implements HttpRequest {
 
     @Override
     public String getHeader(HttpHeaderName name) {
-        return getHeaderUnsafe(name.getKey());
+        return getHeaderUnsafe(name.getCode());
     }
 
     @Override

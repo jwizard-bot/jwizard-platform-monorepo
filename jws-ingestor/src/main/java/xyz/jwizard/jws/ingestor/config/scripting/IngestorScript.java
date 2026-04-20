@@ -21,14 +21,14 @@ public enum IngestorScript implements ScriptFile {
     YARN_PARSER("yarn-parser.bundle.js"),
     ;
 
-    private final String key;
+    private final String code;
 
-    IngestorScript(String key) {
-        this.key = key;
+    IngestorScript(String code) {
+        this.code = code;
     }
 
     @Override
-    public String getKey() {
-        return key;
+    public String getCode() {
+        return code;
     }
 }

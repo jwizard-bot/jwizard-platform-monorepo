@@ -17,5 +17,5 @@ package xyz.jwizard.jws.ingestor.scripting;
 
 import xyz.jwizard.jwl.common.Identifiable;
 
-public interface ScriptFile extends Identifiable {
+public interface ScriptFile extends Identifiable<String> {
 }

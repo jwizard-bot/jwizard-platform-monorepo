@@ -40,7 +40,7 @@ public class JettyHttpResponseAdapter implements HttpResponse {
 
     @Override
     public String getHeader(HttpHeaderName name) {
-        return getHeaderUnsafe(name.getKey());
+        return getHeaderUnsafe(name.getCode());
     }
 
     @Override
@@ -50,12 +50,12 @@ public class JettyHttpResponseAdapter implements HttpResponse {
 
     @Override
     public void setHeader(HttpHeaderName name, HttpHeaderValue value) {
-        setHeaderUnsafe(name.getKey(), value.getKey());
+        setHeaderUnsafe(name.getCode(), value.getCode());
     }
 
     @Override
     public void setHeader(HttpHeaderName name, String value) {
-        setHeaderUnsafe(name.getKey(), value);
+        setHeaderUnsafe(name.getCode(), value);
     }
 
     @Override

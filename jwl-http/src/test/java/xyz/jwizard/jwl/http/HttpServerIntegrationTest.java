@@ -184,8 +184,8 @@ public class HttpServerIntegrationTest {
         final HttpResponse<String> response = get("/api/map");
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK_200.getCode());
-        assertThat(response.headers().firstValue(TestHttpHeaderName.X_TEST_FILTER.getKey()))
-            .isPresent().contains(TestHttpHeaderValue.EXECUTED.getKey());
+        assertThat(response.headers().firstValue(TestHttpHeaderName.X_TEST_FILTER.getCode()))
+            .isPresent().contains(TestHttpHeaderValue.EXECUTED.getCode());
     }
 
     @Test
@@ -196,8 +196,8 @@ public class HttpServerIntegrationTest {
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.FORBIDDEN_403.getCode());
         assertThat(response.body()).isEmpty();
-        assertThat(response.headers().firstValue(TestHttpHeaderName.X_TEST_FILTER.getKey()))
-            .isPresent().contains(TestHttpHeaderValue.EXECUTED.getKey());
+        assertThat(response.headers().firstValue(TestHttpHeaderName.X_TEST_FILTER.getCode()))
+            .isPresent().contains(TestHttpHeaderValue.EXECUTED.getCode());
     }
 
     @Test
@@ -208,7 +208,7 @@ public class HttpServerIntegrationTest {
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK_200.getCode());
         assertThat(response.body()).isEqualTo("public data");
-        assertThat(response.headers().firstValue(TestHttpHeaderName.X_SECURED_BY.getKey()))
+        assertThat(response.headers().firstValue(TestHttpHeaderName.X_SECURED_BY.getCode()))
             .isEmpty();
     }
 
@@ -228,7 +228,7 @@ public class HttpServerIntegrationTest {
         // given
         final HttpRequest request = HttpRequest.newBuilder()
             .uri(URI.create("http://localhost:" + dynamicPort + "/api/private"))
-            .header(TestHttpHeaderName.AUTHORIZATION.getKey(), TEST_PASSWORD)
+            .header(TestHttpHeaderName.AUTHORIZATION.getCode(), TEST_PASSWORD)
             .GET()
             .build();
         // when
@@ -237,8 +237,8 @@ public class HttpServerIntegrationTest {
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK_200.getCode());
         assertThat(response.body()).isEqualTo("secret data");
-        assertThat(response.headers().firstValue(TestHttpHeaderName.X_SECURED_BY.getKey()))
-            .isPresent().contains(TestHttpHeaderValue.ANNOTATION_FILTER.getKey());
+        assertThat(response.headers().firstValue(TestHttpHeaderName.X_SECURED_BY.getCode()))
+            .isPresent().contains(TestHttpHeaderValue.ANNOTATION_FILTER.getCode());
     }
 
     @Test
@@ -248,7 +248,7 @@ public class HttpServerIntegrationTest {
         final HttpResponse<String> response = get("/api/public");
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK_200.getCode());
-        assertThat(response.headers().firstValue(TestHttpHeaderName.X_FILTER_ORDER.getKey()))
+        assertThat(response.headers().firstValue(TestHttpHeaderName.X_FILTER_ORDER.getCode()))
             .isPresent()
             .contains("First -> Second");
     }

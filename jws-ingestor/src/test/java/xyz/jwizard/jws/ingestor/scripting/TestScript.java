@@ -24,14 +24,14 @@ public enum TestScript implements ScriptFile {
     VARS("scripting/test-vars.js"),
     ;
 
-    private final String key;
+    private final String code;
 
-    TestScript(String key) {
-        this.key = key;
+    TestScript(String code) {
+        this.code = code;
     }
 
     @Override
-    public String getKey() {
-        return key;
+    public String getCode() {
+        return code;
     }
 }
