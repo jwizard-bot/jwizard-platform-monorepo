@@ -13,25 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package xyz.jwizard.jwl.common.limit;
 
-plugins {
-    alias(libs.plugins.test.fixtures)
-}
+public interface RateLimiter {
+    boolean tryAcquire(String key);
 
-dependencies {
-    implementation(libs.bucket4j)
-    implementation(libs.clazz.graph)
-    implementation(libs.guava)
-    implementation(libs.guice) {
-        // 7.0.0 has vulnerable old guava version, fetch the newest version explicitly
-        exclude(group = "com.google.guava", module = "guava")
-    }
-    implementation(libs.jackson.databind)
-
-    api(libs.jakarta.inject.api)
-    api(libs.jakarta.cdi.api)
-
-    testFixturesApi(libs.assertj.core)
-    testFixturesApi(libs.junit.jupiter)
-    testFixturesApi(libs.slf4j.api)
+    void reset(String key);
 }

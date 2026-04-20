@@ -1,6 +1,7 @@
 [versions]
 amqpClient = "5.29.0"
 assertj = "3.27.7"
+bucket4j = "8.18.0"
 clazzGraph = "4.8.184"
 guava = "33.5.0-jre"
 guice = "7.0.0"
@@ -27,6 +28,7 @@ testcontainersRedis = "2.2.4"
 [libraries]
 ampq-client = { module = "com.rabbitmq:amqp-client", version.ref = "amqpClient" }
 assertj-core = { module = "org.assertj:assertj-core", version.ref = "assertj" }
+bucket4j = { module = "com.bucket4j:bucket4j_jdk17-core", version.ref = "bucket4j" }
 clazz-graph = { module = "io.github.classgraph:classgraph", version.ref = "clazzGraph" }
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
 guice = { module = "com.google.inject:guice", version.ref = "guice" }
