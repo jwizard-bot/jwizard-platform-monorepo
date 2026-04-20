@@ -60,7 +60,7 @@ class IntegrationTestController {
     @RequestMapping(value = "/api/profile", method = HttpMethod.GET)
     ResponseEntity<String> getProfile(
         @RequestParam(value = "token", required = false) String token) {
-        String status = (token == null) ? "Guest" : "User-" + token;
+        final String status = (token == null) ? "Guest" : "User-" + token;
         return ResponseEntity.ok("Status: " + status);
     }
 
