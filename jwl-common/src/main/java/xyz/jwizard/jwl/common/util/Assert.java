@@ -15,6 +15,8 @@
  */
 package xyz.jwizard.jwl.common.util;
 
+import java.util.Collection;
+
 import xyz.jwizard.jwl.common.bootstrap.CriticalBootstrapException;
 
 public class Assert {
@@ -23,6 +25,10 @@ public class Assert {
 
     public static <T> void notNull(T object, String message) {
         state(object != null, message);
+    }
+
+    public static void notEmpty(Collection<?> collection, String message) {
+        state(!collection.isEmpty(), message);
     }
 
     public static void state(boolean expression, String message) {
