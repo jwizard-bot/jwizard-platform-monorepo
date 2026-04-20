@@ -21,13 +21,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Container;
@@ -36,12 +37,20 @@ import org.testcontainers.utility.DockerImageName;
 
 import com.redis.testcontainers.RedisContainer;
 
+import xyz.jwizard.jwl.common.di.ApplicationContext;
+import xyz.jwizard.jwl.common.di.ComponentProvider;
+import xyz.jwizard.jwl.common.reflect.ClassGraphScanner;
+import xyz.jwizard.jwl.common.reflect.ClassScanner;
 import xyz.jwizard.jwl.common.util.net.HostPort;
+import xyz.jwizard.jwl.kv.KvKey;
+import xyz.jwizard.jwl.kv.TestKvKey;
 import xyz.jwizard.jwl.kv.jedis.factory.FactoryType;
-import xyz.jwizard.jwl.kv.key.KvChannel;
-import xyz.jwizard.jwl.kv.key.KvKey;
-import xyz.jwizard.jwl.kv.key.TestKvChannel;
-import xyz.jwizard.jwl.kv.key.TestKvKey;
+import xyz.jwizard.jwl.kv.jedis.pubsub.ParameterizedStringTestSubscriber;
+import xyz.jwizard.jwl.kv.jedis.pubsub.PatternStringTestSubscriber;
+import xyz.jwizard.jwl.kv.jedis.pubsub.SimpleBinaryTestSubscriber;
+import xyz.jwizard.jwl.kv.jedis.pubsub.SimpleStringTestSubscriber;
+import xyz.jwizard.jwl.kv.pubsub.KvChannel;
+import xyz.jwizard.jwl.kv.pubsub.TestKvChannel;
 
 @Testcontainers
 class JedisServerIntegrationTest {
@@ -52,21 +61,31 @@ class JedisServerIntegrationTest {
         DockerImageName.parse("redis:7.2-alpine")
     ).withExposedPorts(REDIS_PORT);
 
-    private JedisServer jedisServer;
+    private static JedisServer jedisServer;
+    private static ComponentProvider componentProvider;
 
-    @BeforeEach
-    void setup() {
+    @BeforeAll
+    static void setupAll() {
+        final String packageName = JedisServerIntegrationTest.class.getPackageName();
+        final ClassScanner scanner = new ClassGraphScanner(packageName);
+        final ApplicationContext context = new ApplicationContext(scanner);
         final String host = redisContainer.getHost();
         final int port = redisContainer.getMappedPort(REDIS_PORT);
+        componentProvider = context.getComponentProvider();
         jedisServer = JedisServer.builder()
             .nodes(Set.of(new HostPort(host, port)))
+            .poolMaxTotal(128)
+            .poolMinIdle(16)
+            .poolMaxIdle(64)
             .withFactory(FactoryType.SINGLE_NODE)
+            .componentProvider(componentProvider)
             .build();
         jedisServer.start();
+        jedisServer.awaitSubscribers(3000);
     }
 
-    @AfterEach
-    void tearDown() {
+    @AfterAll
+    static void tearDownAll() {
         jedisServer.close();
     }
 
@@ -75,11 +94,11 @@ class JedisServerIntegrationTest {
     void shouldPerformRealSetAndGetOperations() {
         // given
         final KvKey key = TestKvKey.USER_PROFILE;
-        String userId = "999";
-        String expectedValue = "JWizard_Admin";
+        final String userId = "999";
+        final String expectedValue = "JWizard_Admin";
         // when
         jedisServer.set(key, expectedValue, userId);
-        String actualValue = jedisServer.get(key, userId);
+        final String actualValue = jedisServer.get(key, userId);
         // then
         assertEquals(expectedValue, actualValue,
             "Value retrieved from Redis should match the one we set");
@@ -119,71 +138,86 @@ class JedisServerIntegrationTest {
     }
 
     @Test
-    @DisplayName("should successfully broadcast and receive message via Pub/Sub channel")
+    @DisplayName("should auto-discover, register and receive message via DI pub/sub channel")
     void shouldPublishAndReceiveMessage() throws InterruptedException {
         // given
         final KvChannel channel = TestKvChannel.TEST_EVENTS;
         final String expectedMessage = "Hello_PubSub";
-        final CountDownLatch messageReceivedLatch = new CountDownLatch(1);
-        final AtomicReference<String> receivedMessageRef = new AtomicReference<>();
-        // when
-        jedisServer.subscribe(channel, message -> {
-            receivedMessageRef.set(message);
-            messageReceivedLatch.countDown();
-        });
-        Thread.sleep(500);
-        // when
-        jedisServer.publish(channel, expectedMessage);
-        final boolean messageArrived = messageReceivedLatch.await(3, TimeUnit.SECONDS);
-        assertTrue(messageArrived, "Did not receive Pub/Sub message within timeout");
-        assertEquals(expectedMessage, receivedMessageRef.get(),
-            "Received message does not match published message");
-    }
-
-    @Test
-    @DisplayName("should successfully broadcast and receive params message via Pub/Sub channel")
-    void shouldPublishAndReceiveParameterizedMessage() throws InterruptedException {
-        // given
-        final KvChannel channel = TestKvChannel.USER_NOTIFICATIONS;
-        final String userId = "jwizard_123";
-        final String expectedMessage = "You have a new alert";
         final CountDownLatch latch = new CountDownLatch(1);
         final AtomicReference<String> receivedRef = new AtomicReference<>();
+        final SimpleStringTestSubscriber subscriber = componentProvider
+            .getInstance(SimpleStringTestSubscriber.class);
+        subscriber.prepareForTest(latch, receivedRef);
         // when
-        jedisServer.subscribe(channel, message -> {
-            receivedRef.set(message);
-            latch.countDown();
-        }, userId);
-        Thread.sleep(500);
-        jedisServer.publish(channel, expectedMessage, userId);
-        // then
+        jedisServer.publish(channel, expectedMessage);
         final boolean messageArrived = latch.await(3, TimeUnit.SECONDS);
-        assertTrue(messageArrived, "Did not receive parameterized Pub/Sub message within timeout");
+        assertTrue(messageArrived, "Did not receive pub/sub message within timeout");
         assertEquals(expectedMessage, receivedRef.get(),
             "Received message does not match published message");
     }
 
     @Test
-    @DisplayName("should successfully broadcast and receive binary message via Pub/Sub channel")
-    void shouldPublishAndReceiveBinaryMessage() throws InterruptedException {
+    @DisplayName("should auto-discover, register and receive params message via DI pub/sub channel")
+    void shouldPublishAndReceiveParameterizedMessage() throws InterruptedException {
         // given
-        final KvChannel channel = TestKvChannel.TEST_EVENTS;
-        final byte[] expectedPayload = "Binary_Payload_Mock_Data"
-            .getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        final KvChannel channel = TestKvChannel.USER_NOTIFICATIONS;
+        final String userId = ParameterizedStringTestSubscriber.TEST_USER_ID;
+        final String expectedMessage = "You have a new alert";
         final CountDownLatch latch = new CountDownLatch(1);
-        final AtomicReference<byte[]> receivedRef = new AtomicReference<>();
+        final AtomicReference<String> receivedRef = new AtomicReference<>();
+        final ParameterizedStringTestSubscriber subscriber = componentProvider
+            .getInstance(ParameterizedStringTestSubscriber.class);
+        subscriber.prepareForTest(latch, receivedRef);
         // when
-        jedisServer.subscribeBinary(channel, messageBytes -> {
-            receivedRef.set(messageBytes);
-            latch.countDown();
-        });
-        Thread.sleep(500);
-        jedisServer.publishBinary(channel, expectedPayload);
+        jedisServer.publish(channel, expectedMessage, userId);
         // then
         final boolean messageArrived = latch.await(3, TimeUnit.SECONDS);
-        assertTrue(messageArrived, "Did not receive binary Pub/Sub message within timeout");
+        assertTrue(messageArrived, "Did not receive parameterized pub/sub message within timeout");
+        assertEquals(expectedMessage, receivedRef.get(),
+            "Received message does not match published message");
+    }
+
+    @Test
+    @DisplayName("should auto-discover, register and receive binary message via DI pub/sub channel")
+    void shouldPublishAndReceiveBinaryMessage() throws InterruptedException {
+        // given
+        final byte[] expectedPayload = "DI_Auto_Discovery_Binary_Payload"
+            .getBytes(StandardCharsets.UTF_8);
+        final CountDownLatch latch = new CountDownLatch(1);
+        final AtomicReference<byte[]> receivedRef = new AtomicReference<>();
+        final SimpleBinaryTestSubscriber subscriber = componentProvider
+            .getInstance(SimpleBinaryTestSubscriber.class);
+        subscriber.prepareForTest(latch, receivedRef);
+        // when
+        jedisServer.publishBinary(TestKvChannel.TEST_EVENTS, expectedPayload);
+        // then
+        final boolean messageArrived = latch.await(3, TimeUnit.SECONDS);
+        assertTrue(messageArrived, "Did not receive binary pub/sub message within timeout");
         assertNotNull(receivedRef.get(), "Received binary message should not be null");
-        assertArrayEquals(expectedPayload, receivedRef.get(),
-            "Received binary payload does not match the published payload");
+        assertArrayEquals(expectedPayload, receivedRef.get());
+    }
+
+    @Test
+    @DisplayName("should auto-discover pattern subscriber and extract dynamic parameters from channel")
+    void shouldExtractWildcardParamsEndToEnd() throws InterruptedException {
+        // given
+        final String targetUserId = "player_777";
+        final String expectedMessage = "Level_Up_Event";
+        final KvChannel exactChannel = params -> "integration:users:" + targetUserId + ":events";
+        final CountDownLatch latch = new CountDownLatch(1);
+        final AtomicReference<String> receivedRef = new AtomicReference<>();
+        final AtomicReference<String[]> paramsRef = new AtomicReference<>();
+        final PatternStringTestSubscriber subscriber = componentProvider
+            .getInstance(PatternStringTestSubscriber.class);
+        subscriber.prepareForTest(latch, receivedRef, paramsRef);
+        // when
+        jedisServer.publish(exactChannel, expectedMessage);
+        // then
+        final boolean messageArrived = latch.await(3, TimeUnit.SECONDS);
+        assertTrue(messageArrived, "Did not receive Pattern message within timeout");
+        assertEquals(expectedMessage, receivedRef.get(), "Received message does not match");
+        assertNotNull(paramsRef.get(), "Params array should not be null");
+        assertEquals(1, paramsRef.get().length, "Should extract exactly one parameter");
+        assertEquals(targetUserId, paramsRef.get()[0], "Extracted wildcard param does not match!");
     }
 }

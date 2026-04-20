@@ -15,12 +15,26 @@
  */
 package xyz.jwizard.jwl.kv;
 
-public interface KeyValueStore {
-    void set(KvKey key, String value, Object... keyParams);
+public enum TestKvKey implements KvKey {
+    USER_PROFILE("user:%s:name", 0),
+    TEMP_SESSION("temp:key", 3),
+    ;
 
-    void setWithTtl(KvKey key, String value, Object... keyParams);
+    private final String pattern;
+    private final long ttl;
 
-    String get(KvKey key, Object... keyParams);
+    TestKvKey(String pattern, long ttl) {
+        this.pattern = pattern;
+        this.ttl = ttl;
+    }
 
-    void del(KvKey key, Object... keyParams);
+    @Override
+    public String build(Object... params) {
+        return String.format(pattern, params);
+    }
+
+    @Override
+    public long getDefaultTtlSeconds() {
+        return ttl;
+    }
 }

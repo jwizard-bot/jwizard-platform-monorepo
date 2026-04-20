@@ -13,28 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.kv.key;
+package xyz.jwizard.jwl.kv.pubsub;
 
-public enum TestKvKey implements KvKey {
-    USER_PROFILE("user:%s:name", 0),
-    TEMP_SESSION("temp:key", 3),
+public enum TestKvChannel implements KvChannel {
+    TEST_EVENTS("test:channel:events"),
+    USER_NOTIFICATIONS("user:%s:notifications"),
+    USER_EVENTS_WILDCARD("integration:users:*:events"),
     ;
 
     private final String pattern;
-    private final long ttl;
 
-    TestKvKey(String pattern, long ttl) {
+    TestKvChannel(String pattern) {
         this.pattern = pattern;
-        this.ttl = ttl;
     }
 
     @Override
-    public String build(Object... params) {
+    public String buildChannel(Object... params) {
         return String.format(pattern, params);
-    }
-
-    @Override
-    public long getDefaultTtlSeconds() {
-        return ttl;
     }
 }

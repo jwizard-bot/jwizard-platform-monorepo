@@ -13,11 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.kv.key;
+package xyz.jwizard.jwl.kv.pubsub;
 
-public interface KvKey {
-    String build(Object... params);
-
-    // 0 = key life forever
-    long getDefaultTtlSeconds();
+public interface KvChannel {
+    String buildChannel(Object... params);
 }

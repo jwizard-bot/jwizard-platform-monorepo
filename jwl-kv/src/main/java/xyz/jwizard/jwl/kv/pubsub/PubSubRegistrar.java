@@ -13,14 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.kv;
+package xyz.jwizard.jwl.kv.pubsub;
 
-public interface KeyValueStore {
-    void set(KvKey key, String value, Object... keyParams);
+import xyz.jwizard.jwl.kv.pubsub.subscriber.KvSubscriber;
 
-    void setWithTtl(KvKey key, String value, Object... keyParams);
+public interface PubSubRegistrar {
+    void subscribe(KvSubscriber<String> subscriber);
 
-    String get(KvKey key, Object... keyParams);
+    void subscribeBinary(KvSubscriber<byte[]> subscriber);
 
-    void del(KvKey key, Object... keyParams);
+    void pSubscribe(KvSubscriber<String> subscriber);
+
+    void pSubscribeBinary(KvSubscriber<byte[]> subscriber);
 }

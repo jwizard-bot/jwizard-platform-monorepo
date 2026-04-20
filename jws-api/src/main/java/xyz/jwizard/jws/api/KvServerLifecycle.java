@@ -21,21 +21,27 @@ import xyz.jwizard.jwl.common.bootstrap.lifecycle.LifecycleHook;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.kv.KeyValueStore;
 import xyz.jwizard.jwl.kv.KvServer;
-import xyz.jwizard.jwl.kv.PubSubBroadcaster;
 import xyz.jwizard.jwl.kv.jedis.JedisServer;
 import xyz.jwizard.jwl.kv.jedis.factory.FactoryType;
+import xyz.jwizard.jwl.kv.pubsub.PubSubBroadcaster;
 
 import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
 @Singleton
 class KvServerLifecycle implements LifecycleHook {
     private final KvServer kvServer;
 
-    KvServerLifecycle() {
+    @Inject
+    KvServerLifecycle(ComponentProvider componentProvider) {
         kvServer = JedisServer.builder()
             .rawNodes(Set.of("127.0.0.1:9113" /*TODO: getting from config server*/))
             .password(null /*TODO: getting from config server*/)
+            .poolMaxTotal(128 /*TODO: getting from config server*/)
+            .poolMinIdle(16 /*TODO: getting from config server*/)
+            .poolMaxIdle(64 /*TODO: getting from config server*/)
+            .componentProvider(componentProvider)
             .withFactory(FactoryType.SINGLE_NODE)
             .build();
     }

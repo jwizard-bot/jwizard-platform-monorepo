@@ -13,18 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.kv;
+package xyz.jwizard.jwl.kv.pubsub.subscriber;
 
-import java.util.function.Consumer;
+import xyz.jwizard.jwl.kv.pubsub.KvChannel;
 
-import xyz.jwizard.jwl.kv.key.KvChannel;
+public interface KvSubscriber<T> {
+    KvChannel getChannel();
 
-public interface PubSubBroadcaster {
-    void publish(KvChannel channel, String message, Object... channelParams);
+    Class<T> getPayloadType();
 
-    void publishBinary(KvChannel channel, byte[] message, Object... channelParams);
+    boolean isSubscribed();
 
-    void subscribe(KvChannel channel, Consumer<String> onMessage, Object... channelParams);
+    void setSubscribed(boolean subscribed);
 
-    void subscribeBinary(KvChannel channel, Consumer<byte[]> onMessage, Object... channelParams);
+    default Object[] getChannelParams() {
+        return new Object[0];
+    }
+
+    // for pattern subscribers
+    default SubscriptionMode getMode() {
+        return SubscriptionMode.EXACT;
+    }
+
+    void handle(String channel, String[] params, T message);
 }

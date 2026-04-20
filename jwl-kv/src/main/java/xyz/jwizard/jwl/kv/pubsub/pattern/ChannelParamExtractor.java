@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.kv.key;
+package xyz.jwizard.jwl.kv.pubsub.pattern;
 
-public interface KvChannel {
-    String buildChannel(Object... params);
+public interface ChannelParamExtractor {
+    String[] extract(String channel);
 }

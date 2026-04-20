@@ -13,14 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.kv;
+package xyz.jwizard.jwl.kv.pubsub.subscriber;
 
-public interface KeyValueStore {
-    void set(KvKey key, String value, Object... keyParams);
+public abstract class AbstractKvSubscriber<T> implements KvSubscriber<T> {
+    private volatile boolean subscribed = false;
 
-    void setWithTtl(KvKey key, String value, Object... keyParams);
+    @Override
+    public boolean isSubscribed() {
+        return subscribed;
+    }
 
-    String get(KvKey key, Object... keyParams);
-
-    void del(KvKey key, Object... keyParams);
+    @Override
+    public void setSubscribed(boolean subscribed) {
+        this.subscribed = subscribed;
+    }
 }

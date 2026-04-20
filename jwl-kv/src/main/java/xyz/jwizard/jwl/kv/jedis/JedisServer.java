@@ -17,20 +17,18 @@ package xyz.jwizard.jwl.kv.jedis;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import xyz.jwizard.jwl.common.util.Assert;
 import xyz.jwizard.jwl.common.util.io.IoUtil;
-import xyz.jwizard.jwl.common.util.thread.ThreadUtil;
+import xyz.jwizard.jwl.kv.KvKey;
 import xyz.jwizard.jwl.kv.KvServer;
 import xyz.jwizard.jwl.kv.jedis.factory.ClusterJedisClientFactory;
 import xyz.jwizard.jwl.kv.jedis.factory.FactoryType;
 import xyz.jwizard.jwl.kv.jedis.factory.JedisClientFactory;
-import xyz.jwizard.jwl.kv.jedis.pubsub.BinaryJedisPubSubAdapter;
-import xyz.jwizard.jwl.kv.jedis.pubsub.JedisPubSubAdapter;
-import xyz.jwizard.jwl.kv.key.KvChannel;
-import xyz.jwizard.jwl.kv.key.KvKey;
+import xyz.jwizard.jwl.kv.jedis.pubsub.JedisPubSubRegistrar;
+import xyz.jwizard.jwl.kv.pubsub.KvChannel;
+import xyz.jwizard.jwl.kv.pubsub.PubSubRegistrar;
 
 import redis.clients.jedis.ConnectionPoolConfig;
 import redis.clients.jedis.DefaultJedisClientConfig;
@@ -80,6 +78,11 @@ public class JedisServer extends KvServer {
         final String pingResponse = redisClient.ping();
         LOG.debug("KV server ping response: {}", pingResponse);
         LOG.info("Successfully connected to KV server, mode: {}", clientFactory.type());
+    }
+
+    @Override
+    protected PubSubRegistrar createRegistrar() {
+        return new JedisPubSubRegistrar(redisClient);
     }
 
     @Override
@@ -134,28 +137,6 @@ public class JedisServer extends KvServer {
         final byte[] channelBytes = exactChannelName.getBytes(StandardCharsets.UTF_8);
         LOG.debug("KV PUBLISH (binary) -> channel: '{}'", exactChannelName);
         redisClient.publish(channelBytes, message);
-    }
-
-    @Override
-    public void subscribe(KvChannel channel, Consumer<String> onMessage, Object... channelParams) {
-        final String channelName = channel.buildChannel(channelParams);
-        final JedisPubSubAdapter pubSub = new JedisPubSubAdapter(onMessage);
-
-        LOG.info("Registering Pub/Sub listener on channel: '{}'", channelName);
-        ThreadUtil.runAsync("kv-sub-" + channelName, () ->
-            redisClient.subscribe(pubSub, channelName));
-    }
-
-    @Override
-    public void subscribeBinary(KvChannel channel, Consumer<byte[]> onMessage,
-                                Object... channelParams) {
-        final String channelName = channel.buildChannel(channelParams);
-        final byte[] channelBytes = channelName.getBytes(StandardCharsets.UTF_8);
-        final BinaryJedisPubSubAdapter pubSub = new BinaryJedisPubSubAdapter(onMessage);
-
-        LOG.info("Registering Binary Pub/Sub listener on channel: '{}'", channelName);
-        ThreadUtil.runAsync("kv-sub-bin-" + channelName, () ->
-            redisClient.subscribe(pubSub, channelBytes));
     }
 
     public static class Builder extends KvServer.AbstractBuilder<Builder> {

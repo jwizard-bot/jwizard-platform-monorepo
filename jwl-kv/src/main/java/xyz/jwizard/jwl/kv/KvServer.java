@@ -15,24 +15,53 @@
  */
 package xyz.jwizard.jwl.kv;
 
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import xyz.jwizard.jwl.common.bootstrap.lifecycle.IdempotentService;
+import xyz.jwizard.jwl.common.di.ComponentProvider;
+import xyz.jwizard.jwl.common.reflect.TypeReference;
 import xyz.jwizard.jwl.common.util.Assert;
 import xyz.jwizard.jwl.common.util.CastUtil;
 import xyz.jwizard.jwl.common.util.net.HostPort;
 import xyz.jwizard.jwl.common.util.net.NetworkUtil;
+import xyz.jwizard.jwl.kv.pubsub.PubSubBroadcaster;
+import xyz.jwizard.jwl.kv.pubsub.PubSubRegistrar;
+import xyz.jwizard.jwl.kv.pubsub.subscriber.KvSubscriber;
+import xyz.jwizard.jwl.kv.pubsub.subscriber.SubscriptionMode;
 
 public abstract class KvServer extends IdempotentService implements KeyValueStore,
     PubSubBroadcaster {
     protected final Set<HostPort> nodes;
     protected final String password;
+    protected final ComponentProvider componentProvider;
+
+    private final Collection<KvSubscriber<?>> registeredSubscribers = new CopyOnWriteArrayList<>();
 
     protected KvServer(AbstractBuilder<?> builder) {
         nodes = builder.nodes;
         password = builder.password;
+        componentProvider = builder.componentProvider;
+    }
+
+    public void awaitSubscribers(long timeoutMs) {
+        final long limit = System.currentTimeMillis() + timeoutMs;
+        for (final KvSubscriber<?> sub : registeredSubscribers) {
+            while (!sub.isSubscribed()) {
+                if (System.currentTimeMillis() > limit) {
+                    throw new RuntimeException("Timeout waiting for subscriber readiness: " +
+                        sub.getClass().getSimpleName());
+                }
+                Thread.onSpinWait();
+            }
+        }
+        LOG.info("All {} subscribers confirmed readiness", registeredSubscribers.size());
     }
 
     @Override
@@ -43,13 +72,59 @@ public abstract class KvServer extends IdempotentService implements KeyValueStor
         }
         LOG.info("KV server start initializing with {} node(s)", nodes.size());
         onKvServerStart();
+        final PubSubRegistrar registrar = createRegistrar();
+        final int stringCount = registerSet(String.class,
+            new TypeReference<>() {
+            },
+            registrar::subscribe,
+            registrar::pSubscribe
+        );
+        final int binaryCount = registerSet(byte[].class,
+            new TypeReference<>() {
+            },
+            registrar::subscribeBinary,
+            registrar::pSubscribeBinary
+        );
+        LOG.info("KV subscribers auto-discovery completed, total registered: {}",
+            stringCount + binaryCount);
     }
 
     protected abstract void onKvServerStart();
 
+    protected abstract PubSubRegistrar createRegistrar();
+
+    private <T> int registerSet(Class<T> payloadClass, TypeReference<KvSubscriber<T>> typeRef,
+                                Consumer<KvSubscriber<T>> exactRegistrar,
+                                Consumer<KvSubscriber<T>> patternRegistrar) {
+        final Collection<KvSubscriber<T>> subscribers = componentProvider.getInstancesOf(typeRef);
+        final Map<SubscriptionMode, Consumer<KvSubscriber<T>>> strategies = Map.of(
+            SubscriptionMode.EXACT, exactRegistrar,
+            SubscriptionMode.PATTERN, patternRegistrar
+        );
+        final List<KvSubscriber<T>> validSubscribers = subscribers.stream()
+            .filter(sub -> sub.getPayloadType().equals(payloadClass))
+            .toList();
+        for (final KvSubscriber<T> sub : validSubscribers) {
+            final String channelStr = sub.getChannel().buildChannel(sub.getChannelParams());
+            final SubscriptionMode mode = sub.getMode();
+
+            registeredSubscribers.add(sub);
+            strategies.get(mode).accept(sub);
+
+            LOG.debug("Auto-registered {} subscriber: [{}] on '{}'",
+                mode.name().toLowerCase(), sub.getClass().getSimpleName(), channelStr);
+        }
+        if (!validSubscribers.isEmpty()) {
+            LOG.info("Successfully registered {} {} subscribers", validSubscribers.size(),
+                payloadClass.getSimpleName());
+        }
+        return validSubscribers.size();
+    }
+
     protected abstract static class AbstractBuilder<B extends AbstractBuilder<B>> {
         protected Set<HostPort> nodes = new HashSet<>();
         protected String password;
+        protected ComponentProvider componentProvider;
 
         protected AbstractBuilder() {
         }
@@ -77,8 +152,14 @@ public abstract class KvServer extends IdempotentService implements KeyValueStor
             return self();
         }
 
+        public B componentProvider(ComponentProvider componentProvider) {
+            this.componentProvider = componentProvider;
+            return self();
+        }
+
         protected void validate() {
             Assert.notNull(nodes, "Nodes cannot be null");
+            Assert.notNull(componentProvider, "ComponentProvider cannot be null");
         }
 
         public abstract KvServer build();

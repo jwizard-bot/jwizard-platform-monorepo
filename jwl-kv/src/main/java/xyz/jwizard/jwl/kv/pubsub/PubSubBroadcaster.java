@@ -13,21 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.kv.key;
+package xyz.jwizard.jwl.kv.pubsub;
 
-public enum TestKvChannel implements KvChannel {
-    TEST_EVENTS("test:channel:events"),
-    USER_NOTIFICATIONS("user:%s:notifications"),
-    ;
+public interface PubSubBroadcaster {
+    void publish(KvChannel channel, String message, Object... channelParams);
 
-    private final String pattern;
-
-    TestKvChannel(String pattern) {
-        this.pattern = pattern;
-    }
-
-    @Override
-    public String buildChannel(Object... params) {
-        return String.format(pattern, params);
-    }
+    void publishBinary(KvChannel channel, byte[] message, Object... channelParams);
 }

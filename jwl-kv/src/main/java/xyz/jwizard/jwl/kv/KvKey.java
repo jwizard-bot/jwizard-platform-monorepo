@@ -15,12 +15,9 @@
  */
 package xyz.jwizard.jwl.kv;
 
-public interface KeyValueStore {
-    void set(KvKey key, String value, Object... keyParams);
+public interface KvKey {
+    String build(Object... params);
 
-    void setWithTtl(KvKey key, String value, Object... keyParams);
-
-    String get(KvKey key, Object... keyParams);
-
-    void del(KvKey key, Object... keyParams);
+    // 0 = key life forever
+    long getDefaultTtlSeconds();
 }
