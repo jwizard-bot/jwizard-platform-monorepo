@@ -32,6 +32,7 @@ import xyz.jwizard.jwl.kv.jedis.pubsub.JedisPubSubAdapter;
 import xyz.jwizard.jwl.kv.key.KvChannel;
 import xyz.jwizard.jwl.kv.key.KvKey;
 
+import redis.clients.jedis.ConnectionPoolConfig;
 import redis.clients.jedis.DefaultJedisClientConfig;
 import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.JedisClientConfig;
@@ -40,11 +41,18 @@ import redis.clients.jedis.params.SetParams;
 
 public class JedisServer extends KvServer {
     private final JedisClientFactory clientFactory;
+    private final int poolMaxTotal;
+    private final int poolMaxIdle;
+    private final int poolMinIdle;
+
     private UnifiedJedis redisClient;
 
     private JedisServer(Builder builder) {
         super(builder);
-        this.clientFactory = builder.factory;
+        clientFactory = builder.factory;
+        poolMaxTotal = builder.poolMaxTotal;
+        poolMaxIdle = builder.poolMaxIdle;
+        poolMinIdle = builder.poolMinIdle;
     }
 
     public static Builder builder() {
@@ -61,7 +69,14 @@ public class JedisServer extends KvServer {
             .map(c -> new HostAndPort(c.host(), c.port()))
             .collect(Collectors.toSet());
 
-        redisClient = clientFactory.create(clusterNodes, config);
+        final ConnectionPoolConfig poolConfig = new ConnectionPoolConfig();
+        poolConfig.setMaxTotal(poolMaxTotal);
+        poolConfig.setMinIdle(Math.min(poolMinIdle, poolMaxIdle));
+        poolConfig.setMaxIdle(Math.min(poolMaxIdle, poolMaxTotal));
+        LOG.info("KV server pool info: max total: {}, min/max idle: {}/{}",
+            poolConfig.getMaxTotal(), poolConfig.getMinIdle(), poolConfig.getMaxIdle());
+        redisClient = clientFactory.create(clusterNodes, config, poolConfig);
+
         final String pingResponse = redisClient.ping();
         LOG.debug("KV server ping response: {}", pingResponse);
         LOG.info("Successfully connected to KV server, mode: {}", clientFactory.type());
@@ -144,9 +159,27 @@ public class JedisServer extends KvServer {
     }
 
     public static class Builder extends KvServer.AbstractBuilder<Builder> {
+        private int poolMaxTotal = 128;
+        private int poolMaxIdle = 64;
+        private int poolMinIdle = 16;
         private JedisClientFactory factory = new ClusterJedisClientFactory();
 
         private Builder() {
+        }
+
+        public Builder poolMaxTotal(int poolMaxTotal) {
+            this.poolMaxTotal = poolMaxTotal;
+            return this;
+        }
+
+        public Builder poolMaxIdle(int poolMaxIdle) {
+            this.poolMaxIdle = poolMaxIdle;
+            return this;
+        }
+
+        public Builder poolMinIdle(int poolMinIdle) {
+            this.poolMinIdle = poolMinIdle;
+            return this;
         }
 
         public Builder withFactory(FactoryType factoryType) {
@@ -163,6 +196,13 @@ public class JedisServer extends KvServer {
         public JedisServer build() {
             validate();
             Assert.notNull(factory, "JedisClientFactory cannot be null");
+            Assert.state(poolMaxTotal > 0, "PoolMaxTotal must be greater than zero");
+            Assert.state(poolMinIdle >= 0, "PoolMinIdle cannot be negative");
+            Assert.state(poolMaxIdle >= 0, "PoolMaxIdle cannot be negative");
+            Assert.state(poolMinIdle <= poolMaxIdle,
+                "PoolMinIdle cannot be greater than PoolMaxIdle");
+            Assert.state(poolMaxIdle <= poolMaxTotal,
+                "PoolMaxIdle cannot be greater than PoolMaxTotal");
             return new JedisServer(this);
         }
     }
