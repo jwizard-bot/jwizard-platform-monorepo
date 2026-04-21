@@ -88,16 +88,16 @@ public abstract class HttpServer extends IdempotentService {
             new BadRequestExceptionHandler(),
             new GlobalExceptionHandler()
         );
-        LOG.info("HTTP server initialized with:");
-        LOG.info("-- {} filter(s) (via reflect api)", filters.size());
-        LOG.info("-- {} validator(s) (via reflect api)", validators.size());
-        LOG.info("-- {} resolver(s) (statically typed)", resolvers.size());
-        LOG.info("-- {} writer(s) (statically typed)", writers.size());
-        LOG.info("-- {} exception handler(s) (statically typed)", exceptionHandlers.size());
+        log.info("HTTP server initialized with:");
+        log.info("-- {} filter(s) (via reflect api)", filters.size());
+        log.info("-- {} validator(s) (via reflect api)", validators.size());
+        log.info("-- {} resolver(s) (statically typed)", resolvers.size());
+        log.info("-- {} writer(s) (statically typed)", writers.size());
+        log.info("-- {} exception handler(s) (statically typed)", exceptionHandlers.size());
     }
 
     protected HttpRequestHandler prepareRequestHandler() {
-        LOG.info("Scanning routes and preparing HTTP request handler");
+        log.info("Scanning routes and preparing HTTP request handler");
         final RouteScanner scanner = new RouteScanner(componentProvider, router, resolvers);
         scanner.scan();
         return new HttpRequestHandler(

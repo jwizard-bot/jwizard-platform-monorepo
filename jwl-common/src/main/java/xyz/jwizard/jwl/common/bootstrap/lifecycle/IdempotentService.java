@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import xyz.jwizard.jwl.common.bootstrap.CriticalBootstrapException;
 
 public abstract class IdempotentService implements Closeable {
-    protected final Logger LOG = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     private final AtomicBoolean running = new AtomicBoolean(false);
     private final AtomicBoolean initialized = new AtomicBoolean(false);
@@ -34,14 +34,14 @@ public abstract class IdempotentService implements Closeable {
             running.set(true);
             try {
                 onStart();
-                LOG.info("Service '{}' started successfully", getClass().getSimpleName());
+                log.info("Service '{}' started successfully", getClass().getSimpleName());
             } catch (Exception e) {
                 running.set(false);
                 initialized.set(false);
                 throw translateException(e);
             }
         } else {
-            LOG.warn("Service '{}' is already running or was already initialized",
+            log.warn("Service '{}' is already running or was already initialized",
                 getClass().getSimpleName());
         }
     }

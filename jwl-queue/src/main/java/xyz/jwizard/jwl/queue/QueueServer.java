@@ -51,14 +51,14 @@ public abstract class QueueServer extends IdempotentService {
     @Override
     protected final void onStart() throws Exception {
         if (nodes.isEmpty()) {
-            LOG.warn("Not providing any nodes, skipping configuration");
+            log.warn("Not providing any nodes, skipping configuration");
             return;
         }
         final Set<QueueListener<?>> listeners = new HashSet<>(componentProvider
             .getInstancesOf(new TypeReference<>() {
             }));
-        LOG.info("Found {} queue listener(s)", listeners.size());
-        LOG.info("Queue server start initializing with {} node(s)", nodes.size());
+        log.info("Found {} queue listener(s)", listeners.size());
+        log.info("Queue server start initializing with {} node(s)", nodes.size());
         onQueueServerStart();
         registerListeners(listeners);
     }
@@ -72,15 +72,15 @@ public abstract class QueueServer extends IdempotentService {
     }
 
     protected <T> void processDelivery(QueueListener<T> listener, byte[] body) {
-        if (LOG.isTraceEnabled()) {
+        if (log.isTraceEnabled()) {
             final String rawPayload = new String(body, StandardCharsets.UTF_8);
-            LOG.trace("Raw bytes received from queue '{}': {}", listener.getQueueName(),
+            log.trace("Raw bytes received from queue '{}': {}", listener.getQueueName(),
                 rawPayload);
         }
         final Class<T> targetType = listener.getMessageType();
         final T payload = serializerRegistry.get(listener.getFormat())
             .deserializeFromBytes(body, targetType);
-        LOG.debug("Processing message from queue '{}': {}", listener.getQueueName(), payload);
+        log.debug("Processing message from queue '{}': {}", listener.getQueueName(), payload);
         listener.onMessage(payload);
     }
 
@@ -97,7 +97,7 @@ public abstract class QueueServer extends IdempotentService {
             final String queueName = listener.getQueueName();
             try {
                 onRegisterListener(listener);
-                LOG.info("Registered listener for queue: {} (format: {})", queueName,
+                log.info("Registered listener for queue: {} (format: {})", queueName,
                     listener.getFormat());
                 registeredListeners++;
             } catch (Exception ex) {
@@ -105,7 +105,7 @@ public abstract class QueueServer extends IdempotentService {
                     listener.getQueueName(), ex);
             }
         }
-        LOG.info("Registered {} queue listener(s)", registeredListeners);
+        log.info("Registered {} queue listener(s)", registeredListeners);
     }
 
     protected static abstract class AbstractBuilder<B extends AbstractBuilder<B>> {

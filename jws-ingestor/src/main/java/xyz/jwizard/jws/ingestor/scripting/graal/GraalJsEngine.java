@@ -46,19 +46,19 @@ public class GraalJsEngine extends IdempotentService implements JsEngine {
 
     @Override
     protected void onStart() throws Exception {
-        LOG.info("Initializing GraalVM JS context, libraries to preload: {}",
+        log.info("Initializing GraalVM JS context, libraries to preload: {}",
             librariesToPreload.size());
         context = Context.newBuilder("js")
             .allowAllAccess(false)
             .build();
         for (final ScriptFile scriptFile : librariesToPreload) {
-            LOG.debug("Preloading library: {}", scriptFile.getCode());
+            log.debug("Preloading library: {}", scriptFile.getCode());
             final long start = System.currentTimeMillis();
             context.eval(buildSourceFromResource(scriptFile));
-            LOG.trace("Library '{}' loaded in {} ms", scriptFile.getCode(),
+            log.trace("Library '{}' loaded in {} ms", scriptFile.getCode(),
                 (System.currentTimeMillis() - start));
         }
-        LOG.info("GraalVM JS context initialized successfully");
+        log.info("GraalVM JS context initialized successfully");
     }
 
     @Override
@@ -70,10 +70,10 @@ public class GraalJsEngine extends IdempotentService implements JsEngine {
     public <T> T executeScript(ScriptFile scriptFile, Map<String, Object> variables,
                                Class<T> returnType) throws IOException {
         ensureRunning();
-        LOG.debug("Executing script: '{}' with {} injected variables, expected return type: {}",
+        log.debug("Executing script: '{}' with {} injected variables, expected return type: {}",
             scriptFile.getCode(), variables.size(), returnType.getSimpleName());
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Injected variable keys: {}", variables.keySet());
+        if (log.isTraceEnabled()) {
+            log.trace("Injected variable keys: {}", variables.keySet());
         }
         final Value bindings = context.getBindings("js");
         for (final Map.Entry<String, Object> entry : variables.entrySet()) {
@@ -85,43 +85,43 @@ public class GraalJsEngine extends IdempotentService implements JsEngine {
             for (final String key : variables.keySet()) {
                 bindings.removeMember(key);
             }
-            LOG.trace("Cleaned up injected variables for script: '{}'", scriptFile.getCode());
+            log.trace("Cleaned up injected variables for script: '{}'", scriptFile.getCode());
         }
     }
 
     @Override
     public <T> T executeScript(ScriptFile scriptFile, Class<T> returnType) throws IOException {
-        LOG.debug("Executing script: '{}'. Expected return type: {}", scriptFile.getCode(),
+        log.debug("Executing script: '{}'. Expected return type: {}", scriptFile.getCode(),
             returnType.getSimpleName());
         return doExecuteScript(scriptFile).as(returnType);
     }
 
     @Override
     public void executeScript(ScriptFile scriptFile) throws IOException {
-        LOG.debug("Executing script (fire-and-forget): '{}'", scriptFile.getCode());
+        log.debug("Executing script (fire-and-forget): '{}'", scriptFile.getCode());
         doExecuteScript(scriptFile);
     }
 
     @Override
     public <T> T callFunction(String functionName, Class<T> returnType, Object... args) {
-        LOG.debug("Calling JS function: '{}' with {} arguments, expected return type: {}",
+        log.debug("Calling JS function: '{}' with {} arguments, expected return type: {}",
             functionName, args.length, returnType.getSimpleName());
         return doCallFunction(functionName, args).as(returnType);
     }
 
     @Override
     public void callFunction(String functionName, Object... args) {
-        LOG.debug("Calling JS function (fire-and-forget): '{}' with {} arguments", functionName,
+        log.debug("Calling JS function (fire-and-forget): '{}' with {} arguments", functionName,
             args.length);
         doCallFunction(functionName, args);
     }
 
     private Value doExecuteScript(ScriptFile scriptFile) throws IOException {
         ensureRunning();
-        LOG.trace("Evaluating source for script: '{}'", scriptFile.getCode());
+        log.trace("Evaluating source for script: '{}'", scriptFile.getCode());
         final long start = System.currentTimeMillis();
         final Value result = context.eval(buildSourceFromResource(scriptFile));
-        LOG.trace("Script '{}' executed in {} ms", scriptFile.getCode(),
+        log.trace("Script '{}' executed in {} ms", scriptFile.getCode(),
             (System.currentTimeMillis() - start));
         return result;
     }
@@ -134,7 +134,7 @@ public class GraalJsEngine extends IdempotentService implements JsEngine {
         }
         final long start = System.currentTimeMillis();
         final Value result = function.execute(args);
-        LOG.trace("Function '{}' executed in {} ms", functionName,
+        log.trace("Function '{}' executed in {} ms", functionName,
             (System.currentTimeMillis() - start));
         return result;
     }

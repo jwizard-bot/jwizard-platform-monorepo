@@ -61,16 +61,16 @@ public abstract class KvServer extends IdempotentService implements KeyValueStor
                 Thread.onSpinWait();
             }
         }
-        LOG.info("All {} subscribers confirmed readiness", registeredSubscribers.size());
+        log.info("All {} subscribers confirmed readiness", registeredSubscribers.size());
     }
 
     @Override
     protected final void onStart() {
         if (nodes.isEmpty()) {
-            LOG.warn("Not providing any nodes, skipping configuration");
+            log.warn("Not providing any nodes, skipping configuration");
             return;
         }
-        LOG.info("KV server start initializing with {} node(s)", nodes.size());
+        log.info("KV server start initializing with {} node(s)", nodes.size());
         onKvServerStart();
         final PubSubRegistrar registrar = createRegistrar();
         final int stringCount = registerSet(String.class,
@@ -85,7 +85,7 @@ public abstract class KvServer extends IdempotentService implements KeyValueStor
             registrar::subscribeBinary,
             registrar::pSubscribeBinary
         );
-        LOG.info("KV subscribers auto-discovery completed, total registered: {}",
+        log.info("KV subscribers auto-discovery completed, total registered: {}",
             stringCount + binaryCount);
     }
 
@@ -111,11 +111,11 @@ public abstract class KvServer extends IdempotentService implements KeyValueStor
             registeredSubscribers.add(sub);
             strategies.get(mode).accept(sub);
 
-            LOG.debug("Auto-registered {} subscriber: [{}] on '{}'",
+            log.debug("Auto-registered {} subscriber: [{}] on '{}'",
                 mode.name().toLowerCase(), sub.getClass().getSimpleName(), channelStr);
         }
         if (!validSubscribers.isEmpty()) {
-            LOG.info("Successfully registered {} {} subscribers", validSubscribers.size(),
+            log.info("Successfully registered {} {} subscribers", validSubscribers.size(),
                 payloadClass.getSimpleName());
         }
         return validSubscribers.size();

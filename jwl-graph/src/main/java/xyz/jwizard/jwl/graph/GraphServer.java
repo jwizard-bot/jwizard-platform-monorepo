@@ -46,7 +46,7 @@ public abstract class GraphServer<C extends GraphConfig> extends IdempotentServi
 
     @Override
     protected final void onStart() {
-        LOG.info("Connecting to graph server on: {}", uri.toString());
+        log.info("Connecting to graph server on: {}", uri.toString());
         graphClient = clientFactory.createAndInitClient(config);
         graphRepository = repositoryFactory.apply(graphClient);
     }
