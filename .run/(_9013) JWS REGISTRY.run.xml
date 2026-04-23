@@ -2,6 +2,7 @@
   <configuration default="false" name="(:9013) JWS REGISTRY" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="xyz.jwizard.jws.registry.JwsRegistryMain" />
     <module name="jwizard-platform-monorepo.jws-registry.main" />
+    <option name="VM_PARAMETERS" value="-Dlogback.configurationFile=logback-dev.xml" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="xyz.jwizard.jws.registry.*" />

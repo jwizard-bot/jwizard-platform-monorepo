@@ -2,6 +2,7 @@
   <configuration default="false" name="(:9014) JWS TRANSLATOR" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="xyz.jwizard.jws.translator.JwsTranslatorMain" />
     <module name="jwizard-platform-monorepo.jws-translator.main" />
+    <option name="VM_PARAMETERS" value="-Dlogback.configurationFile=logback-dev.xml" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="xyz.jwizard.jws.translator.*" />

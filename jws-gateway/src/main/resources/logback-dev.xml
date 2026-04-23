@@ -14,6 +14,6 @@
   ~ limitations under the License.
   -->
 <configuration>
-  <property name="SERVICE_NAME" value="jws-translator"/>
-  <include resource="logback-prod-base.xml"/>
+  <property name="SERVICE_NAME" value="jws-gateway"/>
+  <include resource="logback-dev-base.xml"/>
 </configuration>

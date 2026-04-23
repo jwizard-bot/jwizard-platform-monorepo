@@ -93,6 +93,7 @@ subprojects {
 
     tasks.withType<JavaExec> {
         jvmArgs(
+            "-Dlogback.configurationFile=logback-dev.xml",
             // GC
             "-XX:+UseZGC",
             "-XX:+ZGenerational",
