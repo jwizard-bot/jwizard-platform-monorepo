@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import xyz.jwizard.jwl.common.serialization.SerializerFormat;
+import xyz.jwizard.jwl.common.serialization.StandardSerializerFormat;
 
 public class QueuePublisher implements MessagePublisher {
     private static final Logger LOG = LoggerFactory.getLogger(QueuePublisher.class);
@@ -31,7 +32,7 @@ public class QueuePublisher implements MessagePublisher {
 
     @Override
     public <T> void publish(String exchange, String routingKey, T payload) {
-        publish(exchange, routingKey, payload, SerializerFormat.JSON);
+        publish(exchange, routingKey, payload, StandardSerializerFormat.JSON);
     }
 
     @Override

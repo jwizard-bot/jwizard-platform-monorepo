@@ -15,22 +15,38 @@
  */
 package xyz.jwizard.jwl.common.serialization;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class SerializerRegistry {
-    private final Map<SerializerFormat, MessageSerializer> serializers = new ConcurrentHashMap<>();
+public class SerializerRegistry<S extends Serializer> {
+    private final Map<String, S> serializers = new ConcurrentHashMap<>();
 
-    public SerializerRegistry register(MessageSerializer serializer) {
-        serializers.put(serializer.format(), serializer);
+    protected SerializerRegistry() {
+    }
+
+    public static SerializerRegistry<MessageSerializer> createDefault() {
+        return new SerializerRegistry<>();
+    }
+
+    public static <S extends Serializer> SerializerRegistry<S> create() {
+        return new SerializerRegistry<>();
+    }
+
+    public SerializerRegistry<S> register(S serializer) {
+        serializers.put(serializer.format().getFormat(), serializer);
         return this;
     }
 
-    public MessageSerializer get(SerializerFormat format) {
-        final MessageSerializer serializer = serializers.get(format);
+    public S get(SerializerFormat key) {
+        final S serializer = serializers.get(key.getFormat());
         if (serializer == null) {
-            throw new IllegalArgumentException("No registered handler for: " + format);
+            throw new IllegalArgumentException("no registered serializer for key: " + key);
         }
         return serializer;
+    }
+
+    public Collection<S> getSerializers() {
+        return serializers.values();
     }
 }

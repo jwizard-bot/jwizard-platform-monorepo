@@ -13,10 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.common.serialization.envelope;
+package xyz.jwizard.jwl.common.serialization;
 
-public interface OpCode {
-    int getCode();
+public enum StandardSerializerFormat implements SerializerFormat {
+    JSON("json"),
+    PROTOBUF("protobuf"),
+    RAW("raw"),
+    ;
 
-    String getName();
+    private final String format;
+
+    StandardSerializerFormat(String format) {
+        this.format = format;
+    }
+
+    @Override
+    public String getFormat() {
+        return format;
+    }
 }

@@ -15,10 +15,20 @@
  */
 package xyz.jwizard.jwl.common.serialization;
 
-public interface MessageSerializer {
-    byte[] serializeToBytes(Object value) throws MessageSerializerException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
-    <T> T deserializeFromBytes(byte[] bytes, Class<T> type) throws MessageSerializerException;
+public interface MessageSerializer extends Serializer {
+    byte[] serializeToBytes(Object value);
 
-    SerializerFormat format();
+    <T> T deserializeFromBytes(byte[] bytes, Class<T> type);
+
+    default void serializeToStream(Object value, OutputStream out) throws IOException {
+        out.write(serializeToBytes(value));
+    }
+
+    default <T> T deserializeFromStream(InputStream in, Class<T> type) throws IOException {
+        return deserializeFromBytes(in.readAllBytes(), type);
+    }
 }

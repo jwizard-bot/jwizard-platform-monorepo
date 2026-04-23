@@ -16,6 +16,7 @@
 package xyz.jwizard.jwl.queue;
 
 import xyz.jwizard.jwl.common.serialization.SerializerFormat;
+import xyz.jwizard.jwl.common.serialization.StandardSerializerFormat;
 
 public interface QueueListener<T> {
     String getQueueName();
@@ -25,7 +26,7 @@ public interface QueueListener<T> {
     void onMessage(T message);
 
     default SerializerFormat getFormat() {
-        return SerializerFormat.JSON;
+        return StandardSerializerFormat.JSON;
     }
 
     default QueueTopology getTopology() {

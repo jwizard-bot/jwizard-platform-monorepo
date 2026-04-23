@@ -17,7 +17,7 @@ package xyz.jwizard.jwl.common.serialization.raw;
 
 import xyz.jwizard.jwl.common.serialization.MessageSerializer;
 import xyz.jwizard.jwl.common.serialization.MessageSerializerException;
-import xyz.jwizard.jwl.common.serialization.SerializerFormat;
+import xyz.jwizard.jwl.common.serialization.StandardSerializerFormat;
 import xyz.jwizard.jwl.common.util.CastUtil;
 
 public class RawByteSerializer implements MessageSerializer {
@@ -53,7 +53,7 @@ public class RawByteSerializer implements MessageSerializer {
     }
 
     @Override
-    public SerializerFormat format() {
-        return SerializerFormat.RAW;
+    public StandardSerializerFormat format() {
+        return StandardSerializerFormat.RAW;
     }
 }

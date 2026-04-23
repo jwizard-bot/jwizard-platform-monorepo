@@ -15,6 +15,6 @@
  */
 package xyz.jwizard.jwl.common.serialization;
 
-public interface SerializerFormat {
-    String getFormat();
+public interface Serializer {
+    SerializerFormat format();
 }
