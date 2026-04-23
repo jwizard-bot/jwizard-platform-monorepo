@@ -64,7 +64,7 @@ public class DefaultBootstrapper {
 
         final long startTime = System.currentTimeMillis();
         try (final ClassScanner scanner = new ClassGraphScanner(packagesToScan)) {
-            final ApplicationContext context = new ApplicationContext(scanner, Map.of(
+            final ApplicationContext context = ApplicationContext.create(scanner, Map.of(
                 ComponentProvider.class, GuiceComponentProvider.class
             ), Map.of(
                 ClassScanner.class, scanner

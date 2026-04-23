@@ -20,6 +20,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -45,7 +46,9 @@ class DependencyInjectionTest {
                 TestInterfaceComponent.class,
                 SecondTestInterfaceComponent.class
             ));
-        final ApplicationContext context = new ApplicationContext(scanner);
+        final ApplicationContext context = ApplicationContext.createDefault(scanner, Map.of(
+            ComponentProvider.class, GuiceComponentProvider.class
+        ));
         componentProvider = context.getComponentProvider();
     }
 

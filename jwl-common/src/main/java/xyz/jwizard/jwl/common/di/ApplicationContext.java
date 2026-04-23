@@ -15,6 +15,7 @@
  */
 package xyz.jwizard.jwl.common.di;
 
+import java.util.Collections;
 import java.util.Map;
 
 import com.google.inject.Guice;
@@ -26,14 +27,25 @@ public class ApplicationContext {
     private final ComponentProvider componentProvider;
     private final ClassScanner scanner;
 
-    public ApplicationContext(ClassScanner scanner, Map<Class<?>, Class<?>> components,
-                              Map<Class<?>, Object> instanceComponents) {
+    private ApplicationContext(ClassScanner scanner, Map<Class<?>, Class<?>> components,
+                               Map<Class<?>, Object> instanceComponents) {
         this.scanner = scanner;
         final Injector injector = Guice.createInjector(
             new ManualBootstrapModule(components, instanceComponents),
             new AutoScanModule(scanner)
         );
         componentProvider = injector.getInstance(ComponentProvider.class);
+    }
+
+    public static ApplicationContext create(ClassScanner scanner,
+                                            Map<Class<?>, Class<?>> components,
+                                            Map<Class<?>, Object> instanceComponents) {
+        return new ApplicationContext(scanner, components, instanceComponents);
+    }
+
+    public static ApplicationContext createDefault(ClassScanner scanner,
+                                                   Map<Class<?>, Class<?>> components) {
+        return create(scanner, components, Collections.emptyMap());
     }
 
     public ComponentProvider getComponentProvider() {
