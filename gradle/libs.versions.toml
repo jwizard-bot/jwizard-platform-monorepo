@@ -13,7 +13,8 @@ jackson = "3.1.0"
 jakartaCdiApi = "5.0.0-M1"
 jakartaInjectApi = "2.0.1"
 jedis = "7.4.0"
-jettyServer = "12.1.7"
+jetty = "12.1.7"
+jspecify = "1.0.0"
 junit = "5.10.2"
 kotlinDsl = "5.2.0"
 logback = "1.5.32"
@@ -43,7 +44,11 @@ jackson-databind = { module = "tools.jackson.core:jackson-databind", version.ref
 jakarta-cdi-api = { module = "jakarta.enterprise:jakarta.enterprise.cdi-api", version.ref = "jakartaCdiApi" }
 jakarta-inject-api = { module = "jakarta.inject:jakarta.inject-api", version.ref = "jakartaInjectApi" }
 jedis = { module = "redis.clients:jedis", version.ref = "jedis" }
-jetty-server = { module = "org.eclipse.jetty:jetty-server", version.ref = "jettyServer" }
+jetty-client = { module = "org.eclipse.jetty:jetty-client", version.ref = "jetty" }
+jetty-server = { module = "org.eclipse.jetty:jetty-server", version.ref = "jetty" }
+jetty-ws-client = { module = "org.eclipse.jetty.websocket:jetty-websocket-jetty-client", version.ref = "jetty" }
+jetty-ws-server = { module = "org.eclipse.jetty.websocket:jetty-websocket-jetty-server", version.ref = "jetty" }
+jspecify = { module = "org.jspecify:jspecify", version.ref = "jspecify" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }

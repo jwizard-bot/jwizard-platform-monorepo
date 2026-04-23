@@ -43,6 +43,7 @@ subprojects {
 
     dependencies {
         implementation(rootProject.libs.slf4j.api)
+        compileOnly(rootProject.libs.jspecify)
         testImplementation(rootProject.libs.assertj.core)
         testImplementation(rootProject.libs.junit.jupiter)
         testImplementation(rootProject.libs.mockito.core)
