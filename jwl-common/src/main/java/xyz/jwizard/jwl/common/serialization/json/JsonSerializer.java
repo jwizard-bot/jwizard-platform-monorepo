@@ -15,14 +15,12 @@
  */
 package xyz.jwizard.jwl.common.serialization.json;
 
-import java.io.InputStream;
-
 import xyz.jwizard.jwl.common.serialization.MessageSerializer;
 
 public interface JsonSerializer extends MessageSerializer {
-    // raw <-> data
-    String serialize(Object value) throws JsonSerializerException;
+    String serialize(Object value);
 
-    // data <-> raw
-    <T> T deserialize(InputStream input, Class<T> type) throws JsonSerializerException;
+    <T> T deserialize(String payload, Class<T> type);
+
+    <T> T convert(Object source, Class<T> type);
 }

@@ -19,134 +19,133 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.io.ByteArrayInputStream;
-import java.util.Collection;
+import java.io.ByteArrayOutputStream;
+import java.util.Map;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import xyz.jwizard.jwl.common.serialization.MessageSerializerException;
-import xyz.jwizard.jwl.common.serialization.SerializerFormat;
-import xyz.jwizard.jwl.common.serialization.envelope.MessageEnvelope;
-import xyz.jwizard.jwl.common.serialization.envelope.OpCode;
-import xyz.jwizard.jwl.common.serialization.envelope.TestOpCode;
-
-import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.json.JsonMapper;
+import xyz.jwizard.jwl.common.serialization.StandardSerializerFormat;
 
 class JacksonSerializerTest {
-    private final JacksonSerializer serializer = JacksonSerializer.createDefaultStrictMapper();
+    private final JacksonSerializer strict = JacksonSerializer.createDefaultStrictMapper();
+    private final JacksonSerializer lenient = JacksonSerializer.createLenientForMessaging();
 
     @Test
-    @DisplayName("should throw clean exception message on malformed JSON")
-    void shouldThrowCleanException() {
-        // given, missing comma
-        final String badJson = "{ \"name\": JWizard }";
-        final ByteArrayInputStream in = new ByteArrayInputStream(badJson.getBytes());
+    @DisplayName("should serialize and deserialize using strings")
+    void shouldHandleStrings() {
+        // given
+        final Simple person = new Simple("JWizard");
+        // when
+        final String json = strict.serialize(person);
+        final Simple result = strict.deserialize(json, Simple.class);
+        // then
+        assertThat(json).contains("\"name\":\"JWizard\"");
+        assertThat(result).isEqualTo(person);
+    }
+
+    @Test
+    @DisplayName("should serialize and deserialize using byte arrays")
+    void shouldHandleBytes() {
+        // given
+        final Simple person = new Simple("ByteWizard");
+        // when
+        final byte[] bytes = strict.serializeToBytes(person);
+        final Simple result = strict.deserializeFromBytes(bytes, Simple.class);
+        // then
+        assertThat(bytes).isNotEmpty();
+        assertThat(result).isEqualTo(person);
+    }
+
+    @Test
+    @DisplayName("should serialize and deserialize using streams")
+    void shouldHandleStreams() {
+        // given
+        final Simple person = new Simple("StreamWizard");
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        // when
+        strict.serializeToStream(person, out);
+        final ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+        final Simple result = strict.deserializeFromStream(in, Simple.class);
+        // then
+        assertThat(result).isEqualTo(person);
+    }
+
+    @Test
+    @DisplayName("should convert map to object type")
+    void shouldConvertTypes() {
+        // given
+        final Map<String, Object> map = Map.of("name", "ConvertedWizard");
+        // when
+        final Simple result = strict.convert(map, Simple.class);
+        // then
+        assertThat(result.name()).isEqualTo("ConvertedWizard");
+    }
+
+    @Test
+    @DisplayName("strict mapper should throw exception on unknown json properties")
+    void strictFailsOnUnknown() {
+        // given
+        final String json = "{\"name\":\"J\", \"unknown_field\": true}";
         // when & then
-        assertThatThrownBy(() -> serializer.deserialize(in, Simple.class))
+        assertThatThrownBy(() -> strict.deserialize(json, Simple.class))
             .isInstanceOf(JsonSerializerException.class);
     }
 
     @Test
-    @DisplayName("should return correct format")
-    void shouldReturnRawFormat() {
-        assertThat(serializer.format()).isEqualTo(SerializerFormat.JSON);
-    }
-
-    @Test
-    @DisplayName("should serialize and deserialize envelope using OpCode interface")
-    void shouldHandleEnvelopeWithOpCode() {
+    @DisplayName("lenient mapper should ignore unknown json properties")
+    void lenientIgnoresUnknown() {
         // given
-        final OpCode op = TestOpCode.USER_DATA;
-        final UserPayload payload = new UserPayload("JWizard", 2026);
+        final String json = "{\"name\":\"J\", \"unknown_field\": true}";
         // when
-        final byte[] serialized = serializer.serializeEnvelope(op, payload);
-        final MessageEnvelope<?> deserialized = serializer.deserializeEnvelope(serialized, code -> {
-            if (code == TestOpCode.USER_DATA.getCode()) {
-                return UserPayload.class;
-            }
-            return null;
-        });
+        final Simple result = lenient.deserialize(json, Simple.class);
         // then
-        assertThat(deserialized.op()).isEqualTo(100);
-        assertThat(deserialized.data()).isInstanceOf(UserPayload.class);
-        final UserPayload resultData = (UserPayload) deserialized.data();
-        assertThat(resultData.username()).isEqualTo("JWizard");
+        assertThat(result.name()).isEqualTo("J");
     }
 
     @Test
-    @DisplayName("should correctly resolve types based on OpCode integer value")
-    void shouldResolveTypesByIntCode() {
+    @DisplayName("should throw exception when required record property is missing")
+    void failsOnMissingProperties() {
         // given
-        final TestOpCode op = TestOpCode.HEARTBEAT;
-        final String jsonString = String.format("{\"op\": %d, \"data\": {}}", op.getCode());
-        final byte[] json = jsonString.getBytes();
-        // when
-        final MessageEnvelope<?> envelope = serializer.deserializeEnvelope(json, code -> {
-            if (code == 200) {
-                return Heartbeat.class;
-            }
-            return null;
-        });
-        // then
-        assertThat(envelope.op()).isEqualTo(200);
-        assertThat(envelope.data()).isInstanceOf(Heartbeat.class);
-    }
-
-    @Test
-    @DisplayName("should throw exception for unknown op code not present in resolver")
-    void shouldThrowOnUnknownCode() {
-        // given
-        final int unknownCode = 999_999;
-        final String jsonString = String.format("{\"op\": %d, \"data\": {}}", unknownCode);
+        final String json = "{}";
         // when & then
-        assertThatThrownBy(() -> serializer
-            .deserializeEnvelope(jsonString.getBytes(), code -> null))
-            .isInstanceOf(MessageSerializerException.class)
-            .hasMessageContaining("Unknown op code: 999");
+        assertThatThrownBy(() -> lenient.deserialize(json, Simple.class))
+            .isInstanceOf(JsonSerializerException.class);
     }
 
     @Test
-    @DisplayName("should handle empty data when dataType is Void.class")
-    void shouldHandleVoidDataType() {
+    @DisplayName("should throw exception when null is assigned to primitive type")
+    void failsOnNullPrimitives() {
         // given
-        final TestOpCode op = TestOpCode.HEARTBEAT;
-        final String jsonString = String.format("{\"op\": %d, \"data\": null}", op.getCode());
-        // when
-        final MessageEnvelope<?> envelope = serializer
-            .deserializeEnvelope(jsonString.getBytes(), code -> Void.class);
-        // then
-        assertThat(envelope.data()).isNull();
+        final String json = "{\"id\": null}";
+        // when & then
+        assertThatThrownBy(() -> strict.deserialize(json, PrimitiveTest.class))
+            .isInstanceOf(JsonSerializerException.class);
     }
 
     @Test
-    @DisplayName("should serialize only 'op' and 'data' fields, ignoring helper methods")
-    void shouldSerializeOnlyRequiredFields() {
-        // given
-        final int opCode = (0x01 << 16) | 0x64;
-        final UserPayload payload = new UserPayload("JWizard", 2026);
-        final MessageEnvelope<UserPayload> envelope = new MessageEnvelope<>(opCode, payload);
+    @DisplayName("should return correct serializer format")
+    void shouldReturnCorrectFormat() {
         // when
-        final String json = serializer.serialize(envelope);
+        final StandardSerializerFormat format = strict.format();
         // then
-        try {
-            final JsonNode tree = new JsonMapper().readTree(json);
-            final Collection<String> keys = tree.propertyNames();
-            assertThat(keys)
-                .as("Generated JSON should contain exactly 'op' and 'data' fields")
-                .containsExactlyInAnyOrder("op", "data");
-            assertThat(keys).doesNotContain("category", "actionId");
-        } catch (Exception ex) {
-            throw new RuntimeException("Failed to verify JSON structure", ex);
-        }
+        assertThat(format).isEqualTo(StandardSerializerFormat.JSON);
+    }
+
+    @Test
+    @DisplayName("should provide clean error message on malformed JSON")
+    void shouldThrowCleanException() {
+        // given
+        final String badJson = "{ \"name\": missing_quotes }";
+        // when & then
+        assertThatThrownBy(() -> strict.deserialize(badJson, Simple.class))
+            .isInstanceOf(JsonSerializerException.class)
+            .hasMessageNotContaining("at [Source");
     }
 }
 
 record Simple(String name) {
 }
 
-record UserPayload(String username, int year) {
-}
-
-record Heartbeat() {
+record PrimitiveTest(int id) {
 }

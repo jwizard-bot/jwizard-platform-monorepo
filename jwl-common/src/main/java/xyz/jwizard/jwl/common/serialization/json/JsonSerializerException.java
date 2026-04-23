@@ -26,4 +26,8 @@ public class JsonSerializerException extends MessageSerializerException {
     public JsonSerializerException(String message, Throwable cause) {
         super(message, cause);
     }
+
+    public JsonSerializerException(String message) {
+        super(message);
+    }
 }

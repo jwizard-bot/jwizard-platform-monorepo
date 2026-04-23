@@ -16,21 +16,16 @@
 package xyz.jwizard.jwl.common.serialization.json;
 
 import java.io.InputStream;
-import java.util.function.Function;
+import java.io.OutputStream;
 
-import xyz.jwizard.jwl.common.serialization.MessageSerializerException;
-import xyz.jwizard.jwl.common.serialization.SerializerFormat;
-import xyz.jwizard.jwl.common.serialization.envelope.EnvelopeSerializer;
-import xyz.jwizard.jwl.common.serialization.envelope.MessageEnvelope;
-import xyz.jwizard.jwl.common.serialization.envelope.OpCode;
+import xyz.jwizard.jwl.common.serialization.StandardSerializerFormat;
 
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.DeserializationFeature;
-import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
 
-public class JacksonSerializer implements JsonSerializer, EnvelopeSerializer {
+public class JacksonSerializer implements JsonSerializer {
     private final ObjectMapper objectMapper;
 
     private JacksonSerializer(ObjectMapper objectMapper) {
@@ -69,7 +64,16 @@ public class JacksonSerializer implements JsonSerializer, EnvelopeSerializer {
     }
 
     @Override
-    public <T> T deserialize(InputStream input, Class<T> type) {
+    public void serializeToStream(Object value, OutputStream out) {
+        try {
+            objectMapper.writeValue(out, value);
+        } catch (JacksonException ex) {
+            throw new JsonSerializerException(getCleanMessage(ex), ex);
+        }
+    }
+
+    @Override
+    public <T> T deserializeFromStream(InputStream input, Class<T> type) {
         try {
             return objectMapper.readValue(input, type);
         } catch (JacksonException ex) {
@@ -78,11 +82,30 @@ public class JacksonSerializer implements JsonSerializer, EnvelopeSerializer {
     }
 
     @Override
+    public <T> T deserialize(String payload, Class<T> type) {
+        try {
+            return objectMapper.readValue(payload, type);
+        } catch (JacksonException ex) {
+            throw new JsonSerializerException(getCleanMessage(ex), ex);
+        }
+    }
+
+    @Override
+    public <T> T convert(Object source, Class<T> type) {
+        try {
+            return objectMapper.convertValue(source, type);
+        } catch (IllegalArgumentException ex) {
+            throw new JsonSerializerException("Failed to convert payload data to expected type: "
+                + type.getSimpleName(), ex);
+        }
+    }
+
+    @Override
     public byte[] serializeToBytes(Object value) {
         try {
             return objectMapper.writeValueAsBytes(value);
         } catch (JacksonException ex) {
-            throw new MessageSerializerException(getCleanMessage(ex), ex);
+            throw new JsonSerializerException(getCleanMessage(ex), ex);
         }
     }
 
@@ -91,45 +114,13 @@ public class JacksonSerializer implements JsonSerializer, EnvelopeSerializer {
         try {
             return objectMapper.readValue(bytes, type);
         } catch (JacksonException ex) {
-            throw new MessageSerializerException(getCleanMessage(ex), ex);
+            throw new JsonSerializerException(getCleanMessage(ex), ex);
         }
     }
 
     @Override
-    public SerializerFormat format() {
-        return SerializerFormat.JSON;
-    }
-
-    @Override
-    public byte[] serializeEnvelope(OpCode opCode, Object payload) {
-        final MessageEnvelope<Object> envelope = new MessageEnvelope<>(opCode.getCode(), payload);
-        return serializeToBytes(envelope);
-    }
-
-    @Override
-    public MessageEnvelope<?> deserializeEnvelope(byte[] payload,
-                                                  Function<Integer, Class<?>> typeResolver) {
-        try {
-            final JsonNode tree = objectMapper.readTree(payload);
-            final JsonNode opNode = tree.get("op");
-            if (opNode == null) {
-                throw new MessageSerializerException("Missing 'op' field in envelope");
-            }
-            final int op = opNode.intValue();
-            final Class<?> dataType = typeResolver.apply(op);
-            if (dataType == null) {
-                throw new MessageSerializerException(String
-                    .format("Unknown op code: 0x%08X (%d)", op, op));
-            }
-            final JsonNode dataNode = tree.get("data");
-            Object data = null;
-            if (dataNode != null && !dataNode.isNull() && dataType != Void.class) {
-                data = objectMapper.treeToValue(dataNode, dataType);
-            }
-            return new MessageEnvelope<>(op, data);
-        } catch (JacksonException ex) {
-            throw new MessageSerializerException(getCleanMessage(ex), ex);
-        }
+    public StandardSerializerFormat format() {
+        return StandardSerializerFormat.JSON;
     }
 
     private String getCleanMessage(JacksonException ex) {
