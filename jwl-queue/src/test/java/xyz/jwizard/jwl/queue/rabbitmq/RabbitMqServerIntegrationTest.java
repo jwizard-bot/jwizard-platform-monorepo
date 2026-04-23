@@ -43,6 +43,7 @@ import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.reflect.TypeReference;
 import xyz.jwizard.jwl.common.serialization.SerializerFormat;
 import xyz.jwizard.jwl.common.serialization.SerializerRegistry;
+import xyz.jwizard.jwl.common.serialization.StandardSerializerFormat;
 import xyz.jwizard.jwl.common.serialization.json.JacksonSerializer;
 import xyz.jwizard.jwl.common.serialization.raw.RawByteSerializer;
 import xyz.jwizard.jwl.common.util.CastUtil;
@@ -93,7 +94,7 @@ public class RabbitMqServerIntegrationTest {
         startServer();
         // when
         final byte[] payload = "Hello RabbitMQ".getBytes(StandardCharsets.UTF_8);
-        messagePublisher.publishToQueue("test.happy.queue", payload, SerializerFormat.RAW);
+        messagePublisher.publishToQueue("test.happy.queue", payload, StandardSerializerFormat.RAW);
 
         // then
         final boolean received = listener.getLatch().await(5, TimeUnit.SECONDS);
@@ -112,7 +113,7 @@ public class RabbitMqServerIntegrationTest {
         startServer();
         // when
         final byte[] poisonPill = "Poison Pill".getBytes(StandardCharsets.UTF_8);
-        messagePublisher.publishToQueue("test.fail.queue", poisonPill, SerializerFormat.RAW);
+        messagePublisher.publishToQueue("test.fail.queue", poisonPill, StandardSerializerFormat.RAW);
         // then
         Thread.sleep(500);
         try (final Connection conn = createDirectConnection();
