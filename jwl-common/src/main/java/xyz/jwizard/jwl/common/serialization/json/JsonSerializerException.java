@@ -15,7 +15,14 @@
  */
 package xyz.jwizard.jwl.common.serialization.json;
 
-public class JsonSerializerException extends RuntimeException {
+import java.io.Serial;
+
+import xyz.jwizard.jwl.common.serialization.MessageSerializerException;
+
+public class JsonSerializerException extends MessageSerializerException {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     public JsonSerializerException(String message, Throwable cause) {
         super(message, cause);
     }

@@ -15,7 +15,12 @@
  */
 package xyz.jwizard.jwl.common.bootstrap;
 
+import java.io.Serial;
+
 public class CriticalBootstrapException extends RuntimeException {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     public CriticalBootstrapException(String message) {
         super(message);
     }

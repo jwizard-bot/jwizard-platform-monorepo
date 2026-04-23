@@ -15,7 +15,12 @@
  */
 package xyz.jwizard.jwl.graph;
 
+import java.io.Serial;
+
 public class GraphDatabaseException extends RuntimeException {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     public GraphDatabaseException(String message, Throwable cause) {
         super(message, cause);
     }

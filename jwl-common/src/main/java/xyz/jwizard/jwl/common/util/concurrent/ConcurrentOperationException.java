@@ -15,7 +15,12 @@
  */
 package xyz.jwizard.jwl.common.util.concurrent;
 
+import java.io.Serial;
+
 public class ConcurrentOperationException extends RuntimeException {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     public ConcurrentOperationException(Throwable cause) {
         super(cause);
     }

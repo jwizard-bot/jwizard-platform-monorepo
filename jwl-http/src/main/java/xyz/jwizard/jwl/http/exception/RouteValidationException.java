@@ -15,11 +15,15 @@
  */
 package xyz.jwizard.jwl.http.exception;
 
+import java.io.Serial;
 import java.lang.reflect.Method;
 
 import xyz.jwizard.jwl.common.bootstrap.CriticalBootstrapException;
 
 public class RouteValidationException extends CriticalBootstrapException {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     public RouteValidationException(Method method, String details) {
         super(String.format("Invalid route configuration in %s.%s(): %s",
             method.getDeclaringClass().getSimpleName(), method.getName(), details));
