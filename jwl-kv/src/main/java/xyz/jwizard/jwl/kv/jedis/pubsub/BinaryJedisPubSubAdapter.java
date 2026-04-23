@@ -66,8 +66,10 @@ public class BinaryJedisPubSubAdapter extends BinaryJedisPubSub {
     public void onSubscribe(byte[] channel, int subscribedChannels) {
         if (kvSubscriber != null) {
             kvSubscriber.setSubscribed(true);
-            LOG.debug("Successfully subscribed to channel/pattern: '{}' (total active: {})",
-                channel, subscribedChannels);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Successfully subscribed to channel/pattern: '{}' (total active: {})",
+                    new String(channel, StandardCharsets.UTF_8), subscribedChannels);
+            }
         }
     }
 
