@@ -80,7 +80,7 @@ public class RabbitMqServer extends QueueServer {
 
         connection = connector.connect(nodes, factory);
         channel = connection.createChannel();
-        LOG.info("Successfully connected to queue server, mode: {}", connector.type());
+        log.info("Successfully connected to queue server, mode: {}", connector.type());
     }
 
     @Override
@@ -116,7 +116,7 @@ public class RabbitMqServer extends QueueServer {
             args.put("x-dead-letter-exchange", dlx);
             args.put("x-dead-letter-routing-key", rk);
 
-            LOG.info("Auto-configured DLX for '{}' -> messages will end up in '{}'", queueName,
+            log.info("Auto-configured DLX for '{}' -> messages will end up in '{}'", queueName,
                 dlq);
         }
         channel.queueDeclare(
@@ -133,7 +133,7 @@ public class RabbitMqServer extends QueueServer {
             final String routingKey = topology.routingKey();
             channel.exchangeDeclare(exchangeName, topology.exchangeType().getType(), true);
             channel.queueBind(queueName, exchangeName, routingKey);
-            LOG.info("Bound queue '{}' to exchange '{}' with routing key '{}'",
+            log.info("Bound queue '{}' to exchange '{}' with routing key '{}'",
                 queueName, exchangeName, routingKey);
         }
         channel.basicConsume(queueName, false, (consumerTag, message) -> {
@@ -142,12 +142,12 @@ public class RabbitMqServer extends QueueServer {
                 processDelivery(listener, message.getBody());
                 channel.basicAck(deliveryTag, false);
             } catch (Throwable t) {
-                LOG.error("Processing failed for message on {}, sending to DLX", queueName, t);
+                log.error("Processing failed for message on {}, sending to DLX", queueName, t);
                 try {
                     // requeue set to false, without DLX delete message
                     channel.basicNack(deliveryTag, false, false);
                 } catch (IOException e) {
-                    LOG.error("Critical: could not send NACK", e);
+                    log.error("Critical: could not send NACK", e);
                 }
             }
         }, cancelTag -> {

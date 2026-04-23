@@ -71,13 +71,14 @@ public class JedisServer extends KvServer {
         poolConfig.setMaxTotal(poolMaxTotal);
         poolConfig.setMinIdle(Math.min(poolMinIdle, poolMaxIdle));
         poolConfig.setMaxIdle(Math.min(poolMaxIdle, poolMaxTotal));
-        LOG.info("KV server pool info: max total: {}, min/max idle: {}/{}",
+
+        log.info("KV server pool info: max total: {}, min/max idle: {}/{}",
             poolConfig.getMaxTotal(), poolConfig.getMinIdle(), poolConfig.getMaxIdle());
         redisClient = clientFactory.create(clusterNodes, config, poolConfig);
 
         final String pingResponse = redisClient.ping();
-        LOG.debug("KV server ping response: {}", pingResponse);
-        LOG.info("Successfully connected to KV server, mode: {}", clientFactory.type());
+        log.debug("KV server ping response: {}", pingResponse);
+        log.info("Successfully connected to KV server, mode: {}", clientFactory.type());
     }
 
     @Override
@@ -93,7 +94,7 @@ public class JedisServer extends KvServer {
     @Override
     public void set(KvKey key, String value, Object... keyParams) {
         final String exactKey = key.build(keyParams);
-        LOG.debug("KV SET -> key: '{}'", exactKey);
+        log.debug("KV SET -> key: '{}'", exactKey);
         redisClient.set(exactKey, value);
     }
 
@@ -102,7 +103,7 @@ public class JedisServer extends KvServer {
         final String exactKey = key.build(keyParams);
         final long ttl = key.getDefaultTtlSeconds();
         if (ttl > 0) {
-            LOG.debug("KV SETEX -> key: '{}', TTL: {}s", exactKey, ttl);
+            log.debug("KV SETEX -> key: '{}', TTL: {}s", exactKey, ttl);
             redisClient.set(exactKey, value, SetParams.setParams().ex(ttl));
         } else {
             set(key, value, keyParams);
@@ -113,21 +114,21 @@ public class JedisServer extends KvServer {
     public String get(KvKey key, Object... keyParams) {
         final String exactKey = key.build(keyParams);
         final String value = redisClient.get(exactKey);
-        LOG.debug("KV GET -> key: '{}', found: {}", exactKey, value != null);
+        log.debug("KV GET -> key: '{}', found: {}", exactKey, value != null);
         return value;
     }
 
     @Override
     public void del(KvKey key, Object... keyParams) {
         final String exactKey = key.build(keyParams);
-        LOG.debug("KV DEL -> key: '{}'", exactKey);
+        log.debug("KV DEL -> key: '{}'", exactKey);
         redisClient.del(exactKey);
     }
 
     @Override
     public void publish(KvChannel channel, String message, Object... channelParams) {
         final String exactChannelName = channel.buildChannel(channelParams);
-        LOG.debug("KV PUBLISH -> channel: '{}'", exactChannelName);
+        log.debug("KV PUBLISH -> channel: '{}'", exactChannelName);
         redisClient.publish(exactChannelName, message);
     }
 
@@ -135,7 +136,7 @@ public class JedisServer extends KvServer {
     public void publishBinary(KvChannel channel, byte[] message, Object... channelParams) {
         final String exactChannelName = channel.buildChannel(channelParams);
         final byte[] channelBytes = exactChannelName.getBytes(StandardCharsets.UTF_8);
-        LOG.debug("KV PUBLISH (binary) -> channel: '{}'", exactChannelName);
+        log.debug("KV PUBLISH (binary) -> channel: '{}'", exactChannelName);
         redisClient.publish(channelBytes, message);
     }
 
