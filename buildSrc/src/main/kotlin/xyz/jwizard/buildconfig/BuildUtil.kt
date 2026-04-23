@@ -15,6 +15,10 @@
  */
 package xyz.jwizard.buildconfig
 
+import org.gradle.api.Project
+import org.gradle.api.artifacts.MinimalExternalModuleDependency
+import org.gradle.api.artifacts.VersionCatalog
+import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.provider.Provider
 import org.gradle.plugin.use.PluginDependency
 
@@ -25,3 +29,16 @@ fun getPluginId(accessor: Provider<PluginDependency>): String {
 fun getEnv(name: String, defValue: String = ""): String {
     return System.getenv("JW_$name") ?: defValue
 }
+
+val Project.libs: VersionCatalog
+    get() = extensions.getByType(VersionCatalogsExtension::class.java).named("libs")
+
+fun VersionCatalog.getPlugin(alias: String): Provider<PluginDependency> =
+    findPlugin(alias).orElseThrow {
+        IllegalArgumentException("Plugin '$alias' not found in TOML")
+    }
+
+fun VersionCatalog.getLibrary(alias: String): Provider<MinimalExternalModuleDependency> =
+    findLibrary(alias).orElseThrow {
+        IllegalArgumentException("Library '$alias' not found in TOML")
+    }

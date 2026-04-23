@@ -13,16 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.gradle.api.tasks.testing.logging.TestLogEvent
-import xyz.jwizard.buildconfig.JwServiceExtension
-import xyz.jwizard.buildconfig.JwServicePlugin
+import xyz.jwizard.buildconfig.CompactTestOutputListener
 import xyz.jwizard.buildconfig.getEnv
 import xyz.jwizard.buildconfig.getPluginId
 
 plugins {
     alias(libs.plugins.java)
-    alias(libs.plugins.shadow) apply false
 }
 
 allprojects {
@@ -57,40 +53,55 @@ subprojects {
     tasks.withType<Test> {
         useJUnitPlatform()
         testLogging {
-            events(TestLogEvent.PASSED, TestLogEvent.SKIPPED, TestLogEvent.FAILED)
-            showStandardStreams = true
+            showStandardStreams = false
         }
+        addTestListener(CompactTestOutputListener())
         // suppress JDK 21+ warnings regarding dynamic agent loading (used by mockito)
         // -Xshare:off: disables class data sharing
-        jvmArgs("-XX:+EnableDynamicAgentLoading", "-Xshare:off")
+        jvmArgs(
+            "-XX:+EnableDynamicAgentLoading",
+            "-Xshare:off",
+            // GC
+            "-XX:+UseZGC",
+            "-XX:+ZGenerational", // high-performance, low-latency gc for java 21+
+            // memory
+            "-Xms2G",
+            "-Xmx2G",
+            "-XX:+AlwaysPreTouch", // zero latency spikes on memory allocation by pre-touching pages
+            "-XX:+UseStringDeduplication", // saves ram by removing duplicate strings from heap
+            // others
+            "-Dfile.encoding=UTF-8",
+            "-XX:+ExitOnOutOfMemoryError"
+        )
     }
 
-    // for services (with main class)
-    plugins.withType<JwServicePlugin> {
-        apply(plugin = getPluginId(rootProject.libs.plugins.shadow))
-        apply(plugin = getPluginId(rootProject.libs.plugins.application))
+    tasks.withType<JavaCompile> {
+        options.compilerArgs.addAll(
+            listOf(
+                "-Werror", // change warnings to errors
+                "-Xdoclint:all,-missing", // for Javadoc
+                "-Xlint:cast",
+                "-Xlint:deprecation",
+                "-Xlint:fallthrough", // for classic switch statements
+                "-Xlint:rawtypes",
+                "-Xlint:serial", // for serialization
+                "-Xlint:unchecked", // show all unchecked and insecure java casts
+            )
+        )
+    }
 
-        dependencies {
-            runtimeOnly(rootProject.libs.logback.classic)
-        }
-
-        val jwizardExt = project.extensions.getByType<JwServiceExtension>()
-        val mainClazz = jwizardExt.packageSuffix.zip(jwizardExt.mainClass) { suffix, clazz ->
-            "${project.group}.jws.$suffix.$clazz"
-        }
-
-        configure<JavaApplication> {
-            mainClass.set(mainClazz)
-        }
-
-        tasks.withType<ShadowJar> {
-            archiveFileName.set("${project.name}.jar")
-            destinationDirectory.set(layout.projectDirectory.dir(".bin"))
-            manifest {
-                attributes(
-                    mapOf("Main-Class" to mainClazz)
-                )
-            }
-        }
+    tasks.withType<JavaExec> {
+        jvmArgs(
+            // GC
+            "-XX:+UseZGC",
+            "-XX:+ZGenerational",
+            // memory
+            "-Xms4G",
+            "-Xmx4G",
+            "-XX:+AlwaysPreTouch",
+            "-XX:+UseStringDeduplication",
+            "-Dfile.encoding=UTF-8",
+            "-XX:+ExitOnOutOfMemoryError"
+        )
     }
 }

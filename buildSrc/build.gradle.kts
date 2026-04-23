@@ -17,6 +17,7 @@
 plugins {
     alias(libs.plugins.kotlin.dsl)
     alias(libs.plugins.java.gradle.plugin)
+    alias(libs.plugins.shadow) apply false
 }
 
 repositories {
@@ -26,6 +27,7 @@ repositories {
 
 dependencies {
     implementation(libs.gradle.node.plugin)
+    implementation(libs.shadow.marker)
     implementation(gradleApi())
 }
 
