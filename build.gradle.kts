@@ -68,6 +68,7 @@ subprojects {
             // memory
             "-Xms2G",
             "-Xmx2G",
+            "-XX:MaxMetaspaceSize=512m", // 512 for protobuf one-class-per-file convention
             "-XX:+AlwaysPreTouch", // zero latency spikes on memory allocation by pre-touching pages
             "-XX:+UseStringDeduplication", // saves ram by removing duplicate strings from heap
             // others
@@ -100,6 +101,7 @@ subprojects {
             // memory
             "-Xms4G",
             "-Xmx4G",
+            "-XX:MaxMetaspaceSize=512m",
             "-XX:+AlwaysPreTouch",
             "-XX:+UseStringDeduplication",
             "-Dfile.encoding=UTF-8",
