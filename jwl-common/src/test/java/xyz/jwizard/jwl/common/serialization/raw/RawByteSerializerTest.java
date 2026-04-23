@@ -22,7 +22,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import xyz.jwizard.jwl.common.serialization.MessageSerializerException;
-import xyz.jwizard.jwl.common.serialization.SerializerFormat;
+import xyz.jwizard.jwl.common.serialization.StandardSerializerFormat;
 
 class RawByteSerializerTest {
     private final RawByteSerializer serializer = RawByteSerializer.createDefault();
@@ -83,6 +83,6 @@ class RawByteSerializerTest {
     @Test
     @DisplayName("should return correct format")
     void shouldReturnRawFormat() {
-        assertThat(serializer.format()).isEqualTo(SerializerFormat.RAW);
+        assertThat(serializer.format()).isEqualTo(StandardSerializerFormat.RAW);
     }
 }
