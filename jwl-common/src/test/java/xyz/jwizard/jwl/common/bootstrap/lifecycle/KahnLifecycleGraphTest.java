@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test;
 
 import xyz.jwizard.jwl.common.bootstrap.CriticalBootstrapException;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
+import xyz.jwizard.jwl.common.reflect.ClassScanner;
 
 class KahnLifecycleGraphTest {
     private KahnLifecycleGraph graph;
@@ -131,7 +132,7 @@ class KahnLifecycleGraphTest {
 
 class HookA implements LifecycleHook {
     @Override
-    public void onStart(ComponentProvider provider) {
+    public void onStart(ComponentProvider provider, ClassScanner scanner) {
     }
 }
 
@@ -142,7 +143,7 @@ class HookB implements LifecycleHook {
     }
 
     @Override
-    public void onStart(ComponentProvider provider) {
+    public void onStart(ComponentProvider provider, ClassScanner scanner) {
     }
 }
 
@@ -153,14 +154,14 @@ class HookC implements LifecycleHook {
     }
 
     @Override
-    public void onStart(ComponentProvider provider) {
+    public void onStart(ComponentProvider provider, ClassScanner scanner) {
     }
 }
 
 // DAG
 class Root implements LifecycleHook {
     @Override
-    public void onStart(ComponentProvider provider) {
+    public void onStart(ComponentProvider provider, ClassScanner scanner) {
     }
 }
 
@@ -171,7 +172,7 @@ class Branch1 implements LifecycleHook {
     }
 
     @Override
-    public void onStart(ComponentProvider provider) {
+    public void onStart(ComponentProvider provider, ClassScanner scanner) {
     }
 }
 
@@ -182,7 +183,7 @@ class Branch2 implements LifecycleHook {
     }
 
     @Override
-    public void onStart(ComponentProvider provider) {
+    public void onStart(ComponentProvider provider, ClassScanner scanner) {
     }
 }
 
@@ -193,7 +194,7 @@ class Leaf implements LifecycleHook {
     }
 
     @Override
-    public void onStart(ComponentProvider provider) {
+    public void onStart(ComponentProvider provider, ClassScanner scanner) {
     }
 }
 
@@ -205,7 +206,7 @@ class CycleA implements LifecycleHook {
     }
 
     @Override
-    public void onStart(ComponentProvider provider) {
+    public void onStart(ComponentProvider provider, ClassScanner scanner) {
     }
 }
 
@@ -216,7 +217,7 @@ class CycleB implements LifecycleHook {
     }
 
     @Override
-    public void onStart(ComponentProvider provider) {
+    public void onStart(ComponentProvider provider, ClassScanner scanner) {
     }
 }
 
@@ -227,25 +228,25 @@ class CycleC implements LifecycleHook {
     }
 
     @Override
-    public void onStart(ComponentProvider provider) {
+    public void onStart(ComponentProvider provider, ClassScanner scanner) {
     }
 }
 
 // independent (no dependency)
 class IndependentHook1 implements LifecycleHook {
     @Override
-    public void onStart(ComponentProvider provider) {
+    public void onStart(ComponentProvider provider, ClassScanner scanner) {
     }
 }
 
 class IndependentHook2 implements LifecycleHook {
     @Override
-    public void onStart(ComponentProvider provider) {
+    public void onStart(ComponentProvider provider, ClassScanner scanner) {
     }
 }
 
 class IndependentHook3 implements LifecycleHook {
     @Override
-    public void onStart(ComponentProvider provider) {
+    public void onStart(ComponentProvider provider, ClassScanner scanner) {
     }
 }
