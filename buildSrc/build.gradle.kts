@@ -17,6 +17,7 @@
 plugins {
     alias(libs.plugins.kotlin.dsl)
     alias(libs.plugins.java.gradle.plugin)
+    alias(libs.plugins.protobuf) apply false
     alias(libs.plugins.shadow) apply false
 }
 
@@ -27,7 +28,9 @@ repositories {
 
 dependencies {
     implementation(libs.gradle.node.plugin)
+    implementation(libs.protobuf.gradle.plugin)
     implementation(libs.shadow.marker)
+    implementation(libs.protoc)
     implementation(gradleApi())
 }
 
@@ -42,6 +45,12 @@ gradlePlugin {
         create("jwPolyglotJs") {
             id = "xyz.jwizard.jw-polyglot-js"
             implementationClass = "xyz.jwizard.buildconfig.JwPolyglotJsPlugin"
+        }
+    }
+    plugins {
+        create("jwProtobuf") {
+            id = "xyz.jwizard.jw-protobuf"
+            implementationClass = "xyz.jwizard.buildconfig.JwProtobufPlugin"
         }
     }
 }

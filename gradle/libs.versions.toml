@@ -20,6 +20,8 @@ logback = "1.5.32"
 mockito = "5.11.0"
 neo4jDriver = "6.0.4"
 postgresql = "42.7.10"
+protobuf = "4.34.1"
+protobufPlugin = "0.10.0"
 shadow = "8.3.0"
 slf4j = "2.0.17"
 testcontainers = "2.0.4"
@@ -48,6 +50,10 @@ mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 mockito-jupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
 neo4j-driver = { module = "org.neo4j.driver:neo4j-java-driver", version.ref = "neo4jDriver" }
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
+protobuf-gradle-plugin = { module = "com.google.protobuf:protobuf-gradle-plugin", version.ref = "protobufPlugin" }
+protobuf-java = { module = "com.google.protobuf:protobuf-java", version.ref = "protobuf" }
+protoc = { module = "com.google.protobuf:protoc", version.ref = "protobuf" }
+shadow-marker = { module = "com.gradleup.shadow:com.gradleup.shadow.gradle.plugin", version.ref = "shadow" }
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 slf4j-jdk-platform = { module = "org.slf4j:slf4j-jdk-platform-logging", version.ref = "slf4j" }
 testcontainers = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
@@ -58,10 +64,10 @@ testcontainers-rabbitmq = { module = "org.testcontainers:testcontainers-rabbitmq
 testcontainers-redis = { module = "com.redis:testcontainers-redis", version.ref = "testcontainersRedis" }
 
 [plugins]
-application = { id = "application" }
 java = { id = "java" }
 java-gradle-plugin = { id = "java-gradle-plugin" }
 java-library = { id = "java-library" }
 kotlin-dsl = { id = "org.gradle.kotlin.kotlin-dsl", version.ref = "kotlinDsl" }
+protobuf = { id = "com.google.protobuf", version.ref = "protobufPlugin" }
 shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
 test-fixtures = { id = "java-test-fixtures" }

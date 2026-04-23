@@ -52,3 +52,4 @@ hard:
 hard-all: down up-all
 
 include Makefile.jws
+include Makefile.tools
