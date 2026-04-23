@@ -21,6 +21,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Map;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -28,6 +29,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import xyz.jwizard.jwl.common.di.ApplicationContext;
+import xyz.jwizard.jwl.common.di.ComponentProvider;
+import xyz.jwizard.jwl.common.di.GuiceComponentProvider;
 import xyz.jwizard.jwl.common.reflect.ClassGraphScanner;
 import xyz.jwizard.jwl.common.reflect.ClassScanner;
 import xyz.jwizard.jwl.common.serialization.SerializerRegistry;
@@ -50,7 +53,9 @@ public class HttpServerIntegrationTest {
     static void startServer() {
         final String packageName = HttpServerIntegrationTest.class.getPackageName();
         final ClassScanner scanner = new ClassGraphScanner(packageName);
-        final ApplicationContext context = new ApplicationContext(scanner);
+        final ApplicationContext context = ApplicationContext.createDefault(scanner, Map.of(
+            ComponentProvider.class, GuiceComponentProvider.class
+        ));
         httpServer = JettyHttpServer.builder()
             .componentProvider(context.getComponentProvider())
             .serializerRegistry(SerializerRegistry.createDefault().register(SERIALIZER))
