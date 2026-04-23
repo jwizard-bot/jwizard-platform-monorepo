@@ -23,6 +23,8 @@ import java.util.function.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import xyz.jwizard.jwl.common.util.Assert;
+
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 
@@ -49,6 +51,10 @@ public class TokenBucketRateLimiter implements RateLimiter {
         return new Builder();
     }
 
+    public static TokenBucketRateLimiter createDefault() {
+        return new TokenBucketRateLimiter(builder());
+    }
+
     @Override
     public boolean tryAcquire(String key) {
         final Bucket bucket = buckets.computeIfAbsent(key, k -> bucketSupplier.get());
@@ -61,9 +67,9 @@ public class TokenBucketRateLimiter implements RateLimiter {
     }
 
     public static class Builder {
-        private long capacity;
-        private long refillTokens;
-        private Duration refillPeriod;
+        private long capacity = 20;
+        private long refillTokens = 10;
+        private Duration refillPeriod = Duration.ofSeconds(1);
 
         private Builder() {
         }
@@ -84,6 +90,7 @@ public class TokenBucketRateLimiter implements RateLimiter {
         }
 
         public RateLimiter build() {
+            Assert.notNull(refillPeriod, "RefillPeriod cannot be null");
             return new TokenBucketRateLimiter(this);
         }
     }
