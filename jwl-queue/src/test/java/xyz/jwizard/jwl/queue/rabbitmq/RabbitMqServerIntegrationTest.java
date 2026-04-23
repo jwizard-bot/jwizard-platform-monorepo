@@ -17,7 +17,6 @@ package xyz.jwizard.jwl.queue.rabbitmq;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.nio.charset.StandardCharsets;
@@ -29,6 +28,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.rabbitmq.RabbitMQContainer;
@@ -41,7 +43,7 @@ import com.rabbitmq.client.GetResponse;
 
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.reflect.TypeReference;
-import xyz.jwizard.jwl.common.serialization.SerializerFormat;
+import xyz.jwizard.jwl.common.serialization.MessageSerializer;
 import xyz.jwizard.jwl.common.serialization.SerializerRegistry;
 import xyz.jwizard.jwl.common.serialization.StandardSerializerFormat;
 import xyz.jwizard.jwl.common.serialization.json.JacksonSerializer;
@@ -58,6 +60,7 @@ import xyz.jwizard.jwl.queue.QueueServer;
 import xyz.jwizard.jwl.queue.rabbitmq.connector.ConnectorType;
 
 @Testcontainers
+@ExtendWith(MockitoExtension.class)
 public class RabbitMqServerIntegrationTest {
     @Container
     static final RabbitMQContainer rabbitMQ = new RabbitMQContainer(
@@ -66,18 +69,15 @@ public class RabbitMqServerIntegrationTest {
 
     private QueueServer server;
     private MessagePublisher messagePublisher;
+    @Mock
     private ComponentProvider componentProvider;
-    private SerializerRegistry serializerRegistry;
+    private SerializerRegistry<MessageSerializer> serializerRegistry;
 
     @BeforeEach
     void setUp() {
-        componentProvider = mock(ComponentProvider.class);
-        serializerRegistry = mock(SerializerRegistry.class);
-
-        when(serializerRegistry.get(SerializerFormat.RAW))
-            .thenReturn(RawByteSerializer.createDefault());
-        when(serializerRegistry.get(SerializerFormat.JSON))
-            .thenReturn(JacksonSerializer.createLenientForMessaging());
+        serializerRegistry = SerializerRegistry.create();
+        serializerRegistry.register(RawByteSerializer.createDefault());
+        serializerRegistry.register(JacksonSerializer.createLenientForMessaging());
     }
 
     @AfterEach
