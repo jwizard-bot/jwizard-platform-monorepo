@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -39,6 +40,7 @@ import com.redis.testcontainers.RedisContainer;
 
 import xyz.jwizard.jwl.common.di.ApplicationContext;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
+import xyz.jwizard.jwl.common.di.GuiceComponentProvider;
 import xyz.jwizard.jwl.common.reflect.ClassGraphScanner;
 import xyz.jwizard.jwl.common.reflect.ClassScanner;
 import xyz.jwizard.jwl.common.util.net.HostPort;
@@ -68,7 +70,9 @@ class JedisServerIntegrationTest {
     static void setupAll() {
         final String packageName = JedisServerIntegrationTest.class.getPackageName();
         final ClassScanner scanner = new ClassGraphScanner(packageName);
-        final ApplicationContext context = new ApplicationContext(scanner);
+        final ApplicationContext context = ApplicationContext.createDefault(scanner, Map.of(
+            ComponentProvider.class, GuiceComponentProvider.class
+        ));
         final String host = redisContainer.getHost();
         final int port = redisContainer.getMappedPort(REDIS_PORT);
         componentProvider = context.getComponentProvider();
