@@ -19,6 +19,7 @@ import java.util.Set;
 
 import xyz.jwizard.jwl.common.bootstrap.lifecycle.LifecycleHook;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
+import xyz.jwizard.jwl.common.reflect.ClassScanner;
 import xyz.jwizard.jwl.kv.KeyValueStore;
 import xyz.jwizard.jwl.kv.KvServer;
 import xyz.jwizard.jwl.kv.jedis.JedisServer;
@@ -47,7 +48,7 @@ class KvServerLifecycle implements LifecycleHook {
     }
 
     @Override
-    public void onStart(ComponentProvider componentProvider) {
+    public void onStart(ComponentProvider componentProvider, ClassScanner scanner) {
         kvServer.start();
     }
 

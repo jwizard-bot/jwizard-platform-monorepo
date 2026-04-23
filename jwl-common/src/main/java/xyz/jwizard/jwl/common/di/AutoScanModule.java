@@ -45,8 +45,6 @@ class AutoScanModule extends AbstractModule {
     @Override
     protected void configure() {
         LOG.debug("Auto-configuring bindings for @Injectable component(s)");
-        bind(ComponentProvider.class).to(GuiceComponentProvider.class).in(Scopes.SINGLETON);
-
         final Provider<Injector> injectorProvider = getProvider(Injector.class);
         final Set<Class<?>> injectables = classScanner.getTypesAnnotatedWith(Singleton.class);
         int boundedComponents = 0;

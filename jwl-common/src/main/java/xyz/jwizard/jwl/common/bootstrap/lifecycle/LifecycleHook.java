@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 
 import xyz.jwizard.jwl.common.di.ComponentProvider;
+import xyz.jwizard.jwl.common.reflect.ClassScanner;
 
 public interface LifecycleHook {
     // defines hook classes witch must be started before this hook
@@ -26,7 +27,7 @@ public interface LifecycleHook {
         return Collections.emptyList();
     }
 
-    void onStart(ComponentProvider componentProvider);
+    void onStart(ComponentProvider componentProvider, ClassScanner scanner);
 
     default void onStop() {
     }

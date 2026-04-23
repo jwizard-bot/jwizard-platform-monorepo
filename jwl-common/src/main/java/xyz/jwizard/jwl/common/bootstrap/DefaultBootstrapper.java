@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
@@ -29,6 +30,8 @@ import xyz.jwizard.jwl.common.bootstrap.lifecycle.KahnLifecycleGraph;
 import xyz.jwizard.jwl.common.bootstrap.lifecycle.LifecycleGraph;
 import xyz.jwizard.jwl.common.bootstrap.lifecycle.LifecycleHook;
 import xyz.jwizard.jwl.common.di.ApplicationContext;
+import xyz.jwizard.jwl.common.di.ComponentProvider;
+import xyz.jwizard.jwl.common.di.GuiceComponentProvider;
 import xyz.jwizard.jwl.common.reflect.ClassGraphScanner;
 import xyz.jwizard.jwl.common.reflect.ClassScanner;
 import xyz.jwizard.jwl.common.util.ArrayUtil;
@@ -61,8 +64,11 @@ public class DefaultBootstrapper {
 
         final long startTime = System.currentTimeMillis();
         try (final ClassScanner scanner = new ClassGraphScanner(packagesToScan)) {
-            final ApplicationContext context = new ApplicationContext(scanner);
-
+            final ApplicationContext context = new ApplicationContext(scanner, Map.of(
+                ComponentProvider.class, GuiceComponentProvider.class
+            ), Map.of(
+                ClassScanner.class, scanner
+            ));
             final List<? extends LifecycleHook> hooks = discoverAndSortHooks(scanner, context);
             registerShutdownHook(hooks, wait);
             startHooks(hooks, context);
@@ -99,7 +105,7 @@ public class DefaultBootstrapper {
             final String name = hook.getClass().getSimpleName();
             try {
                 LOG.debug("Starting lifecycle hook: {}", name);
-                hook.onStart(context.getComponentProvider());
+                hook.onStart(context.getComponentProvider(), context.getScanner());
             } catch (Exception ex) {
                 throw new CriticalBootstrapException("Failed to start hook: " + name, ex);
             }

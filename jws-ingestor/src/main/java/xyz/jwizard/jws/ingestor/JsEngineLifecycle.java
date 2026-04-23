@@ -17,6 +17,7 @@ package xyz.jwizard.jws.ingestor;
 
 import xyz.jwizard.jwl.common.bootstrap.lifecycle.LifecycleHook;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
+import xyz.jwizard.jwl.common.reflect.ClassScanner;
 import xyz.jwizard.jws.ingestor.config.scripting.IngestorScript;
 import xyz.jwizard.jws.ingestor.scripting.JsEngine;
 import xyz.jwizard.jws.ingestor.scripting.graal.GraalJsEngine;
@@ -35,7 +36,7 @@ class JsEngineLifecycle implements LifecycleHook {
     }
 
     @Override
-    public void onStart(ComponentProvider componentProvider) {
+    public void onStart(ComponentProvider componentProvider, ClassScanner scanner) {
         jsEngine.start();
     }
 

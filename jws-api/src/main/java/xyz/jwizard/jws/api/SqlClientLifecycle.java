@@ -19,6 +19,7 @@ import java.util.List;
 
 import xyz.jwizard.jwl.common.bootstrap.lifecycle.LifecycleHook;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
+import xyz.jwizard.jwl.common.reflect.ClassScanner;
 import xyz.jwizard.jwl.sql.config.SqlDatabaseConfig;
 import xyz.jwizard.jwl.sql.config.SqlDatabaseDialect;
 import xyz.jwizard.jwl.sql.jdbc.JdbcSqlClient;
@@ -55,7 +56,7 @@ class SqlClientLifecycle implements LifecycleHook {
     }
 
     @Override
-    public void onStart(ComponentProvider componentProvider) {
+    public void onStart(ComponentProvider componentProvider, ClassScanner scanner) {
         sqlDatabaseRegistry.startAll();
     }
 
