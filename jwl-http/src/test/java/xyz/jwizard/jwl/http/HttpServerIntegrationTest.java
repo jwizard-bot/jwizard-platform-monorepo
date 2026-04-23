@@ -30,6 +30,7 @@ import org.junit.jupiter.api.Test;
 import xyz.jwizard.jwl.common.di.ApplicationContext;
 import xyz.jwizard.jwl.common.reflect.ClassGraphScanner;
 import xyz.jwizard.jwl.common.reflect.ClassScanner;
+import xyz.jwizard.jwl.common.serialization.SerializerRegistry;
 import xyz.jwizard.jwl.common.serialization.json.JacksonSerializer;
 import xyz.jwizard.jwl.common.serialization.json.JsonSerializer;
 import xyz.jwizard.jwl.http.filter.CacheSpyFilter;
@@ -52,7 +53,7 @@ public class HttpServerIntegrationTest {
         final ApplicationContext context = new ApplicationContext(scanner);
         httpServer = JettyHttpServer.builder()
             .componentProvider(context.getComponentProvider())
-            .jsonSerializer(SERIALIZER)
+            .serializerRegistry(SerializerRegistry.createDefault().register(SERIALIZER))
             .port(0)
             .build();
         httpServer.start();

@@ -44,7 +44,7 @@ class QueueServerLifecycle implements LifecycleHook {
             .username("guest" /*TODO: incoming from config server*/)
             .password("guest" /*TODO: incoming from config server*/)
             .virtualHost("jwizard-main" /*TODO: incoming from config server*/)
-            .serializerRegistry(new SerializerRegistry()
+            .serializerRegistry(SerializerRegistry.createDefault()
                 .register(JacksonSerializer.createLenientForMessaging())
                 .register(RawByteSerializer.createDefault())
             )

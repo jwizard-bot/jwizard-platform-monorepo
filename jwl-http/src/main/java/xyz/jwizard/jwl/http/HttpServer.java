@@ -23,6 +23,9 @@ import java.util.stream.Collectors;
 
 import xyz.jwizard.jwl.common.bootstrap.lifecycle.IdempotentService;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
+import xyz.jwizard.jwl.common.serialization.MessageSerializer;
+import xyz.jwizard.jwl.common.serialization.SerializerRegistry;
+import xyz.jwizard.jwl.common.serialization.StandardSerializerFormat;
 import xyz.jwizard.jwl.common.serialization.json.JsonSerializer;
 import xyz.jwizard.jwl.common.util.Assert;
 import xyz.jwizard.jwl.common.util.CastUtil;
@@ -80,9 +83,9 @@ public abstract class HttpServer extends IdempotentService {
         resolvers = CollectionUtil.linkedSetOf(
             new PathVariableResolver(router),
             new RequestParamResolver(),
-            new RequestBodyResolver(builder.jsonSerializer, new ValidationHandler(validators))
+            new RequestBodyResolver(builder.serializerRegistry, new ValidationHandler(validators))
         );
-        writers = initWriters(builder.jsonSerializer);
+        writers = initWriters(builder.serializerRegistry);
         exceptionHandlers = CollectionUtil.linkedSetOf(
             new AnnotatedExceptionHandler(),
             new BadRequestExceptionHandler(),
@@ -116,11 +119,10 @@ public abstract class HttpServer extends IdempotentService {
         return Set.copyOf(combined);
     }
 
-    private Set<ResponseWriter> initWriters(JsonSerializer json) {
+    private Set<ResponseWriter> initWriters(SerializerRegistry<MessageSerializer> registry) {
         final Set<ResponseWriter> delegates = CollectionUtil.linkedSetOf(
             new VoidResponseWriter(),
-            new StringResponseWriter(),
-            new JsonResponseWriter(json)
+            new StringResponseWriter()
         );
         final Set<ResponseWriter> all = CollectionUtil.linkedSetOf(
             new ResponseEntityResponseWriter(delegates)
@@ -135,7 +137,7 @@ public abstract class HttpServer extends IdempotentService {
         protected final Set<String> ignoredPaths = new HashSet<>();
 
         protected ComponentProvider componentProvider;
-        protected JsonSerializer jsonSerializer;
+        protected SerializerRegistry<MessageSerializer> serializerRegistry;
         protected int port = 8080;
 
         protected AbstractBuilder() {
@@ -150,8 +152,8 @@ public abstract class HttpServer extends IdempotentService {
             return self();
         }
 
-        public B jsonSerializer(JsonSerializer json) {
-            this.jsonSerializer = json;
+        public B serializerRegistry(SerializerRegistry<MessageSerializer> serializerRegistry) {
+            this.serializerRegistry = serializerRegistry;
             return self();
         }
 
@@ -167,7 +169,7 @@ public abstract class HttpServer extends IdempotentService {
 
         protected void validate() {
             Assert.notNull(componentProvider, "ComponentProvider cannot be null");
-            Assert.notNull(jsonSerializer, "JsonSerializer cannot be null");
+            Assert.notNull(serializerRegistry, "SerializerRegistry cannot be null");
             Assert.state(port >= 0 && port < 65536, "Invalid port number");
         }
 

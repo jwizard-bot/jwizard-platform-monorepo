@@ -25,6 +25,7 @@ import xyz.jwizard.jwl.common.bootstrap.CriticalBootstrapException;
 import xyz.jwizard.jwl.common.bootstrap.lifecycle.IdempotentService;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.reflect.TypeReference;
+import xyz.jwizard.jwl.common.serialization.MessageSerializer;
 import xyz.jwizard.jwl.common.serialization.SerializerRegistry;
 import xyz.jwizard.jwl.common.util.Assert;
 import xyz.jwizard.jwl.common.util.CastUtil;
@@ -35,7 +36,7 @@ public abstract class QueueServer extends IdempotentService {
     protected final String username;
     protected final String password;
     protected final Set<HostPort> nodes;
-    protected final SerializerRegistry serializerRegistry;
+    protected final SerializerRegistry<MessageSerializer> serializerRegistry;
     protected final ComponentProvider componentProvider;
 
     private final QueuePublisher queuePublisher = new QueuePublisher(this);
@@ -63,7 +64,7 @@ public abstract class QueueServer extends IdempotentService {
         registerListeners(listeners);
     }
 
-    SerializerRegistry getSerializerRegistry() {
+    SerializerRegistry<MessageSerializer> getSerializerRegistry() {
         return serializerRegistry;
     }
 
@@ -112,7 +113,7 @@ public abstract class QueueServer extends IdempotentService {
         protected String username;
         protected String password;
         protected Set<HostPort> nodes = new HashSet<>();
-        protected SerializerRegistry serializerRegistry;
+        protected SerializerRegistry<MessageSerializer> serializerRegistry;
         protected ComponentProvider componentProvider;
 
         protected AbstractBuilder() {
@@ -145,7 +146,7 @@ public abstract class QueueServer extends IdempotentService {
             return self();
         }
 
-        public B serializerRegistry(SerializerRegistry serializerRegistry) {
+        public B serializerRegistry(SerializerRegistry<MessageSerializer> serializerRegistry) {
             this.serializerRegistry = serializerRegistry;
             return self();
         }
