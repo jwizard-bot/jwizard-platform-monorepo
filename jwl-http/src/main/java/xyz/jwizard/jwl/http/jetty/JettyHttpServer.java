@@ -61,7 +61,7 @@ public class JettyHttpServer extends HttpServer {
         server.setHandler(new JettyHttpRequestHandlerAdapter(httpRequestHandler));
 
         server.start();
-        LOG.info("HTTP server started successfully with {}ms shutdown timeout",
+        log.info("HTTP server started successfully with {}ms shutdown timeout",
             SHUTDOWN_TIMEOUT_MS);
     }
 
