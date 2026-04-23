@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import xyz.jwizard.buildconfig.JwProtobufPlugin
 
 plugins {
     alias(libs.plugins.test.fixtures)
 }
+
+apply<JwProtobufPlugin>()
 
 dependencies {
     implementation(libs.bucket4j)
@@ -27,6 +30,7 @@ dependencies {
         exclude(group = "com.google.guava", module = "guava")
     }
     implementation(libs.jackson.databind)
+    implementation(libs.protobuf.java)
 
     api(libs.jakarta.inject.api)
     api(libs.jakarta.cdi.api)
