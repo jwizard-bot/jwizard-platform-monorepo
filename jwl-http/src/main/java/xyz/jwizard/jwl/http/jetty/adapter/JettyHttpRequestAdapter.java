@@ -23,6 +23,7 @@ import org.eclipse.jetty.util.MultiMap;
 import org.eclipse.jetty.util.UrlEncoded;
 
 import xyz.jwizard.jwl.http.HttpRequest;
+import xyz.jwizard.jwl.http.header.CommonHttpHeaderName;
 import xyz.jwizard.jwl.http.header.HttpHeaderName;
 
 public class JettyHttpRequestAdapter implements HttpRequest {
@@ -79,5 +80,18 @@ public class JettyHttpRequestAdapter implements HttpRequest {
     @Override
     public String getHeaderUnsafe(String name) {
         return request.getHeaders().get(name);
+    }
+
+    @Override
+    public String getContentType() {
+        final String contentType = getHeader(CommonHttpHeaderName.CONTENT_TYPE);
+        if (contentType == null) {
+            return null;
+        }
+        final int semicolonIndex = contentType.indexOf(';');
+        final String rawType = (semicolonIndex != -1)
+            ? contentType.substring(0, semicolonIndex)
+            : contentType;
+        return rawType.trim().toLowerCase();
     }
 }

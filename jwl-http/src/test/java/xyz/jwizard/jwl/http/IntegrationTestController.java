@@ -17,6 +17,7 @@ package xyz.jwizard.jwl.http;
 
 import java.util.Map;
 
+import xyz.jwizard.jwl.common.util.math.MemUnit;
 import xyz.jwizard.jwl.http.annotation.Body;
 import xyz.jwizard.jwl.http.annotation.HttpController;
 import xyz.jwizard.jwl.http.annotation.HttpMethod;
@@ -30,6 +31,16 @@ class IntegrationTestController {
     @RequestMapping(value = "/api/test", method = HttpMethod.POST)
     ResponseEntity<String> handleTest(@Body TestEnvelope testEnvelope) {
         return ResponseEntity.ok("Success: " + testEnvelope.testUser().name());
+    }
+
+    @RequestMapping(value = "/api/raw", method = HttpMethod.POST)
+    ResponseEntity<String> handleRawData(@Body byte[] data) {
+        return ResponseEntity.ok("Received " + data.length + " bytes of raw data");
+    }
+
+    @RequestMapping(value = "/api/limited", method = HttpMethod.POST)
+    ResponseEntity<String> handleLimitedData(@Body(limit = 10, unit = MemUnit.BYTES) byte[] data) {
+        return ResponseEntity.ok("Processed limited payload");
     }
 
     @RequestMapping(value = "/api/users/{id}", method = HttpMethod.GET)

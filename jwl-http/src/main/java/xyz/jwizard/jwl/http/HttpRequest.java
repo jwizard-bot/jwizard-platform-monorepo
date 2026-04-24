@@ -35,4 +35,7 @@ public interface HttpRequest {
     String getHeader(HttpHeaderName name);
 
     String getHeaderUnsafe(String name);
+
+    // get clear content type without encoding
+    String getContentType();
 }

@@ -22,6 +22,7 @@ import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.reflect.ClassScanner;
 import xyz.jwizard.jwl.common.serialization.SerializerRegistry;
 import xyz.jwizard.jwl.common.serialization.json.JacksonSerializer;
+import xyz.jwizard.jwl.common.serialization.raw.RawByteSerializer;
 import xyz.jwizard.jwl.http.HttpServer;
 import xyz.jwizard.jwl.http.jetty.JettyHttpServer;
 
@@ -38,6 +39,7 @@ public class HttpServerLifecycle implements LifecycleHook {
             .componentProvider(componentProvider)
             .serializerRegistry(SerializerRegistry.createDefault()
                 .register(JacksonSerializer.createDefaultStrictMapper())
+                .register(RawByteSerializer.createDefault())
             )
             .ignoredPaths(Set.of())
             .port(9094) /*TODO: incoming from config server*/

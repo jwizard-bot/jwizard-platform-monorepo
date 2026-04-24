@@ -20,7 +20,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import xyz.jwizard.jwl.common.util.math.MemUnit;
+
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
 public @interface Body {
+    long limit() default -1; // max size
+
+    MemUnit unit() default MemUnit.MB;
 }

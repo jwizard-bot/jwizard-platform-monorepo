@@ -13,13 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.common.serialization.envelope;
+package xyz.jwizard.jwl.common.util.math;
 
-import java.util.function.Function;
+public enum MemUnit {
+    BYTES(1L),
+    KB(1024L),
+    MB(1024L * 1024L),
+    GB(1024L * 1024L * 1024L),
+    ;
 
-public interface EnvelopeSerializer {
-    byte[] serializeEnvelope(OpCode opCode, Object payload);
+    private final long factor;
 
-    MessageEnvelope<?> deserializeEnvelope(byte[] payload,
-                                           Function<Integer, Class<?>> typeResolver);
+    MemUnit(long factor) {
+        this.factor = factor;
+    }
+
+    public long toBytes(long value) {
+        return value * factor;
+    }
 }

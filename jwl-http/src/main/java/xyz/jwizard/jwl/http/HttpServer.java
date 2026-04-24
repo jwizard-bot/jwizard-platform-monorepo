@@ -35,11 +35,12 @@ import xyz.jwizard.jwl.http.exception.handler.AnnotatedExceptionHandler;
 import xyz.jwizard.jwl.http.exception.handler.BadRequestExceptionHandler;
 import xyz.jwizard.jwl.http.exception.handler.ExceptionHandler;
 import xyz.jwizard.jwl.http.exception.handler.GlobalExceptionHandler;
+import xyz.jwizard.jwl.http.exception.handler.RequestTooLargeExceptionHandler;
 import xyz.jwizard.jwl.http.filter.HttpFilter;
 import xyz.jwizard.jwl.http.resolver.ArgumentResolver;
 import xyz.jwizard.jwl.http.resolver.PathVariableResolver;
-import xyz.jwizard.jwl.http.resolver.RequestBodyResolver;
 import xyz.jwizard.jwl.http.resolver.RequestParamResolver;
+import xyz.jwizard.jwl.http.resolver.body.RequestBodyResolver;
 import xyz.jwizard.jwl.http.route.Router;
 import xyz.jwizard.jwl.http.route.TrieRouter;
 import xyz.jwizard.jwl.http.validation.AnnotationValidator;
@@ -89,6 +90,7 @@ public abstract class HttpServer extends IdempotentService {
         exceptionHandlers = CollectionUtil.linkedSetOf(
             new AnnotatedExceptionHandler(),
             new BadRequestExceptionHandler(),
+            new RequestTooLargeExceptionHandler(),
             new GlobalExceptionHandler()
         );
         log.info("HTTP server initialized with:");

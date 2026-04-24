@@ -17,11 +17,13 @@ package xyz.jwizard.jwl.http;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+import java.io.ByteArrayInputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -36,6 +38,7 @@ import xyz.jwizard.jwl.common.reflect.ClassScanner;
 import xyz.jwizard.jwl.common.serialization.SerializerRegistry;
 import xyz.jwizard.jwl.common.serialization.json.JacksonSerializer;
 import xyz.jwizard.jwl.common.serialization.json.JsonSerializer;
+import xyz.jwizard.jwl.common.serialization.raw.RawByteSerializer;
 import xyz.jwizard.jwl.http.filter.CacheSpyFilter;
 import xyz.jwizard.jwl.http.header.TestHttpHeaderName;
 import xyz.jwizard.jwl.http.header.TestHttpHeaderValue;
@@ -58,7 +61,10 @@ public class HttpServerIntegrationTest {
         ));
         httpServer = JettyHttpServer.builder()
             .componentProvider(context.getComponentProvider())
-            .serializerRegistry(SerializerRegistry.createDefault().register(SERIALIZER))
+            .serializerRegistry(SerializerRegistry.createDefault()
+                .register(SERIALIZER)
+                .register(RawByteSerializer.createDefault())
+            )
             .port(0)
             .build();
         httpServer.start();
@@ -273,5 +279,63 @@ public class HttpServerIntegrationTest {
         assertThat(countAfterSecondRequest)
             .withFailMessage("Filter supports() was called again, cache is not working")
             .isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("POST /api/raw should accept wildcard Content-Type (image/png) and resolve as RAW")
+    void shouldAcceptWildcardContentType() throws Exception {
+        // given
+        final byte[] payload = new byte[]{0x01, 0x02, 0x03, 0x04};
+        final HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create("http://localhost:" + dynamicPort + "/api/raw"))
+            .header("Content-Type", "image/png")
+            .POST(HttpRequest.BodyPublishers.ofByteArray(payload))
+            .build();
+        // when
+        final HttpResponse<String> response = httpClient
+            .send(request, HttpResponse.BodyHandlers.ofString());
+        // then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK_200.getCode());
+        assertThat(response.body()).isEqualTo("Received 4 bytes of raw data");
+    }
+
+    @Test
+    @DisplayName("POST /api/limited should reject payload explicitly exceeding @Body " +
+        "limit (Fast-Fail via Content-Length)")
+    void shouldFailFastOnExceedingDeclaredContentLength() throws Exception {
+        // given
+        final byte[] payload = "123456789012345".getBytes();
+        final HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create("http://localhost:" + dynamicPort + "/api/limited"))
+            .header("Content-Type", "application/octet-stream")
+            .POST(HttpRequest.BodyPublishers.ofByteArray(payload)) // Set's Content-Length: 15
+            .build();
+        // when
+        final HttpResponse<String> response = httpClient
+            .send(request, HttpResponse.BodyHandlers.ofString());
+        // then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.PAYLOAD_TOO_LARGE.getCode());
+    }
+
+    @Test
+    @DisplayName("POST /api/limited should reject chunked payload exceeding limit " +
+        "(via LimitedInputStream)")
+    void shouldFailViaLimitedInputStreamForChunkedTransfer() throws Exception {
+        // given - endpoint has limit of 10 bytes, we send 15 bytes of random garbage
+        // via chunked transfer
+        final byte[] payload = new byte[15];
+        ThreadLocalRandom.current().nextBytes(payload);
+        final HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create("http://localhost:" + dynamicPort + "/api/limited"))
+            .header("Content-Type", "application/octet-stream")
+            // ofInputStream forces chunked transfer encoding, meaning Content-Length is not sent
+            // this bypasses the fail-fast check and forces LimitedInputStream to throw exception
+            .POST(HttpRequest.BodyPublishers.ofInputStream(() -> new ByteArrayInputStream(payload)))
+            .build();
+        // when
+        final HttpResponse<String> response = httpClient
+            .send(request, HttpResponse.BodyHandlers.ofString());
+        // then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.PAYLOAD_TOO_LARGE.getCode());
     }
 }

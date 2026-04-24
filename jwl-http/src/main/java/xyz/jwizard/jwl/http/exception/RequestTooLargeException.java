@@ -13,26 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.http;
+package xyz.jwizard.jwl.http.exception;
 
-public enum HttpStatus {
-    OK_200(200),
-    NO_CONTENT_204(204),
-    BAD_REQUEST_400(400),
-    UNAUTHORIZED_401(401),
-    FORBIDDEN_403(403),
-    NOT_FOUND_404(404),
-    PAYLOAD_TOO_LARGE(413),
-    INTERNAL_SERVER_ERROR_500(500),
-    ;
+import java.io.Serial;
 
-    private final int code;
+public class RequestTooLargeException extends RuntimeException {
+    @Serial
+    private static final long serialVersionUID = 1L;
 
-    HttpStatus(int code) {
-        this.code = code;
-    }
-
-    public int getCode() {
-        return code;
+    public RequestTooLargeException(String message) {
+        super(message);
     }
 }
