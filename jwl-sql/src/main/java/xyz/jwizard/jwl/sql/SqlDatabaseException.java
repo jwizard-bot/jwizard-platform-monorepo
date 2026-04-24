@@ -15,7 +15,12 @@
  */
 package xyz.jwizard.jwl.sql;
 
+import java.io.Serial;
+
 public class SqlDatabaseException extends RuntimeException {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     public SqlDatabaseException(String message, Throwable cause) {
         super(message, cause);
     }
