@@ -37,8 +37,8 @@ public class JdbcSqlClient extends GenericSqlClient {
 
     @Override
     public <T> List<T> query(String sql, SqlRowMapper<T> mapper, Object... params) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Executing SQL query: [{}] | Params: {}", sql, Arrays.toString(params));
+        if (log.isDebugEnabled()) {
+            log.debug("Executing SQL query: [{}] | Params: {}", sql, Arrays.toString(params));
         }
         try (final Connection conn = getActiveDataSource().getConnection();
              final PreparedStatement stmt = prepareStatement(conn, sql, params);
@@ -48,10 +48,10 @@ public class JdbcSqlClient extends GenericSqlClient {
             while (rs.next()) {
                 results.add(mapper.map(rs));
             }
-            LOG.debug("Query returned {} row(s)", results.size());
+            log.debug("Query returned {} row(s)", results.size());
             return results;
         } catch (SQLException e) {
-            LOG.error("Failed to execute query: {}", sql, e);
+            log.error("Failed to execute query: {}", sql, e);
             throw new SqlDatabaseException("SQL database query failed", e);
         }
     }
@@ -60,27 +60,27 @@ public class JdbcSqlClient extends GenericSqlClient {
     public <T> Optional<T> queryForObject(String sql, SqlRowMapper<T> mapper, Object... params) {
         final List<T> results = query(sql, mapper, params);
         if (results.isEmpty()) {
-            LOG.debug("QueryForObject returned empty result for SQL: [{}]", sql);
+            log.debug("QueryForObject returned empty result for SQL: [{}]", sql);
             return Optional.empty();
         }
         if (results.size() > 1) {
-            LOG.warn("Expected 1 result for query, but found {}. SQL: {}", results.size(), sql);
+            log.warn("Expected 1 result for query, but found {}. SQL: {}", results.size(), sql);
         }
         return Optional.of(results.getFirst());
     }
 
     @Override
     public int update(String sql, Object... params) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Executing SQL update: [{}] | Params: {}", sql, Arrays.toString(params));
+        if (log.isDebugEnabled()) {
+            log.debug("Executing SQL update: [{}] | Params: {}", sql, Arrays.toString(params));
         }
         try (final Connection conn = getActiveDataSource().getConnection();
              final PreparedStatement stmt = prepareStatement(conn, sql, params)) {
             final int affectedRows = stmt.executeUpdate();
-            LOG.debug("Update affected {} row(s)", affectedRows);
+            log.debug("Update affected {} row(s)", affectedRows);
             return affectedRows;
         } catch (SQLException e) {
-            LOG.error("Failed to execute update: {}", sql, e);
+            log.error("Failed to execute update: {}", sql, e);
             throw new SqlDatabaseException("SQL database update failed", e);
         }
     }
