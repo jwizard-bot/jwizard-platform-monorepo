@@ -20,12 +20,14 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.kotlin.dsl.getByType
+import org.gradle.plugins.ide.idea.model.IdeaModel
 
 class JwProtobufPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         val protobufPlugin = target.libs.getPlugin("protobuf")
 
         target.pluginManager.apply(getPluginId(protobufPlugin))
+        target.pluginManager.apply("idea")
 
         val protocLib = target.libs.getLibrary("protoc").get()
         val protocGroup = protocLib.module.group
@@ -44,6 +46,23 @@ class JwProtobufPlugin : Plugin<Project> {
         sourceSets.all {
             val generatedDir = project.file("build/generated/source/proto/$name/java")
             java.srcDir(generatedDir)
+        }
+        project.plugins.withId("idea") {
+            val idea = project.extensions.getByType<IdeaModel>()
+            with(idea.module) {
+                val mainProto = project.file("src/main/proto")
+                if (mainProto.exists()) {
+                    sourceDirs.add(mainProto)
+                }
+                val testProto = project.file("src/test/proto")
+                if (testProto.exists()) {
+                    testSources.from(testProto)
+                }
+                val fixturesProto = project.file("src/testFixtures/proto")
+                if (fixturesProto.exists()) {
+                    testSources.from(fixturesProto)
+                }
+            }
         }
     }
 }
