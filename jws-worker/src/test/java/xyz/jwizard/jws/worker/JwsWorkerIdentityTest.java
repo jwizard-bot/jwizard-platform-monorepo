@@ -20,6 +20,11 @@ import xyz.jwizard.jwl.common.ModuleIdentityTest;
 class JwsWorkerIdentityTest extends ModuleIdentityTest {
     @Override
     protected String getModuleName() {
-        return "jws-worker";
+        return "worker";
+    }
+
+    @Override
+    protected String getPackageSuffix() {
+        return "jws";
     }
 }

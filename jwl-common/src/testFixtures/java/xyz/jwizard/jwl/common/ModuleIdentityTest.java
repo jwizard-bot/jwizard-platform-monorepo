@@ -27,14 +27,16 @@ public abstract class ModuleIdentityTest {
     @Test
     void shouldIdentifyModule() {
         // given
-        final String moduleName = getModuleName();
+        final String moduleName = getPackageSuffix() + "-" + getModuleName();
         final String packageName = getClass().getPackageName();
         // when
         log.info("running smoke test for module: {} (package: {})", moduleName, packageName);
         // then
         assertThat(moduleName).isNotBlank();
-        assertThat(packageName).startsWith("xyz.jwizard.jwl");
+        assertThat(packageName).startsWith("xyz.jwizard." + getPackageSuffix());
     }
 
     protected abstract String getModuleName();
+
+    protected abstract String getPackageSuffix();
 }

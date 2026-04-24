@@ -20,6 +20,11 @@ import xyz.jwizard.jwl.common.ModuleIdentityTest;
 class JwlGraphIdentityTest extends ModuleIdentityTest {
     @Override
     protected String getModuleName() {
-        return "jwl-graph";
+        return "graph";
+    }
+
+    @Override
+    protected String getPackageSuffix() {
+        return "jwl";
     }
 }

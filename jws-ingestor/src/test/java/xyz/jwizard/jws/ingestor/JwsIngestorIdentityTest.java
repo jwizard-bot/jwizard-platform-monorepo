@@ -20,6 +20,11 @@ import xyz.jwizard.jwl.common.ModuleIdentityTest;
 class JwsIngestorIdentityTest extends ModuleIdentityTest {
     @Override
     protected String getModuleName() {
-        return "jws-ingestor";
+        return "ingestor";
+    }
+
+    @Override
+    protected String getPackageSuffix() {
+        return "jws";
     }
 }

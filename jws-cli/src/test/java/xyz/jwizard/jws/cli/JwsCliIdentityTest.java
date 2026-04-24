@@ -20,6 +20,11 @@ import xyz.jwizard.jwl.common.ModuleIdentityTest;
 class JwsCliIdentityTest extends ModuleIdentityTest {
     @Override
     protected String getModuleName() {
-        return "jws-cli";
+        return "cli";
+    }
+
+    @Override
+    protected String getPackageSuffix() {
+        return "jws";
     }
 }

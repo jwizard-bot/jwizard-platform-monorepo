@@ -20,6 +20,11 @@ import xyz.jwizard.jwl.common.ModuleIdentityTest;
 class JwlCiIdentityTest extends ModuleIdentityTest {
     @Override
     protected String getModuleName() {
-        return "jwl-ci";
+        return "ci";
+    }
+
+    @Override
+    protected String getPackageSuffix() {
+        return "jwl";
     }
 }

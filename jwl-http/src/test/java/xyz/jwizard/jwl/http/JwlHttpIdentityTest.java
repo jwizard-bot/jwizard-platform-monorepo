@@ -20,6 +20,11 @@ import xyz.jwizard.jwl.common.ModuleIdentityTest;
 class JwlHttpIdentityTest extends ModuleIdentityTest {
     @Override
     protected String getModuleName() {
-        return "jwl-http";
+        return "http";
+    }
+
+    @Override
+    protected String getPackageSuffix() {
+        return "jwl";
     }
 }

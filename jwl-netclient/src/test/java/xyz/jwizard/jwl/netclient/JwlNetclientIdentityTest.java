@@ -20,6 +20,11 @@ import xyz.jwizard.jwl.common.ModuleIdentityTest;
 class JwlNetclientIdentityTest extends ModuleIdentityTest {
     @Override
     protected String getModuleName() {
-        return "jwl-netclient";
+        return "netclient";
+    }
+
+    @Override
+    protected String getPackageSuffix() {
+        return "jwl";
     }
 }

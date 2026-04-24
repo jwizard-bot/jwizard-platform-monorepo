@@ -20,6 +20,11 @@ import xyz.jwizard.jwl.common.ModuleIdentityTest;
 class JwsTranslatorIdentityTest extends ModuleIdentityTest {
     @Override
     protected String getModuleName() {
-        return "jws-translator";
+        return "translator";
+    }
+
+    @Override
+    protected String getPackageSuffix() {
+        return "jws";
     }
 }
