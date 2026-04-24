@@ -19,6 +19,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 enum ParameterConverter {
     STRING(String.class, value -> value),
     INTEGER(Integer.class, Integer::valueOf),
@@ -36,13 +39,18 @@ enum ParameterConverter {
     DOUBLE(Double.class, Double::valueOf),
     ;
 
+    private static final Logger LOG = LoggerFactory.getLogger(ParameterConverter.class);
+
     // for fast O(1) search
     private static final Map<Class<?>, ParameterConverter> LOOKUP = new HashMap<>();
 
     static {
         for (final ParameterConverter converter : values()) {
             LOOKUP.put(converter.targetType, converter);
+            LOG.trace("Registered parameter converter: {} -> {}",
+                converter.targetType.getSimpleName(), converter.name());
         }
+        LOG.info("ParameterConverter cache initialized with {} mapping(s)", LOOKUP.size());
     }
 
     private final Class<?> targetType;
