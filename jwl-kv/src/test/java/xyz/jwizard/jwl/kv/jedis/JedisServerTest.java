@@ -29,6 +29,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.util.net.HostPort;
 import xyz.jwizard.jwl.kv.TestKvKey;
 import xyz.jwizard.jwl.kv.jedis.factory.JedisClientFactory;
@@ -40,9 +41,10 @@ import redis.clients.jedis.params.SetParams;
 class JedisServerTest {
     @Mock
     private JedisClientFactory factory;
-
     @Mock
     private RedisClusterClient redisClient;
+    @Mock
+    private ComponentProvider componentProvider;
 
     private JedisServer jedisServer;
 
@@ -53,6 +55,7 @@ class JedisServerTest {
         jedisServer = JedisServer.builder()
             .nodes(Set.of(new HostPort("localhost", 6379)))
             .withFactory(factory)
+            .componentProvider(componentProvider)
             .build();
         jedisServer.start();
     }
