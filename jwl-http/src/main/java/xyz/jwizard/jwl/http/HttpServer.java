@@ -38,6 +38,7 @@ import xyz.jwizard.jwl.http.exception.handler.GlobalExceptionHandler;
 import xyz.jwizard.jwl.http.exception.handler.RequestTooLargeExceptionHandler;
 import xyz.jwizard.jwl.http.filter.HttpFilter;
 import xyz.jwizard.jwl.http.resolver.ArgumentResolver;
+import xyz.jwizard.jwl.http.resolver.HttpRequestArgumentResolver;
 import xyz.jwizard.jwl.http.resolver.PathVariableResolver;
 import xyz.jwizard.jwl.http.resolver.RequestParamResolver;
 import xyz.jwizard.jwl.http.resolver.body.RequestBodyResolver;
@@ -84,6 +85,7 @@ public abstract class HttpServer extends IdempotentService {
         resolvers = CollectionUtil.linkedSetOf(
             new PathVariableResolver(router),
             new RequestParamResolver(),
+            new HttpRequestArgumentResolver(),
             new RequestBodyResolver(builder.serializerRegistry, new ValidationHandler(validators))
         );
         writers = initWriters(builder.serializerRegistry);

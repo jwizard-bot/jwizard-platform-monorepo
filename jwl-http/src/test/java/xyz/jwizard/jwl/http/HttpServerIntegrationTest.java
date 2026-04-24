@@ -338,4 +338,22 @@ public class HttpServerIntegrationTest {
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.PAYLOAD_TOO_LARGE.getCode());
     }
+
+    @Test
+    @DisplayName("GET /api/inspect should inject HttpRequest directly without any annotations")
+    void shouldInjectHttpRequestDirectly() throws Exception {
+        // given
+        final String headerValue = TestHttpHeaderValue.DIRECT_INJECT.getCode();
+        final HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create("http://localhost:" + dynamicPort + "/api/inspect"))
+            .header(TestHttpHeaderName.X_INSPECT_HEADER.getCode(), headerValue)
+            .GET()
+            .build();
+        // when
+        final HttpResponse<String> response = httpClient
+            .send(request, HttpResponse.BodyHandlers.ofString());
+        // then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK_200.getCode());
+        assertThat(response.body()).isEqualTo("method: GET, header: %s", headerValue);
+    }
 }

@@ -13,24 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.http.header;
+package xyz.jwizard.jwl.http.resolver;
 
-public enum TestHttpHeaderName implements HttpHeaderName {
-    AUTHORIZATION("Authorization"),
-    X_SECURED_BY("X-Secured-By"),
-    X_TEST_FILTER("X-Test-Filter"),
-    X_FILTER_ORDER("X-Filter-Order"),
-    X_INSPECT_HEADER("X-Inspect-Header"),
-    ;
+import java.lang.reflect.Parameter;
 
-    private final String code;
+import xyz.jwizard.jwl.http.HttpRequest;
+import xyz.jwizard.jwl.http.route.MatchResult;
 
-    TestHttpHeaderName(String code) {
-        this.code = code;
+public class HttpRequestArgumentResolver implements ArgumentResolver {
+    @Override
+    public boolean supports(Parameter parameter) {
+        return HttpRequest.class.isAssignableFrom(parameter.getType());
     }
 
     @Override
-    public String getCode() {
-        return code;
+    public Object resolve(Parameter parameter, HttpRequest req, MatchResult match) {
+        return req;
     }
 }

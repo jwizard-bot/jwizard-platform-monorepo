@@ -25,6 +25,7 @@ import xyz.jwizard.jwl.http.annotation.PathVariable;
 import xyz.jwizard.jwl.http.annotation.RequestMapping;
 import xyz.jwizard.jwl.http.annotation.RequestParam;
 import xyz.jwizard.jwl.http.annotation.SecuredRoute;
+import xyz.jwizard.jwl.http.header.TestHttpHeaderName;
 
 @HttpController
 class IntegrationTestController {
@@ -104,5 +105,15 @@ class IntegrationTestController {
     @RequestMapping(value = "/api/private", method = HttpMethod.GET)
     ResponseEntity<String> secureEndpoint() {
         return ResponseEntity.ok("secret data");
+    }
+
+    @RequestMapping(value = "/api/inspect", method = HttpMethod.GET)
+    ResponseEntity<String> inspectRequest(HttpRequest request) {
+        final String customHeader = request.getHeader(TestHttpHeaderName.X_INSPECT_HEADER);
+        final String method = request.getMethod();
+        return ResponseEntity.ok(
+            String.format("method: %s, header: %s", method, customHeader != null
+                ? customHeader : "NONE")
+        );
     }
 }

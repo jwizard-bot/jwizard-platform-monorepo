@@ -18,6 +18,7 @@ package xyz.jwizard.jwl.http.header;
 public enum TestHttpHeaderValue implements HttpHeaderValue {
     ANNOTATION_FILTER("AnnotationFilter"),
     EXECUTED("Executed"),
+    DIRECT_INJECT("DirectInject"),
     ;
 
     private final String code;
