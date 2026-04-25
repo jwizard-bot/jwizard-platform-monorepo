@@ -70,6 +70,7 @@ testcontainers-redis = { module = "com.redis:testcontainers-redis", version.ref 
 
 [plugins]
 java = { id = "java" }
+idea = { id = "idea" }
 java-gradle-plugin = { id = "java-gradle-plugin" }
 java-library = { id = "java-library" }
 kotlin-dsl = { id = "org.gradle.kotlin.kotlin-dsl", version.ref = "kotlinDsl" }
