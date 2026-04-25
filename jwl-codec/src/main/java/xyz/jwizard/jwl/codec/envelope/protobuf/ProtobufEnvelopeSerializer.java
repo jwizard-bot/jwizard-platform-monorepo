@@ -91,7 +91,7 @@ public class ProtobufEnvelopeSerializer implements EnvelopeSerializer<byte[]> {
         final int op = protoEnvelope.getOp();
         final Class<?> dataType = typeResolver.apply(op);
         if (dataType == null) {
-            throw new ProtobufSerializerException(String.format("Unknown OP code: %d", op));
+            return new MessageEnvelope<>(op, null); // checked in ActionRouterWsMessageListener
         }
         Object data = null;
         if (!protoEnvelope.getData().isEmpty() && dataType != Void.class) {

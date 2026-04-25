@@ -76,8 +76,7 @@ public abstract class JsonEnvelopeSerializer<T> implements EnvelopeSerializer<T>
         final int op = opNumber.intValue();
         final Class<?> dataType = typeResolver.apply(op);
         if (dataType == null) {
-            throw new JsonSerializerException(String
-                .format("Unknown OP code: 0x%08X (%d)", op, op));
+            return new MessageEnvelope<>(op, null); // checked in ActionRouterWsMessageListener
         }
         final Object rawData = tree.get("data");
         Object data = null;
