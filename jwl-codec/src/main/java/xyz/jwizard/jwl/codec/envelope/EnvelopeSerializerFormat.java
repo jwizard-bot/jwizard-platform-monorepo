@@ -13,35 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.common.serialization.envelope;
+package xyz.jwizard.jwl.codec.envelope;
 
-public enum TestOpCode implements OpCode {
-    USER_DATA((0x01 << 16) | 0x64, "USER_DATA"),
-    HEARTBEAT((0x02 << 16) | 0xC8, "HEARTBEAT"),
-    ;
+import org.jspecify.annotations.NonNull;
 
-    private final int code;
-    private final String name;
+import xyz.jwizard.jwl.codec.serialization.SerializerFormat;
 
-    TestOpCode(int code, String name) {
-        this.code = code;
-        this.name = name;
+public record EnvelopeSerializerFormat(
+    SerializerFormat baseFormat,
+    EnvelopeDataType envelopeDataType
+) implements SerializerFormat {
+    public static EnvelopeSerializerFormat from(SerializerFormat format,
+                                                EnvelopeDataType dataType) {
+        return new EnvelopeSerializerFormat(format, dataType);
     }
 
     @Override
-    public int getCode() {
-        return code;
+    public String getFormat() {
+        return baseFormat.getFormat() + "+" + envelopeDataType.getCode();
     }
 
     @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
+    @NonNull
     public String toString() {
-        final int category = (code >> 16) & 0xFF;
-        final int action = code & 0xFF;
-        return String.format("%s (0x%02X:%02X) [%d]", name, category, action, code);
+        return getFormat();
     }
 }

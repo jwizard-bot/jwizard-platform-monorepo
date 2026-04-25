@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package xyz.jwizard.jwl.codec.envelope.protobuf;
+
+option java_package = "xyz.jwizard.jwl.codec.envelope.protobuf";
+option java_outer_classname = "WsEnvelopeProto";
+option java_multiple_files = true;
+
+message RawWsEnvelope {
+    int32 op = 1;
+    bytes data = 2;
+}

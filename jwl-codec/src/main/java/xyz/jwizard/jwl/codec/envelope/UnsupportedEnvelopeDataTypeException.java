@@ -13,22 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.common.serialization.envelope;
+package xyz.jwizard.jwl.codec.envelope;
 
-public record MessageEnvelope<T>(int op, T data) {
-    public static <T> MessageEnvelope<T> of(OpCode opCode) {
-        return new MessageEnvelope<>(opCode.getCode(), null);
-    }
+import java.io.Serial;
 
-    public boolean isCategory(int category) {
-        return ((op >> 16) & 0xFF) == category;
-    }
+public class UnsupportedEnvelopeDataTypeException extends RuntimeException {
+    @Serial
+    private static final long serialVersionUID = 1L;
 
-    public int category() {
-        return (op >> 16) & 0xFF;
-    }
-
-    public int actionId() {
-        return op & 0xFF;
+    public UnsupportedEnvelopeDataTypeException(String message) {
+        super(message);
     }
 }
