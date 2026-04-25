@@ -13,15 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import org.gradle.plugins.ide.idea.model.IdeaModel
 import xyz.jwizard.buildconfig.CompactTestOutputListener
 import xyz.jwizard.buildconfig.getEnv
 import xyz.jwizard.buildconfig.getPluginId
 
 plugins {
     alias(libs.plugins.java)
+    alias(libs.plugins.idea)
 }
 
 allprojects {
+    apply(plugin = getPluginId(rootProject.libs.plugins.idea))
+
     group = "xyz.jwizard"
     version = getEnv("VERSION", "0.0.0")
 
@@ -30,6 +34,13 @@ allprojects {
         maven {
             // for gradle tooling api
             url = uri("https://repo.gradle.org/gradle/libs-releases")
+        }
+    }
+
+    configure<IdeaModel> {
+        module {
+            excludeDirs.add(file(".bin"))
+            excludeDirs.add(file(".kotlin"))
         }
     }
 }
