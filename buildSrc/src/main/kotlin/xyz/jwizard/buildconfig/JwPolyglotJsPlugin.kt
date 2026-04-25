@@ -95,20 +95,17 @@ class JwPolyglotJsPlugin : Plugin<Project> {
 
     private fun configureSourceSets(project: Project) {
         val sourceSets = project.extensions.getByType<SourceSetContainer>()
-        val generatedJsDir = project.file("src/main/generated/js")
-        val jsSourceDir = project.file("src/main/js")
-
+        val generatedBaseDir = project.file("src/main/generated")
         sourceSets.named("main") {
-            resources.srcDir(generatedJsDir)
+            resources.srcDir(generatedBaseDir)
         }
         project.plugins.withId("idea") {
             val idea = project.extensions.getByType<IdeaModel>()
             with(idea.module) {
-                excludeDirs.remove(project.file("src/main/generated"))
-                excludeDirs.remove(generatedJsDir)
-                sourceDirs.add(jsSourceDir)
-                generatedSourceDirs.add(generatedJsDir)
-                sourceDirs.add(generatedJsDir)
+                excludeDirs.add(project.file("src/main/js/node_modules"))
+                sourceDirs.add(project.file("src/main/js"))
+                generatedSourceDirs.add(generatedBaseDir)
+                excludeDirs.remove(generatedBaseDir)
             }
         }
     }
