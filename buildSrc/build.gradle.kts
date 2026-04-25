@@ -15,8 +15,9 @@
  */
 
 plugins {
-    alias(libs.plugins.kotlin.dsl)
+    alias(libs.plugins.idea)
     alias(libs.plugins.java.gradle.plugin)
+    alias(libs.plugins.kotlin.dsl)
     alias(libs.plugins.protobuf) apply false
     alias(libs.plugins.shadow) apply false
 }
@@ -52,5 +53,11 @@ gradlePlugin {
             id = "xyz.jwizard.jw-protobuf"
             implementationClass = "xyz.jwizard.buildconfig.JwProtobufPlugin"
         }
+    }
+}
+
+idea {
+    module {
+        excludeDirs.add(file(".kotlin"))
     }
 }
