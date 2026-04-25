@@ -35,6 +35,7 @@ dependencies {
     implementation(libs.graalvm.polyglot)
     implementation(libs.graalvm.polyglot.js)
     implementation(libs.gradle.tooling.api)
+    implementation(project(":jwl-codec"))
     implementation(project(":jwl-common"))
     implementation(project(":jwl-graph"))
     implementation(project(":jwl-http"))

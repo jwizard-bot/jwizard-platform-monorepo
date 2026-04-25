@@ -18,12 +18,12 @@ package xyz.jwizard.jws.api;
 import java.util.List;
 import java.util.Set;
 
+import xyz.jwizard.jwl.codec.serialization.SerializerRegistry;
+import xyz.jwizard.jwl.codec.serialization.json.JacksonSerializer;
+import xyz.jwizard.jwl.codec.serialization.raw.RawByteSerializer;
 import xyz.jwizard.jwl.common.bootstrap.lifecycle.LifecycleHook;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.reflect.ClassScanner;
-import xyz.jwizard.jwl.common.serialization.SerializerRegistry;
-import xyz.jwizard.jwl.common.serialization.json.JacksonSerializer;
-import xyz.jwizard.jwl.common.serialization.raw.RawByteSerializer;
 import xyz.jwizard.jwl.http.HttpServer;
 import xyz.jwizard.jwl.http.jetty.JettyHttpServer;
 

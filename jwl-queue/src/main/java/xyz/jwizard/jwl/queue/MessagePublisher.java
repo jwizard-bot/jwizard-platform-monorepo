@@ -15,7 +15,7 @@
  */
 package xyz.jwizard.jwl.queue;
 
-import xyz.jwizard.jwl.common.serialization.SerializerFormat;
+import xyz.jwizard.jwl.codec.serialization.SerializerFormat;
 
 public interface MessagePublisher {
     <T> void publish(String exchange, String routingKey, T payload);

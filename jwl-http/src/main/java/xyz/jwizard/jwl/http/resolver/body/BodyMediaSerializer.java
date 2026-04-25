@@ -22,8 +22,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import xyz.jwizard.jwl.common.serialization.SerializerFormat;
-import xyz.jwizard.jwl.common.serialization.StandardSerializerFormat;
+import xyz.jwizard.jwl.codec.serialization.SerializerFormat;
+import xyz.jwizard.jwl.codec.serialization.StandardSerializerFormat;
 import xyz.jwizard.jwl.common.util.math.MemSize;
 import xyz.jwizard.jwl.common.util.math.MemUnit;
 

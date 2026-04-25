@@ -15,7 +15,7 @@
  */
 package xyz.jwizard.jwl.queue;
 
-import xyz.jwizard.jwl.common.serialization.StandardSerializerFormat;
+import xyz.jwizard.jwl.codec.serialization.StandardSerializerFormat;
 
 public class FailingListener implements QueueListener<byte[]> {
     @Override

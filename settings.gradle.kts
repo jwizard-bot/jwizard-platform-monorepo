@@ -17,6 +17,7 @@
 rootProject.name = "jwizard-platform-monorepo"
 
 include("jwl-ci")
+include("jwl-codec")
 include("jwl-common")
 include("jwl-contracts")
 include("jwl-graph")

@@ -18,8 +18,8 @@ package xyz.jwizard.jwl.queue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import xyz.jwizard.jwl.common.serialization.SerializerFormat;
-import xyz.jwizard.jwl.common.serialization.StandardSerializerFormat;
+import xyz.jwizard.jwl.codec.serialization.SerializerFormat;
+import xyz.jwizard.jwl.codec.serialization.StandardSerializerFormat;
 
 public class QueuePublisher implements MessagePublisher {
     private static final Logger LOG = LoggerFactory.getLogger(QueuePublisher.class);

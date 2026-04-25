@@ -20,8 +20,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
 
-import xyz.jwizard.jwl.common.serialization.MessageSerializer;
-import xyz.jwizard.jwl.common.serialization.SerializerRegistry;
+import xyz.jwizard.jwl.codec.serialization.MessageSerializer;
+import xyz.jwizard.jwl.codec.serialization.SerializerRegistry;
 import xyz.jwizard.jwl.http.HttpRequest;
 import xyz.jwizard.jwl.http.annotation.Body;
 import xyz.jwizard.jwl.http.exception.RequestTooLargeException;

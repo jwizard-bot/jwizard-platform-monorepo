@@ -21,12 +21,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import xyz.jwizard.jwl.codec.serialization.MessageSerializer;
+import xyz.jwizard.jwl.codec.serialization.SerializerRegistry;
+import xyz.jwizard.jwl.codec.serialization.StandardSerializerFormat;
+import xyz.jwizard.jwl.codec.serialization.json.JsonSerializer;
 import xyz.jwizard.jwl.common.bootstrap.lifecycle.IdempotentService;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
-import xyz.jwizard.jwl.common.serialization.MessageSerializer;
-import xyz.jwizard.jwl.common.serialization.SerializerRegistry;
-import xyz.jwizard.jwl.common.serialization.StandardSerializerFormat;
-import xyz.jwizard.jwl.common.serialization.json.JsonSerializer;
 import xyz.jwizard.jwl.common.util.Assert;
 import xyz.jwizard.jwl.common.util.CastUtil;
 import xyz.jwizard.jwl.common.util.CollectionUtil;
@@ -128,6 +128,10 @@ public abstract class HttpServer extends IdempotentService {
             new VoidResponseWriter(),
             new StringResponseWriter()
         );
+        final JsonSerializer jsonSerializer = (JsonSerializer) registry.get(StandardSerializerFormat.JSON);
+        if (jsonSerializer != null) {
+            delegates.add(new JsonResponseWriter(jsonSerializer));
+        }
         final Set<ResponseWriter> all = CollectionUtil.linkedSetOf(
             new ResponseEntityResponseWriter(delegates)
         );

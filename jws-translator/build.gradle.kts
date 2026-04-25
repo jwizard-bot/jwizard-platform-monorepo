@@ -24,6 +24,7 @@ jwService {
 }
 
 dependencies {
+    implementation(project(":jwl-codec"))
     implementation(project(":jwl-common"))
     implementation(project(":jwl-http"))
     implementation(project(":jwl-i18n"))

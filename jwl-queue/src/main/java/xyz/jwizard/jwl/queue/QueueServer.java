@@ -21,12 +21,12 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import xyz.jwizard.jwl.codec.serialization.MessageSerializer;
+import xyz.jwizard.jwl.codec.serialization.SerializerRegistry;
 import xyz.jwizard.jwl.common.bootstrap.CriticalBootstrapException;
 import xyz.jwizard.jwl.common.bootstrap.lifecycle.IdempotentService;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.reflect.TypeReference;
-import xyz.jwizard.jwl.common.serialization.MessageSerializer;
-import xyz.jwizard.jwl.common.serialization.SerializerRegistry;
 import xyz.jwizard.jwl.common.util.Assert;
 import xyz.jwizard.jwl.common.util.CastUtil;
 import xyz.jwizard.jwl.common.util.net.HostPort;

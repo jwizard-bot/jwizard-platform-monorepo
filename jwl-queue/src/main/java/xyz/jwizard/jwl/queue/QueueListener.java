@@ -15,8 +15,8 @@
  */
 package xyz.jwizard.jwl.queue;
 
-import xyz.jwizard.jwl.common.serialization.SerializerFormat;
-import xyz.jwizard.jwl.common.serialization.StandardSerializerFormat;
+import xyz.jwizard.jwl.codec.serialization.SerializerFormat;
+import xyz.jwizard.jwl.codec.serialization.StandardSerializerFormat;
 
 public interface QueueListener<T> {
     String getQueueName();

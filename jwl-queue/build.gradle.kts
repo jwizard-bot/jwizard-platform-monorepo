@@ -16,6 +16,7 @@
 
 dependencies {
     implementation(libs.ampq.client)
+    implementation(project(":jwl-codec"))
     implementation(project(":jwl-common"))
 
     testImplementation(libs.testcontainers)

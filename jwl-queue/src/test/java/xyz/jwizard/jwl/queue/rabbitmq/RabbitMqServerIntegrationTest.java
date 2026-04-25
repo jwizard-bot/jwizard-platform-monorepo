@@ -41,13 +41,13 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.GetResponse;
 
+import xyz.jwizard.jwl.codec.serialization.MessageSerializer;
+import xyz.jwizard.jwl.codec.serialization.SerializerRegistry;
+import xyz.jwizard.jwl.codec.serialization.StandardSerializerFormat;
+import xyz.jwizard.jwl.codec.serialization.json.JacksonSerializer;
+import xyz.jwizard.jwl.codec.serialization.raw.RawByteSerializer;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.reflect.TypeReference;
-import xyz.jwizard.jwl.common.serialization.MessageSerializer;
-import xyz.jwizard.jwl.common.serialization.SerializerRegistry;
-import xyz.jwizard.jwl.common.serialization.StandardSerializerFormat;
-import xyz.jwizard.jwl.common.serialization.json.JacksonSerializer;
-import xyz.jwizard.jwl.common.serialization.raw.RawByteSerializer;
 import xyz.jwizard.jwl.common.util.CastUtil;
 import xyz.jwizard.jwl.common.util.net.HostPort;
 import xyz.jwizard.jwl.queue.FailingListener;
