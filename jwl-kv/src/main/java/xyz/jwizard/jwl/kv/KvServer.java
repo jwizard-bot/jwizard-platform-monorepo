@@ -24,6 +24,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import org.jspecify.annotations.Nullable;
+
 import xyz.jwizard.jwl.common.bootstrap.lifecycle.IdempotentService;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.reflect.TypeReference;
@@ -146,8 +148,7 @@ public abstract class KvServer extends IdempotentService implements KeyValueStor
                 .collect(Collectors.toSet()));
         }
 
-        // might be null
-        public B password(String password) {
+        public B password(@Nullable String password) {
             this.password = password;
             return self();
         }
