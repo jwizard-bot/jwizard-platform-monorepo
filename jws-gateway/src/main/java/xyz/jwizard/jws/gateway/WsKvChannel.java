@@ -13,24 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import xyz.jwizard.buildconfig.JwServicePlugin
-import xyz.jwizard.buildconfig.jwService
+package xyz.jwizard.jws.gateway;
 
-apply<JwServicePlugin>()
+import xyz.jwizard.jwl.kv.pubsub.KvChannel;
 
-jwService {
-    packageSuffix.set("gateway")
-    mainClass.set("JwsGatewayMain")
-}
+public enum WsKvChannel implements KvChannel {
+    TOPIC_BROADCAST("ws:topic:%s"),
+    TOPIC_RECEIVE_EVENTS("ws:topic:*:events"),
+    GLOBAL_BROADCAST("ws:global"),
+    ;
 
-dependencies {
-    implementation(project(":jwl-codec"))
-    implementation(project(":jwl-common"))
-    implementation(project(":jwl-contracts"))
-    implementation(project(":jwl-http"))
-    implementation(project(":jwl-kv"))
-    implementation(project(":jwl-queue"))
-    implementation(project(":jwl-websocket"))
+    private final String pattern;
 
-    testImplementation(testFixtures(project(":jwl-common")))
+    WsKvChannel(String pattern) {
+        this.pattern = pattern;
+    }
+
+    @Override
+    public String buildChannel(Object... params) {
+        return String.format(pattern, params);
+    }
 }
