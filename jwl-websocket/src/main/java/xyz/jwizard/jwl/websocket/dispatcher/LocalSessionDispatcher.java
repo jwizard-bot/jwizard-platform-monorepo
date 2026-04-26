@@ -13,26 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package xyz.jwizard.jwl.websocket.dispatcher;
 
-rootProject.name = "jwizard-platform-monorepo"
+import xyz.jwizard.jwl.websocket.broadcast.WsMessageSink;
+import xyz.jwizard.jwl.websocket.broadcast.WsTopic;
 
-include("jwl-ci")
-include("jwl-codec")
-include("jwl-common")
-include("jwl-contracts")
-include("jwl-graph")
-include("jwl-http")
-include("jwl-i18n")
-include("jwl-kv")
-include("jwl-netclient")
-include("jwl-queue")
-include("jwl-sql")
-include("jwl-websocket")
+public interface LocalSessionDispatcher extends WsMessageSink {
+    void dispatchRaw(String topic, byte[] payload);
 
-include("jws-api")
-include("jws-cli")
-include("jws-gateway")
-include("jws-ingestor")
-include("jws-registry")
-include("jws-translator")
-include("jws-worker")
+    void dispatchRawAll(byte[] payload);
+
+    @Override
+    default void payload(WsTopic topic, byte[] payload) {
+        dispatchRaw(topic.getTopic(), payload);
+    }
+
+    @Override
+    default void payloadAll(byte[] payload) {
+        dispatchRawAll(payload);
+    }
+}

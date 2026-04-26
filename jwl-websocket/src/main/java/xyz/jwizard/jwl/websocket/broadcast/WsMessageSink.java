@@ -13,26 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package xyz.jwizard.jwl.websocket.broadcast;
 
-rootProject.name = "jwizard-platform-monorepo"
+public interface WsMessageSink {
+    void payload(WsTopic topic, byte[] payload);
 
-include("jwl-ci")
-include("jwl-codec")
-include("jwl-common")
-include("jwl-contracts")
-include("jwl-graph")
-include("jwl-http")
-include("jwl-i18n")
-include("jwl-kv")
-include("jwl-netclient")
-include("jwl-queue")
-include("jwl-sql")
-include("jwl-websocket")
-
-include("jws-api")
-include("jws-cli")
-include("jws-gateway")
-include("jws-ingestor")
-include("jws-registry")
-include("jws-translator")
-include("jws-worker")
+    void payloadAll(byte[] payload);
+}

@@ -13,26 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package xyz.jwizard.jwl.websocket.registry;
 
-rootProject.name = "jwizard-platform-monorepo"
+import java.util.Collection;
 
-include("jwl-ci")
-include("jwl-codec")
-include("jwl-common")
-include("jwl-contracts")
-include("jwl-graph")
-include("jwl-http")
-include("jwl-i18n")
-include("jwl-kv")
-include("jwl-netclient")
-include("jwl-queue")
-include("jwl-sql")
-include("jwl-websocket")
+import xyz.jwizard.jwl.websocket.WsSession;
+import xyz.jwizard.jwl.websocket.broadcast.WsTopic;
 
-include("jws-api")
-include("jws-cli")
-include("jws-gateway")
-include("jws-ingestor")
-include("jws-registry")
-include("jws-translator")
-include("jws-worker")
+public interface WsSubscriptionRegistry {
+    void subscribe(WsSession session, WsTopic topic);
+
+    void unsubscribe(WsSession session, WsTopic topic);
+
+    Collection<WsSession> getSubscribers(WsTopic topic);
+
+    Collection<WsSession> getAllSessions();
+}

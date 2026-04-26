@@ -13,26 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package xyz.jwizard.jwl.websocket.listener.action;
 
-rootProject.name = "jwizard-platform-monorepo"
+import xyz.jwizard.jwl.codec.envelope.OpCode;
 
-include("jwl-ci")
-include("jwl-codec")
-include("jwl-common")
-include("jwl-contracts")
-include("jwl-graph")
-include("jwl-http")
-include("jwl-i18n")
-include("jwl-kv")
-include("jwl-netclient")
-include("jwl-queue")
-include("jwl-sql")
-include("jwl-websocket")
+public enum TestOpCode implements OpCode {
+    SUBSCRIBE(0x09, 0x01),
+    SUBSCRIBE_ACK(0x09, 0x02),
+    BROADCAST_MSG(0x09, 0x03);
 
-include("jws-api")
-include("jws-cli")
-include("jws-gateway")
-include("jws-ingestor")
-include("jws-registry")
-include("jws-translator")
-include("jws-worker")
+    private final int code;
+
+    TestOpCode(int category, int action) {
+        this.code = OpCode.combine(category, action);
+    }
+
+    @Override
+    public int getCode() {
+        return code;
+    }
+
+    @Override
+    public String getName() {
+        return name();
+    }
+}

@@ -13,26 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import xyz.jwizard.buildconfig.JwProtobufPlugin
 
-rootProject.name = "jwizard-platform-monorepo"
+apply<JwProtobufPlugin>()
 
-include("jwl-ci")
-include("jwl-codec")
-include("jwl-common")
-include("jwl-contracts")
-include("jwl-graph")
-include("jwl-http")
-include("jwl-i18n")
-include("jwl-kv")
-include("jwl-netclient")
-include("jwl-queue")
-include("jwl-sql")
-include("jwl-websocket")
+dependencies {
+    implementation(libs.jetty.ws.server)
+    implementation(project(":jwl-codec"))
+    implementation(project(":jwl-common"))
 
-include("jws-api")
-include("jws-cli")
-include("jws-gateway")
-include("jws-ingestor")
-include("jws-registry")
-include("jws-translator")
-include("jws-worker")
+    testImplementation(testFixtures(project(":jwl-common")))
+}

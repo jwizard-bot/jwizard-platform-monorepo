@@ -13,26 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package xyz.jwizard.jwl.websocket;
 
-rootProject.name = "jwizard-platform-monorepo"
+import java.util.List;
 
-include("jwl-ci")
-include("jwl-codec")
-include("jwl-common")
-include("jwl-contracts")
-include("jwl-graph")
-include("jwl-http")
-include("jwl-i18n")
-include("jwl-kv")
-include("jwl-netclient")
-include("jwl-queue")
-include("jwl-sql")
-include("jwl-websocket")
+import xyz.jwizard.jwl.websocket.header.WsHeader;
 
-include("jws-api")
-include("jws-cli")
-include("jws-gateway")
-include("jws-ingestor")
-include("jws-registry")
-include("jws-translator")
-include("jws-worker")
+public interface WsHandshakeRequest {
+    String getHeader(WsHeader header);
+
+    String getCookie(WsCookie cookie);
+
+    List<String> getQueryParameter(String key);
+}

@@ -13,26 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package xyz.jwizard.jwl.websocket;
 
-rootProject.name = "jwizard-platform-monorepo"
+public enum TestWsCookie implements WsCookie {
+    SESSION_COOKIE("SESSION_ID"),
+    ;
 
-include("jwl-ci")
-include("jwl-codec")
-include("jwl-common")
-include("jwl-contracts")
-include("jwl-graph")
-include("jwl-http")
-include("jwl-i18n")
-include("jwl-kv")
-include("jwl-netclient")
-include("jwl-queue")
-include("jwl-sql")
-include("jwl-websocket")
+    private final String cookie;
 
-include("jws-api")
-include("jws-cli")
-include("jws-gateway")
-include("jws-ingestor")
-include("jws-registry")
-include("jws-translator")
-include("jws-worker")
+    TestWsCookie(String cookie) {
+        this.cookie = cookie;
+    }
+
+    @Override
+    public String getCode() {
+        return cookie;
+    }
+}

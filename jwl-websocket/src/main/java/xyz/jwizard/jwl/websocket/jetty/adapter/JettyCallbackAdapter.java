@@ -13,26 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package xyz.jwizard.jwl.websocket.jetty.adapter;
 
-rootProject.name = "jwizard-platform-monorepo"
+import org.eclipse.jetty.websocket.api.Callback;
 
-include("jwl-ci")
-include("jwl-codec")
-include("jwl-common")
-include("jwl-contracts")
-include("jwl-graph")
-include("jwl-http")
-include("jwl-i18n")
-include("jwl-kv")
-include("jwl-netclient")
-include("jwl-queue")
-include("jwl-sql")
-include("jwl-websocket")
+import xyz.jwizard.jwl.common.util.concurrent.IoCallback;
 
-include("jws-api")
-include("jws-cli")
-include("jws-gateway")
-include("jws-ingestor")
-include("jws-registry")
-include("jws-translator")
-include("jws-worker")
+class JettyCallbackAdapter implements Callback {
+    private final IoCallback domainCallback;
+
+    JettyCallbackAdapter(IoCallback domainCallback) {
+        this.domainCallback = domainCallback;
+    }
+
+    @Override
+    public void succeed() {
+        domainCallback.onSuccess();
+    }
+
+    @Override
+    public void fail(Throwable cause) {
+        domainCallback.onFailure(cause);
+    }
+}

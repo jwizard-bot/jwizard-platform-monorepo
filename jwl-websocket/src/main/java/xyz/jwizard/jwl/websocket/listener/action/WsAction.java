@@ -13,26 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package xyz.jwizard.jwl.websocket.listener.action;
 
-rootProject.name = "jwizard-platform-monorepo"
+import org.jspecify.annotations.Nullable;
 
-include("jwl-ci")
-include("jwl-codec")
-include("jwl-common")
-include("jwl-contracts")
-include("jwl-graph")
-include("jwl-http")
-include("jwl-i18n")
-include("jwl-kv")
-include("jwl-netclient")
-include("jwl-queue")
-include("jwl-sql")
-include("jwl-websocket")
+import xyz.jwizard.jwl.codec.envelope.OpCode;
+import xyz.jwizard.jwl.websocket.WsSession;
+import xyz.jwizard.jwl.websocket.listener.action.pool.WsActionPool;
 
-include("jws-api")
-include("jws-cli")
-include("jws-gateway")
-include("jws-ingestor")
-include("jws-registry")
-include("jws-translator")
-include("jws-worker")
+public interface WsAction<T> {
+    void handle(WsSession session, T data);
+
+    OpCode opCode();
+
+    Class<T> payloadClass();
+
+    // null means root pool handled by non-pooled action websocket handler
+    @Nullable
+    default WsActionPool pool() {
+        return null;
+    }
+}
