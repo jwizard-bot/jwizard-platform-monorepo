@@ -13,52 +13,57 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jws.ingestor;
+package xyz.jwizard.jws.gateway;
 
-import java.util.List;
 import java.util.Set;
 
-import xyz.jwizard.jwl.codec.serialization.SerializerRegistry;
-import xyz.jwizard.jwl.codec.serialization.json.JacksonSerializer;
-import xyz.jwizard.jwl.codec.serialization.raw.RawByteSerializer;
 import xyz.jwizard.jwl.common.bootstrap.lifecycle.LifecycleHook;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.reflect.ClassScanner;
-import xyz.jwizard.jwl.http.HttpServer;
-import xyz.jwizard.jwl.http.jetty.JettyHttpServer;
+import xyz.jwizard.jwl.kv.KeyValueStore;
+import xyz.jwizard.jwl.kv.KvServer;
+import xyz.jwizard.jwl.kv.jedis.JedisServer;
+import xyz.jwizard.jwl.kv.jedis.factory.FactoryType;
+import xyz.jwizard.jwl.kv.pubsub.PubSubBroadcaster;
 
+import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
 @Singleton
-public class HttpServerLifecycle implements LifecycleHook {
-    private final HttpServer httpServer;
+class KvServerLifecycle implements LifecycleHook {
+    private final KvServer kvServer;
 
     @Inject
-    HttpServerLifecycle(ComponentProvider componentProvider) {
-        httpServer = JettyHttpServer.builder()
+    KvServerLifecycle(ComponentProvider componentProvider) {
+        kvServer = JedisServer.builder()
+            .rawNodes(Set.of("127.0.0.1:9113" /*TODO: getting from config server*/))
+            .password(null /*TODO: getting from config server*/)
+            .poolMaxTotal(128 /*TODO: getting from config server*/)
+            .poolMinIdle(16 /*TODO: getting from config server*/)
+            .poolMaxIdle(64 /*TODO: getting from config server*/)
             .componentProvider(componentProvider)
-            .serializerRegistry(SerializerRegistry.createDefault()
-                .register(JacksonSerializer.createDefaultStrictMapper())
-                .register(RawByteSerializer.createDefault())
-            )
-            .ignoredPaths(Set.of())
-            .port(9092) /*TODO: incoming from config server*/
+            .withFactory(FactoryType.SINGLE_NODE)
             .build();
     }
 
     @Override
     public void onStart(ComponentProvider componentProvider, ClassScanner scanner) {
-        httpServer.start();
+        kvServer.start();
     }
 
     @Override
     public void onStop() {
-        httpServer.close();
+        kvServer.close();
     }
 
-    @Override
-    public List<Class<? extends LifecycleHook>> dependsOn() {
-        return List.of(GraphServerLifecycle.class, JsEngineLifecycle.class);
+    @Produces
+    KeyValueStore keyValueStore() {
+        return kvServer;
+    }
+
+    @Produces
+    PubSubBroadcaster pubSubBroadcaster() {
+        return kvServer;
     }
 }
