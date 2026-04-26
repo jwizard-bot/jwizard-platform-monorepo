@@ -18,7 +18,7 @@ package xyz.jwizard.jws.ingestor.config.scripting;
 import xyz.jwizard.jws.ingestor.scripting.ScriptFile;
 
 public enum IngestorScript implements ScriptFile {
-    YARN_PARSER("yarn-parser.bundle.js"),
+    YARN_PARSER("js/yarn-parser.bundle.js"),
     ;
 
     private final String code;
