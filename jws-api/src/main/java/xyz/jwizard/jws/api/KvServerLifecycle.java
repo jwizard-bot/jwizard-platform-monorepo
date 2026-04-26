@@ -58,11 +58,13 @@ class KvServerLifecycle implements LifecycleHook {
     }
 
     @Produces
+    @Singleton
     KeyValueStore keyValueStore() {
         return kvServer;
     }
 
     @Produces
+    @Singleton
     PubSubBroadcaster pubSubBroadcaster() {
         return kvServer;
     }

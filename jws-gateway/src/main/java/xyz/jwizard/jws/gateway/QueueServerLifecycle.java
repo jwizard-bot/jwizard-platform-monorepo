@@ -63,6 +63,7 @@ class QueueServerLifecycle implements LifecycleHook {
     }
 
     @Produces
+    @Singleton
     MessagePublisher messagePublisher() {
         return queueServer.getQueuePublisher();
     }

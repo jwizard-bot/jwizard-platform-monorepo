@@ -68,16 +68,19 @@ class GraphServerLifecycle implements LifecycleHook {
     }
 
     @Produces
+    @Singleton
     GraphReader graphReader() {
         return graphServer.getRepository();
     }
 
     @Produces
+    @Singleton
     GraphWriter graphWriter() {
         return graphServer.getRepository();
     }
 
     @Produces
+    @Singleton
     GraphClient graphClient() {
         return graphServer.getClient();
     }

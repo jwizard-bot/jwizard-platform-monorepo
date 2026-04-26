@@ -94,11 +94,13 @@ class WsServerLifecycle implements LifecycleHook {
     }
 
     @Produces
+    @Singleton
     WsSubscriptionRegistry wsSubscriptionRegistry() {
         return wsServer.getWsSubscriptionRegistry();
     }
 
     @Produces
+    @Singleton
     WsBroadcaster wsBroadcaster() {
         return wsServer.getBroadcaster();
     }

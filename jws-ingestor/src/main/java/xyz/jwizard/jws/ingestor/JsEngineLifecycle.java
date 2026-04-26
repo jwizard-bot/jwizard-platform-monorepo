@@ -46,6 +46,7 @@ class JsEngineLifecycle implements LifecycleHook {
     }
 
     @Produces
+    @Singleton
     JsEngine jsEngine() {
         return jsEngine;
     }
