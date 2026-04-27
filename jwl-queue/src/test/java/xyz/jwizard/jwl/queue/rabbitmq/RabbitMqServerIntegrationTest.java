@@ -49,7 +49,7 @@ import xyz.jwizard.jwl.codec.serialization.raw.RawByteSerializer;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.reflect.TypeReference;
 import xyz.jwizard.jwl.common.util.CastUtil;
-import xyz.jwizard.jwl.common.util.net.HostPort;
+import xyz.jwizard.jwl.net.HostPort;
 import xyz.jwizard.jwl.queue.FailingListener;
 import xyz.jwizard.jwl.queue.HappyPathListener;
 import xyz.jwizard.jwl.queue.JsonCommandListener;
@@ -150,7 +150,7 @@ public class RabbitMqServerIntegrationTest {
     private void startServer() {
         server = RabbitMqServer.builder()
             .withConnector(ConnectorType.SINGLE_NODE)
-            .nodes(Set.of(new HostPort(rabbitMQ.getHost(), rabbitMQ.getAmqpPort())))
+            .nodes(Set.of(HostPort.from(rabbitMQ.getHost(), rabbitMQ.getAmqpPort())))
             .username(rabbitMQ.getAdminUsername())
             .password(rabbitMQ.getAdminPassword())
             .virtualHost("/")

@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.common.util.net;
+package xyz.jwizard.jwl.net;
 
-public record HostPort(String host, int port) {
-    public static HostPort from(String host, int port) {
-        return new HostPort(host, port);
-    }
+public interface NetworkProtocol {
+    String getScheme();
 }

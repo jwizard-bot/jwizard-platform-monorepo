@@ -18,7 +18,7 @@ package xyz.jwizard.jwl.sql.config;
 import java.util.Map;
 
 import xyz.jwizard.jwl.common.bootstrap.CriticalBootstrapException;
-import xyz.jwizard.jwl.common.util.net.HostPort;
+import xyz.jwizard.jwl.net.HostPort;
 
 public enum SqlDatabaseDialect {
     POSTGRESQL("jdbc:postgresql://%s:%d/%s", Map.of(

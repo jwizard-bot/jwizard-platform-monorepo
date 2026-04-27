@@ -18,8 +18,8 @@ package xyz.jwizard.jwl.sql.config;
 import java.util.Map;
 
 import xyz.jwizard.jwl.common.util.Assert;
-import xyz.jwizard.jwl.common.util.net.HostPort;
-import xyz.jwizard.jwl.common.util.net.NetworkUtil;
+import xyz.jwizard.jwl.net.HostPort;
+import xyz.jwizard.jwl.net.NetworkUtil;
 
 public record SqlDatabaseConfig(
     SqlDatabaseDialect dialect,

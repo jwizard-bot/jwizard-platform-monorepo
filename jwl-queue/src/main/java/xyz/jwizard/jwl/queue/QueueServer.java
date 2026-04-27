@@ -29,8 +29,8 @@ import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.reflect.TypeReference;
 import xyz.jwizard.jwl.common.util.Assert;
 import xyz.jwizard.jwl.common.util.CastUtil;
-import xyz.jwizard.jwl.common.util.net.HostPort;
-import xyz.jwizard.jwl.common.util.net.NetworkUtil;
+import xyz.jwizard.jwl.net.HostPort;
+import xyz.jwizard.jwl.net.NetworkUtil;
 
 public abstract class QueueServer extends IdempotentService {
     protected final String username;
@@ -132,7 +132,7 @@ public abstract class QueueServer extends IdempotentService {
         public B rawNodes(Set<String> rawNodes) {
             return nodes(rawNodes.stream()
                 .map(NetworkUtil::parseHostPort)
-                .map(hp -> new HostPort(hp.host(), hp.port()))
+                .map(hp -> HostPort.from(hp.host(), hp.port()))
                 .collect(Collectors.toSet()));
         }
 

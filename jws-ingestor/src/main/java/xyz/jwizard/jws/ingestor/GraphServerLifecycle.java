@@ -20,7 +20,6 @@ import java.util.List;
 import xyz.jwizard.jwl.common.bootstrap.lifecycle.LifecycleHook;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.reflect.ClassScanner;
-import xyz.jwizard.jwl.common.util.net.HostPort;
 import xyz.jwizard.jwl.graph.GraphReader;
 import xyz.jwizard.jwl.graph.GraphServer;
 import xyz.jwizard.jwl.graph.GraphWriter;
@@ -30,6 +29,7 @@ import xyz.jwizard.jwl.graph.neo4j.Neo4jServer;
 import xyz.jwizard.jwl.graph.neo4j.client.factory.DefaultNeo4jClientFactory;
 import xyz.jwizard.jwl.graph.neo4j.client.factory.Neo4jConfig;
 import xyz.jwizard.jwl.graph.neo4j.repository.Neo4jGraphRepository;
+import xyz.jwizard.jwl.net.HostPort;
 
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Singleton;

@@ -38,6 +38,7 @@ dependencies {
     implementation(project(":jwl-codec"))
     implementation(project(":jwl-common"))
     implementation(project(":jwl-graph"))
+    implementation(project(":jwl-net"))
     implementation(project(":jwl-websocket"))
 
     testImplementation(testFixtures(project(":jwl-common")))

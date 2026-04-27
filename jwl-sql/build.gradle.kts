@@ -17,6 +17,7 @@
 dependencies {
     implementation(libs.hikari.cp)
     implementation(project(":jwl-common"))
+    implementation(project(":jwl-net"))
 
     testImplementation(libs.postgresql)
     testImplementation(libs.testcontainers)

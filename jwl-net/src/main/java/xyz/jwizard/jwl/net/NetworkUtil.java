@@ -13,13 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.common.util.net;
+package xyz.jwizard.jwl.net;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import xyz.jwizard.jwl.common.bootstrap.ForbiddenInstantiationException;
+
 public class NetworkUtil {
+    private static final String HTTP_SCHEME = "http://";
+    private static final String HTTPS_SCHEME = "https://";
+
     private NetworkUtil() {
+        throw new ForbiddenInstantiationException(NetworkUtil.class);
     }
 
     public static HostPort parseHostPort(String address) {
@@ -34,7 +40,7 @@ public class NetworkUtil {
         try {
             final String host = parts[0].trim();
             final int port = Integer.parseInt(parts[1].trim());
-            return new HostPort(host, port);
+            return HostPort.from(host, port);
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Invalid port number in address definition: '" +
                 address + "'", e);
@@ -56,5 +62,13 @@ public class NetworkUtil {
                     port + "'", ex
             );
         }
+    }
+
+    public static boolean isAbsoluteUrl(String uri) {
+        return uri != null && (uri.startsWith(HTTP_SCHEME) || uri.startsWith(HTTPS_SCHEME));
+    }
+
+    public static String concatPaths(String baseUrl, String path) {
+        return baseUrl + (path.startsWith("/") ? path : "/" + path);
     }
 }

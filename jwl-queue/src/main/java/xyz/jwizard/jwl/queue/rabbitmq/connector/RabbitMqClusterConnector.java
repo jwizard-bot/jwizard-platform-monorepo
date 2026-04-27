@@ -21,7 +21,7 @@ import com.rabbitmq.client.Address;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
-import xyz.jwizard.jwl.common.util.net.HostPort;
+import xyz.jwizard.jwl.net.HostPort;
 
 public class RabbitMqClusterConnector implements RabbitMqConnector {
     @Override
