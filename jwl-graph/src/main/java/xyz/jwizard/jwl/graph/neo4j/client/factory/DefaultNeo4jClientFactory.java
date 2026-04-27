@@ -24,10 +24,10 @@ import org.neo4j.driver.GraphDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import xyz.jwizard.jwl.common.util.net.NetworkUtil;
 import xyz.jwizard.jwl.graph.client.GraphClient;
 import xyz.jwizard.jwl.graph.client.factory.GraphClientFactory;
 import xyz.jwizard.jwl.graph.neo4j.client.Neo4jClient;
+import xyz.jwizard.jwl.net.NetworkUtil;
 
 public class DefaultNeo4jClientFactory implements GraphClientFactory<Neo4jConfig> {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultNeo4jClientFactory.class);

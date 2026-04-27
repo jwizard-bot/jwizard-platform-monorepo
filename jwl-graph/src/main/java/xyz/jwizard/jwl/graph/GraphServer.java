@@ -22,11 +22,11 @@ import xyz.jwizard.jwl.common.bootstrap.lifecycle.IdempotentService;
 import xyz.jwizard.jwl.common.util.Assert;
 import xyz.jwizard.jwl.common.util.CastUtil;
 import xyz.jwizard.jwl.common.util.io.IoUtil;
-import xyz.jwizard.jwl.common.util.net.NetworkUtil;
 import xyz.jwizard.jwl.graph.client.GraphClient;
 import xyz.jwizard.jwl.graph.client.factory.GraphClientFactory;
 import xyz.jwizard.jwl.graph.client.factory.GraphConfig;
 import xyz.jwizard.jwl.graph.repository.GraphRepository;
+import xyz.jwizard.jwl.net.NetworkUtil;
 
 public abstract class GraphServer<C extends GraphConfig> extends IdempotentService {
     protected final URI uri;

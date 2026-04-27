@@ -17,8 +17,8 @@ package xyz.jwizard.jwl.graph.client.factory;
 
 import xyz.jwizard.jwl.common.util.Assert;
 import xyz.jwizard.jwl.common.util.CastUtil;
-import xyz.jwizard.jwl.common.util.net.HostPort;
 import xyz.jwizard.jwl.graph.GraphProtocol;
+import xyz.jwizard.jwl.net.HostPort;
 
 public abstract class GraphConfig {
     protected final GraphProtocol protocol;

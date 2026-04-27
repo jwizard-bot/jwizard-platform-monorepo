@@ -30,7 +30,6 @@ import org.testcontainers.neo4j.Neo4jContainer;
 import org.testcontainers.utility.DockerImageName;
 
 import xyz.jwizard.jwl.common.util.io.IoUtil;
-import xyz.jwizard.jwl.common.util.net.HostPort;
 import xyz.jwizard.jwl.graph.GraphServer;
 import xyz.jwizard.jwl.graph.client.GraphClient;
 import xyz.jwizard.jwl.graph.model.GraphEdge;
@@ -39,6 +38,7 @@ import xyz.jwizard.jwl.graph.neo4j.client.factory.DefaultNeo4jClientFactory;
 import xyz.jwizard.jwl.graph.neo4j.client.factory.Neo4jConfig;
 import xyz.jwizard.jwl.graph.neo4j.repository.Neo4jGraphRepository;
 import xyz.jwizard.jwl.graph.repository.GraphRepository;
+import xyz.jwizard.jwl.net.HostPort;
 
 @Testcontainers
 class Neo4jIntegrationTest {

@@ -43,7 +43,6 @@ import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.di.GuiceComponentProvider;
 import xyz.jwizard.jwl.common.reflect.ClassGraphScanner;
 import xyz.jwizard.jwl.common.reflect.ClassScanner;
-import xyz.jwizard.jwl.common.util.net.HostPort;
 import xyz.jwizard.jwl.kv.KvKey;
 import xyz.jwizard.jwl.kv.TestKvKey;
 import xyz.jwizard.jwl.kv.jedis.factory.FactoryType;
@@ -53,6 +52,7 @@ import xyz.jwizard.jwl.kv.jedis.pubsub.SimpleBinaryTestSubscriber;
 import xyz.jwizard.jwl.kv.jedis.pubsub.SimpleStringTestSubscriber;
 import xyz.jwizard.jwl.kv.pubsub.KvChannel;
 import xyz.jwizard.jwl.kv.pubsub.TestKvChannel;
+import xyz.jwizard.jwl.net.HostPort;
 
 @Testcontainers
 class JedisServerIntegrationTest {
@@ -77,7 +77,7 @@ class JedisServerIntegrationTest {
         final int port = redisContainer.getMappedPort(REDIS_PORT);
         componentProvider = context.getComponentProvider();
         jedisServer = JedisServer.builder()
-            .nodes(Set.of(new HostPort(host, port)))
+            .nodes(Set.of(HostPort.from(host, port)))
             .poolMaxTotal(128)
             .poolMinIdle(16)
             .poolMaxIdle(64)

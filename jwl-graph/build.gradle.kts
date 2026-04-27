@@ -19,6 +19,7 @@ dependencies {
     implementation(libs.slf4j.jdk.platform) // for neo4j logger
 
     implementation(project(":jwl-common"))
+    implementation(project(":jwl-net"))
 
     testImplementation(libs.testcontainers)
     testImplementation(libs.testcontainers.jupyter)

@@ -15,7 +15,7 @@
  */
 package xyz.jwizard.jwl.graph;
 
-import xyz.jwizard.jwl.common.util.net.NetworkProtocol;
+import xyz.jwizard.jwl.net.NetworkProtocol;
 
 public interface GraphProtocol extends NetworkProtocol {
     boolean isEncrypted();

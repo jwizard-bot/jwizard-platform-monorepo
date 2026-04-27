@@ -22,8 +22,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import xyz.jwizard.jwl.common.bootstrap.CriticalBootstrapException;
-import xyz.jwizard.jwl.common.util.net.HostPort;
 import xyz.jwizard.jwl.graph.neo4j.client.factory.Neo4jConfig;
+import xyz.jwizard.jwl.net.HostPort;
 
 class Neo4jConfigUnitTest {
     @Test
@@ -61,7 +61,7 @@ class Neo4jConfigUnitTest {
     void shouldThrowExceptionWhenProtocolIsMissing() {
         // given
         final Neo4jConfig.Builder builder = Neo4jConfig.builder()
-            .address(new HostPort("localhost", 7687))
+            .address(HostPort.from("localhost", 7687))
             .username("admin")
             .password("pass");
         // when & then

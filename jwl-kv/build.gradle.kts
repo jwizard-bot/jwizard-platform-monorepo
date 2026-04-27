@@ -18,6 +18,7 @@ dependencies {
     implementation(libs.jedis)
 
     implementation(project(":jwl-common"))
+    implementation(project(":jwl-net"))
 
     testImplementation(libs.testcontainers)
     testImplementation(libs.testcontainers.jupyter)
