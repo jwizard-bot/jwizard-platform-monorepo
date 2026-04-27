@@ -16,10 +16,12 @@
 
 dependencies {
     implementation(libs.jedis)
+
     implementation(project(":jwl-common"))
 
     testImplementation(libs.testcontainers)
     testImplementation(libs.testcontainers.jupyter)
     testImplementation(libs.testcontainers.redis)
+
     testImplementation(testFixtures(project(":jwl-common")))
 }

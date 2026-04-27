@@ -19,6 +19,7 @@ apply<JwProtobufPlugin>()
 
 dependencies {
     implementation(libs.jetty.ws.server)
+
     implementation(project(":jwl-codec"))
     implementation(project(":jwl-common"))
     implementation(project(":jwl-net"))

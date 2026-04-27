@@ -16,6 +16,7 @@
 
 dependencies {
     implementation(libs.hikari.cp)
+
     implementation(project(":jwl-common"))
     implementation(project(":jwl-net"))
 
@@ -23,5 +24,6 @@ dependencies {
     testImplementation(libs.testcontainers)
     testImplementation(libs.testcontainers.jupyter)
     testImplementation(libs.testcontainers.postgresql)
+
     testImplementation(testFixtures(project(":jwl-common")))
 }

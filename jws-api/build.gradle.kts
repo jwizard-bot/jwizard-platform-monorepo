@@ -25,6 +25,7 @@ jwService {
 
 dependencies {
     runtimeOnly(libs.postgresql)
+
     implementation(project(":jwl-codec"))
     implementation(project(":jwl-common"))
     implementation(project(":jwl-http"))
