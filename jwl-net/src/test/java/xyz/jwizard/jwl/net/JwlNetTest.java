@@ -17,7 +17,7 @@ package xyz.jwizard.jwl.net;
 
 import xyz.jwizard.jwl.common.ModuleIdentityTest;
 
-class JwlI18nTest extends ModuleIdentityTest {
+class JwlNetTest extends ModuleIdentityTest {
     @Override
     protected String getModuleName() {
         return "net";
