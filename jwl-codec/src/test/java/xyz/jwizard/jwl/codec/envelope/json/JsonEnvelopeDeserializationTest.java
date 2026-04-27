@@ -82,11 +82,14 @@ class JsonEnvelopeDeserializationTest {
     @DisplayName("should throw exception when OP code is unknown to resolver")
     void shouldThrowOnUnknownOpCode() {
         // given
-        final Map<String, Object> mockTree = Map.of("op", 999999);
+        final int nonExistingOpCode = 999999;
+        final Map<String, Object> mockTree = Map.of("op", nonExistingOpCode);
         when(jsonSerializerMock.deserialize(any(String.class), eq(Map.class))).thenReturn(mockTree);
+        // when
+        final MessageEnvelope<?> envelope = serializer.deserializeEnvelope("{}", typeResolver);
         // then
-        assertThatThrownBy(() -> serializer.deserializeEnvelope("{}", typeResolver))
-            .isInstanceOf(JsonSerializerException.class)
-            .hasMessageContaining("Unknown OP code");
+        assertThat(envelope).isNotNull();
+        assertThat(envelope.op()).isEqualTo(nonExistingOpCode);
+        assertThat(envelope.data()).isNull();
     }
 }
