@@ -18,6 +18,7 @@ dependencies {
     implementation(libs.jetty.server)
     implementation(project(":jwl-codec"))
     implementation(project(":jwl-common"))
+    implementation(project(":jwl-net"))
 
     testImplementation(testFixtures(project(":jwl-common")))
 }

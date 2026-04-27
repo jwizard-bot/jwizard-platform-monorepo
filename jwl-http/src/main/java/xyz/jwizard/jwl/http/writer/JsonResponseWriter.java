@@ -17,8 +17,8 @@ package xyz.jwizard.jwl.http.writer;
 
 import xyz.jwizard.jwl.codec.serialization.json.JsonSerializer;
 import xyz.jwizard.jwl.http.HttpResponse;
-import xyz.jwizard.jwl.http.header.CommonHttpHeaderName;
-import xyz.jwizard.jwl.http.header.CommonHttpHeaderValue;
+import xyz.jwizard.jwl.net.http.header.CommonHttpHeaderName;
+import xyz.jwizard.jwl.net.http.header.CommonHttpHeaderValue;
 
 public class JsonResponseWriter implements ResponseWriter {
     private final JsonSerializer jsonSerializer;

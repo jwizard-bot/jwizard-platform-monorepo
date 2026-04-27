@@ -20,9 +20,9 @@ import org.eclipse.jetty.server.Response;
 import org.eclipse.jetty.util.Callback;
 
 import xyz.jwizard.jwl.http.HttpResponse;
-import xyz.jwizard.jwl.http.HttpStatus;
-import xyz.jwizard.jwl.http.header.HttpHeaderName;
-import xyz.jwizard.jwl.http.header.HttpHeaderValue;
+import xyz.jwizard.jwl.net.http.HttpStatus;
+import xyz.jwizard.jwl.net.http.header.HttpHeaderName;
+import xyz.jwizard.jwl.net.http.header.HttpHeaderValue;
 
 public class JettyHttpResponseAdapter implements HttpResponse {
     private final Response response;
@@ -49,8 +49,8 @@ public class JettyHttpResponseAdapter implements HttpResponse {
     }
 
     @Override
-    public void setHeader(HttpHeaderName name, HttpHeaderValue value) {
-        setHeaderUnsafe(name.getCode(), value.getCode());
+    public void setHeader(HttpHeaderName name, HttpHeaderValue value, Object... args) {
+        setHeaderUnsafe(name.getCode(), value.buildWithArgs(args));
     }
 
     @Override

@@ -13,9 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.http.header;
+package xyz.jwizard.jwl.net.http.header;
 
-import xyz.jwizard.jwl.common.Identifiable;
+public enum CommonHttpHeaderValue implements HttpHeaderValue {
+    APPLICATION_JSON_UTF_8("application/json; charset=utf-8"),
+    TEXT_PLAIN_UTF_8("text/plain; charset=utf-8"),
+    ;
 
-public interface HttpHeaderValue extends Identifiable<String> {
+    private final String code;
+
+    CommonHttpHeaderValue(String code) {
+        this.code = code;
+    }
+
+    @Override
+    public String buildWithArgs(Object... args) {
+        return format(code, args);
+    }
 }

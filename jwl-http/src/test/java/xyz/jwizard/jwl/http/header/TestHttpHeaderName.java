@@ -15,8 +15,9 @@
  */
 package xyz.jwizard.jwl.http.header;
 
+import xyz.jwizard.jwl.net.http.header.HttpHeaderName;
+
 public enum TestHttpHeaderName implements HttpHeaderName {
-    AUTHORIZATION("Authorization"),
     X_SECURED_BY("X-Secured-By"),
     X_TEST_FILTER("X-Test-Filter"),
     X_FILTER_ORDER("X-Filter-Order"),

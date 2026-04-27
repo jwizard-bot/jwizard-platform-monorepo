@@ -15,6 +15,8 @@
  */
 package xyz.jwizard.jwl.http.header;
 
+import xyz.jwizard.jwl.net.http.header.HttpHeaderValue;
+
 public enum TestHttpHeaderValue implements HttpHeaderValue {
     ANNOTATION_FILTER("AnnotationFilter"),
     EXECUTED("Executed"),
@@ -28,7 +30,7 @@ public enum TestHttpHeaderValue implements HttpHeaderValue {
     }
 
     @Override
-    public String getCode() {
-        return code;
+    public String buildWithArgs(Object... args) {
+        return format(code, args);
     }
 }

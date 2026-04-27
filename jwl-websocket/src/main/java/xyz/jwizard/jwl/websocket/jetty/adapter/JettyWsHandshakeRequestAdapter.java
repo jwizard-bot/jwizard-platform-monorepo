@@ -22,9 +22,9 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.util.Fields;
 import org.eclipse.jetty.websocket.server.ServerUpgradeRequest;
 
-import xyz.jwizard.jwl.websocket.WsCookie;
+import xyz.jwizard.jwl.net.http.cookie.CookieName;
+import xyz.jwizard.jwl.net.http.header.HttpHeaderName;
 import xyz.jwizard.jwl.websocket.WsHandshakeRequest;
-import xyz.jwizard.jwl.websocket.header.WsHeader;
 
 public class JettyWsHandshakeRequestAdapter implements WsHandshakeRequest {
     private final ServerUpgradeRequest req;
@@ -34,12 +34,12 @@ public class JettyWsHandshakeRequestAdapter implements WsHandshakeRequest {
     }
 
     @Override
-    public String getHeader(WsHeader header) {
+    public String getHeader(HttpHeaderName header) {
         return req.getHeaders().get(header.getCode());
     }
 
     @Override
-    public String getCookie(WsCookie name) {
+    public String getCookie(CookieName name) {
         final List<HttpCookie> cookies = Request.getCookies(req);
         if (cookies == null) {
             return null;

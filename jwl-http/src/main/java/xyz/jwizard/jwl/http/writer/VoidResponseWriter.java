@@ -16,7 +16,7 @@
 package xyz.jwizard.jwl.http.writer;
 
 import xyz.jwizard.jwl.http.HttpResponse;
-import xyz.jwizard.jwl.http.HttpStatus;
+import xyz.jwizard.jwl.net.http.HttpStatus;
 
 public class VoidResponseWriter implements ResponseWriter {
     @Override

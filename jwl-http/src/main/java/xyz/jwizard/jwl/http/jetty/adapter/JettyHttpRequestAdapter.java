@@ -23,8 +23,8 @@ import org.eclipse.jetty.util.MultiMap;
 import org.eclipse.jetty.util.UrlEncoded;
 
 import xyz.jwizard.jwl.http.HttpRequest;
-import xyz.jwizard.jwl.http.header.CommonHttpHeaderName;
-import xyz.jwizard.jwl.http.header.HttpHeaderName;
+import xyz.jwizard.jwl.net.http.header.CommonHttpHeaderName;
+import xyz.jwizard.jwl.net.http.header.HttpHeaderName;
 
 public class JettyHttpRequestAdapter implements HttpRequest {
     private final Request request;

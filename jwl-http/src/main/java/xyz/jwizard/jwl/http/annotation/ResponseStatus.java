@@ -20,7 +20,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import xyz.jwizard.jwl.http.HttpStatus;
+import xyz.jwizard.jwl.net.http.HttpStatus;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

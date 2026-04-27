@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.netclient;
+package xyz.jwizard.jwl.net.http.header;
 
-class JwlNetclient {
+import xyz.jwizard.jwl.common.Identifiable;
+
+public interface HttpHeaderName extends Identifiable<String> {
 }

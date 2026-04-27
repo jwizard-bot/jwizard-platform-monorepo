@@ -17,12 +17,13 @@ package xyz.jwizard.jwl.websocket;
 
 import java.util.List;
 
-import xyz.jwizard.jwl.websocket.header.WsHeader;
+import xyz.jwizard.jwl.net.http.cookie.CookieName;
+import xyz.jwizard.jwl.net.http.header.HttpHeaderName;
 
 public interface WsHandshakeRequest {
-    String getHeader(WsHeader header);
+    String getHeader(HttpHeaderName header);
 
-    String getCookie(WsCookie cookie);
+    String getCookie(CookieName cookie);
 
     List<String> getQueryParameter(String key);
 }

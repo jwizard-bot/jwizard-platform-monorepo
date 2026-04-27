@@ -13,14 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.http.annotation;
+package xyz.jwizard.jwl.net.http.header;
 
-public enum HttpMethod {
-    GET,
-    POST,
-    PUT,
-    DELETE,
-    PATCH,
-    OPTIONS,
-    HEAD,
+public enum CommonHttpHeaderName implements HttpHeaderName {
+    CONTENT_TYPE("Content-Type"),
+    AUTHORIZATION("Authorization"),
+    // x-custom
+    X_JW_AUTH_TOKEN("x-jw-auth-token"),
+    ;
+
+    private final String code;
+
+    CommonHttpHeaderName(String code) {
+        this.code = code;
+    }
+
+    @Override
+    public String getCode() {
+        return code;
+    }
 }

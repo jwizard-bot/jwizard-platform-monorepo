@@ -21,8 +21,8 @@ import org.slf4j.LoggerFactory;
 import xyz.jwizard.jwl.codec.serialization.json.JsonSerializerException;
 import xyz.jwizard.jwl.http.HttpRequest;
 import xyz.jwizard.jwl.http.HttpResponse;
-import xyz.jwizard.jwl.http.HttpStatus;
 import xyz.jwizard.jwl.http.validation.ValidationException;
+import xyz.jwizard.jwl.net.http.HttpStatus;
 
 public class BadRequestExceptionHandler implements ExceptionHandler {
     private static final Logger LOG = LoggerFactory.getLogger(BadRequestExceptionHandler.class);

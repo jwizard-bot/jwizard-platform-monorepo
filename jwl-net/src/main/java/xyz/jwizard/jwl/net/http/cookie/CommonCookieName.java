@@ -13,9 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.http.header;
+package xyz.jwizard.jwl.net.http.cookie;
 
-import xyz.jwizard.jwl.common.Identifiable;
+public enum CommonCookieName implements CookieName {
+    SID("SESSION_ID"),
+    ;
 
-public interface HttpHeaderName extends Identifiable<String> {
+    private final String code;
+
+    CommonCookieName(String code) {
+        this.code = code;
+    }
+
+    @Override
+    public String getCode() {
+        return code;
+    }
 }

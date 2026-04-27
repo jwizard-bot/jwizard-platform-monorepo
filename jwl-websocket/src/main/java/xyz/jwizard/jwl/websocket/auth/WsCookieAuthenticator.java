@@ -18,15 +18,15 @@ package xyz.jwizard.jwl.websocket.auth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import xyz.jwizard.jwl.websocket.WsCookie;
+import xyz.jwizard.jwl.net.http.cookie.CookieName;
 import xyz.jwizard.jwl.websocket.WsHandshakeRequest;
 
 public abstract class WsCookieAuthenticator implements WsAuthenticator {
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
-    private final WsCookie cookie;
+    private final CookieName cookie;
 
-    protected WsCookieAuthenticator(WsCookie cookie) {
+    protected WsCookieAuthenticator(CookieName cookie) {
         this.cookie = cookie;
     }
 

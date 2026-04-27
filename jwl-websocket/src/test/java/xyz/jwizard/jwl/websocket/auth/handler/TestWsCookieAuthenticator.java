@@ -15,12 +15,12 @@
  */
 package xyz.jwizard.jwl.websocket.auth.handler;
 
-import xyz.jwizard.jwl.websocket.TestWsCookie;
+import xyz.jwizard.jwl.net.http.cookie.CommonCookieName;
 import xyz.jwizard.jwl.websocket.auth.WsCookieAuthenticator;
 
 public class TestWsCookieAuthenticator extends WsCookieAuthenticator {
     public TestWsCookieAuthenticator() {
-        super(TestWsCookie.SESSION_COOKIE);
+        super(CommonCookieName.SID);
     }
 
     @Override

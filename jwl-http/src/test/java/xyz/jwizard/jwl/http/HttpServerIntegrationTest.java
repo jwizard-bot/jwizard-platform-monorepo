@@ -43,6 +43,8 @@ import xyz.jwizard.jwl.http.filter.CacheSpyFilter;
 import xyz.jwizard.jwl.http.header.TestHttpHeaderName;
 import xyz.jwizard.jwl.http.header.TestHttpHeaderValue;
 import xyz.jwizard.jwl.http.jetty.JettyHttpServer;
+import xyz.jwizard.jwl.net.http.HttpStatus;
+import xyz.jwizard.jwl.net.http.header.CommonHttpHeaderName;
 
 public class HttpServerIntegrationTest {
     public static final String TEST_PASSWORD = "SecretToken-123";
@@ -197,7 +199,7 @@ public class HttpServerIntegrationTest {
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK_200.getCode());
         assertThat(response.headers().firstValue(TestHttpHeaderName.X_TEST_FILTER.getCode()))
-            .isPresent().contains(TestHttpHeaderValue.EXECUTED.getCode());
+            .isPresent().contains(TestHttpHeaderValue.EXECUTED.buildWithArgs());
     }
 
     @Test
@@ -209,7 +211,7 @@ public class HttpServerIntegrationTest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.FORBIDDEN_403.getCode());
         assertThat(response.body()).isEmpty();
         assertThat(response.headers().firstValue(TestHttpHeaderName.X_TEST_FILTER.getCode()))
-            .isPresent().contains(TestHttpHeaderValue.EXECUTED.getCode());
+            .isPresent().contains(TestHttpHeaderValue.EXECUTED.buildWithArgs());
     }
 
     @Test
@@ -240,7 +242,7 @@ public class HttpServerIntegrationTest {
         // given
         final HttpRequest request = HttpRequest.newBuilder()
             .uri(URI.create("http://localhost:" + dynamicPort + "/api/private"))
-            .header(TestHttpHeaderName.AUTHORIZATION.getCode(), TEST_PASSWORD)
+            .header(CommonHttpHeaderName.AUTHORIZATION.getCode(), TEST_PASSWORD)
             .GET()
             .build();
         // when
@@ -250,7 +252,7 @@ public class HttpServerIntegrationTest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK_200.getCode());
         assertThat(response.body()).isEqualTo("secret data");
         assertThat(response.headers().firstValue(TestHttpHeaderName.X_SECURED_BY.getCode()))
-            .isPresent().contains(TestHttpHeaderValue.ANNOTATION_FILTER.getCode());
+            .isPresent().contains(TestHttpHeaderValue.ANNOTATION_FILTER.buildWithArgs());
     }
 
     @Test
@@ -343,7 +345,7 @@ public class HttpServerIntegrationTest {
     @DisplayName("GET /api/inspect should inject HttpRequest directly without any annotations")
     void shouldInjectHttpRequestDirectly() throws Exception {
         // given
-        final String headerValue = TestHttpHeaderValue.DIRECT_INJECT.getCode();
+        final String headerValue = TestHttpHeaderValue.DIRECT_INJECT.buildWithArgs();
         final HttpRequest request = HttpRequest.newBuilder()
             .uri(URI.create("http://localhost:" + dynamicPort + "/api/inspect"))
             .header(TestHttpHeaderName.X_INSPECT_HEADER.getCode(), headerValue)

@@ -13,20 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.websocket.header;
+package xyz.jwizard.jwl.net;
 
-public enum CommonWsHeader implements WsHeader {
-    X_WS_AUTH_TOKEN("x-ws-auth-token"),
-    ;
+import xyz.jwizard.jwl.common.ModuleIdentityTest;
 
-    private final String code;
-
-    CommonWsHeader(String code) {
-        this.code = code;
+class JwlI18nTest extends ModuleIdentityTest {
+    @Override
+    protected String getModuleName() {
+        return "net";
     }
 
     @Override
-    public String getCode() {
-        return code;
+    protected String getPackageSuffix() {
+        return "jwl";
     }
 }

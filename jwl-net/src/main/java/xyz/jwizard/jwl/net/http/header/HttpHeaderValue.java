@@ -13,9 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.websocket;
+package xyz.jwizard.jwl.net.http.header;
 
-import xyz.jwizard.jwl.common.Identifiable;
+public interface HttpHeaderValue {
+    default String format(String raw, Object... args) {
+        return raw.formatted(args);
+    }
 
-public interface WsCookie extends Identifiable<String> {
+    String buildWithArgs(Object... args);
 }

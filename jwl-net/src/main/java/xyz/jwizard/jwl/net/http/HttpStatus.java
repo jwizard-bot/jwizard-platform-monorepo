@@ -13,20 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.websocket;
+package xyz.jwizard.jwl.net.http;
 
-public enum TestWsCookie implements WsCookie {
-    SESSION_COOKIE("SESSION_ID"),
+public enum HttpStatus {
+    OK_200(200),
+    NO_CONTENT_204(204),
+    BAD_REQUEST_400(400),
+    UNAUTHORIZED_401(401),
+    FORBIDDEN_403(403),
+    NOT_FOUND_404(404),
+    PAYLOAD_TOO_LARGE(413),
+    INTERNAL_SERVER_ERROR_500(500),
     ;
 
-    private final String cookie;
+    private final int code;
 
-    TestWsCookie(String cookie) {
-        this.cookie = cookie;
+    HttpStatus(int code) {
+        this.code = code;
     }
 
-    @Override
-    public String getCode() {
-        return cookie;
+    public int getCode() {
+        return code;
     }
 }

@@ -22,8 +22,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import xyz.jwizard.jwl.common.util.Assert;
+import xyz.jwizard.jwl.net.http.header.CommonHttpHeaderName;
 import xyz.jwizard.jwl.websocket.WsHandshakeRequest;
-import xyz.jwizard.jwl.websocket.header.CommonWsHeader;
 
 public class WsTokenAuthenticator implements WsAuthenticator {
     private static final Logger LOG = LoggerFactory.getLogger(WsTokenAuthenticator.class);
@@ -48,7 +48,7 @@ public class WsTokenAuthenticator implements WsAuthenticator {
             LOG.trace("Attempting token authentication for configured principal: '{}'",
                 principalId);
         }
-        final String incomingToken = req.getHeader(CommonWsHeader.X_WS_AUTH_TOKEN);
+        final String incomingToken = req.getHeader(CommonHttpHeaderName.X_JW_AUTH_TOKEN);
         if (expectedToken.equals(incomingToken)) {
             LOG.trace("Authentication successful via HTTP header for principal: '{}'", principalId);
             return principalId;

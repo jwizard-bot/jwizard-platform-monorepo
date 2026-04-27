@@ -19,9 +19,10 @@ import static xyz.jwizard.jwl.http.HttpServerIntegrationTest.TEST_PASSWORD;
 
 import xyz.jwizard.jwl.http.HttpRequest;
 import xyz.jwizard.jwl.http.HttpResponse;
-import xyz.jwizard.jwl.http.HttpStatus;
 import xyz.jwizard.jwl.http.header.TestHttpHeaderName;
 import xyz.jwizard.jwl.http.header.TestHttpHeaderValue;
+import xyz.jwizard.jwl.net.http.HttpStatus;
+import xyz.jwizard.jwl.net.http.header.CommonHttpHeaderName;
 
 import jakarta.inject.Singleton;
 
@@ -29,7 +30,7 @@ import jakarta.inject.Singleton;
 public class AnnotationSecurityFilter extends SecureRouteFilter {
     @Override
     public boolean preHandle(HttpRequest req, HttpResponse res) {
-        final String token = req.getHeader(TestHttpHeaderName.AUTHORIZATION);
+        final String token = req.getHeader(CommonHttpHeaderName.AUTHORIZATION);
         if (!TEST_PASSWORD.equals(token)) {
             res.setStatus(HttpStatus.UNAUTHORIZED_401);
             return false;

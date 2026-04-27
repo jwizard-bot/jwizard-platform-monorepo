@@ -25,11 +25,11 @@ import org.slf4j.LoggerFactory;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.util.PathUtil;
 import xyz.jwizard.jwl.http.annotation.HttpController;
-import xyz.jwizard.jwl.http.annotation.HttpMethod;
 import xyz.jwizard.jwl.http.annotation.RequestMapping;
 import xyz.jwizard.jwl.http.resolver.ArgumentResolver;
 import xyz.jwizard.jwl.http.route.Route;
 import xyz.jwizard.jwl.http.route.Router;
+import xyz.jwizard.jwl.net.http.HttpMethod;
 
 class RouteScanner {
     private static final Logger LOG = LoggerFactory.getLogger(RouteScanner.class);

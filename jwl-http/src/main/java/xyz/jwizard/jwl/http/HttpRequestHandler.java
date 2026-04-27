@@ -33,6 +33,7 @@ import xyz.jwizard.jwl.http.route.MatchResult;
 import xyz.jwizard.jwl.http.route.Route;
 import xyz.jwizard.jwl.http.route.Router;
 import xyz.jwizard.jwl.http.writer.ResponseWriter;
+import xyz.jwizard.jwl.net.http.HttpStatus;
 
 public class HttpRequestHandler {
     private static final Logger LOG = LoggerFactory.getLogger(HttpRequestHandler.class);

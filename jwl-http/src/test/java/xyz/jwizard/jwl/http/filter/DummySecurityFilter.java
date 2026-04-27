@@ -17,10 +17,10 @@ package xyz.jwizard.jwl.http.filter;
 
 import xyz.jwizard.jwl.http.HttpRequest;
 import xyz.jwizard.jwl.http.HttpResponse;
-import xyz.jwizard.jwl.http.HttpStatus;
 import xyz.jwizard.jwl.http.header.TestHttpHeaderName;
 import xyz.jwizard.jwl.http.header.TestHttpHeaderValue;
 import xyz.jwizard.jwl.http.route.Route;
+import xyz.jwizard.jwl.net.http.HttpStatus;
 
 import jakarta.inject.Singleton;
 

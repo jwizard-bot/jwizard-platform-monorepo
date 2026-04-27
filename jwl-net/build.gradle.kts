@@ -13,20 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.http.header;
 
-public enum CommonHttpHeaderName implements HttpHeaderName {
-    CONTENT_TYPE("Content-Type"),
-    ;
+dependencies {
+    implementation(project(":jwl-common"))
 
-    private final String code;
-
-    CommonHttpHeaderName(String code) {
-        this.code = code;
-    }
-
-    @Override
-    public String getCode() {
-        return code;
-    }
+    testImplementation(testFixtures(project(":jwl-common")))
 }
