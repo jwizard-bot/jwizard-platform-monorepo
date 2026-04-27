@@ -72,10 +72,10 @@ public abstract class GraphServer<C extends GraphConfig> extends IdempotentServi
 
     protected static abstract class AbstractBuilder<B extends AbstractBuilder<B, C>,
         C extends GraphConfig> {
-        protected URI uri;
         protected C config;
-        protected GraphClientFactory<C> clientFactory;
-        protected Function<GraphClient, GraphRepository> repositoryFactory;
+        private URI uri;
+        private GraphClientFactory<C> clientFactory;
+        private Function<GraphClient, GraphRepository> repositoryFactory;
 
         protected AbstractBuilder() {
         }

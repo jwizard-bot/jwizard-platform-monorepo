@@ -124,9 +124,9 @@ public abstract class KvServer extends IdempotentService implements KeyValueStor
     }
 
     protected abstract static class AbstractBuilder<B extends AbstractBuilder<B>> {
-        protected Set<HostPort> nodes = new HashSet<>();
-        protected String password;
-        protected ComponentProvider componentProvider;
+        private Set<HostPort> nodes = new HashSet<>();
+        private String password;
+        private ComponentProvider componentProvider;
 
         protected AbstractBuilder() {
         }

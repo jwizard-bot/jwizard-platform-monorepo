@@ -142,11 +142,11 @@ public abstract class HttpServer extends IdempotentService {
     public abstract int getLocalPort();
 
     protected abstract static class AbstractBuilder<B extends AbstractBuilder<B>> {
-        protected final Set<String> ignoredPaths = new HashSet<>();
+        private final Set<String> ignoredPaths = new HashSet<>();
 
-        protected ComponentProvider componentProvider;
-        protected SerializerRegistry<MessageSerializer> serializerRegistry;
-        protected int port = 8080;
+        private ComponentProvider componentProvider;
+        private SerializerRegistry<MessageSerializer> serializerRegistry;
+        private int port = 8080;
 
         protected AbstractBuilder() {
         }

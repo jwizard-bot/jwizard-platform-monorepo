@@ -110,11 +110,11 @@ public abstract class QueueServer extends IdempotentService {
     }
 
     protected static abstract class AbstractBuilder<B extends AbstractBuilder<B>> {
-        protected String username;
-        protected String password;
-        protected Set<HostPort> nodes = new HashSet<>();
-        protected SerializerRegistry<MessageSerializer> serializerRegistry;
-        protected ComponentProvider componentProvider;
+        private String username;
+        private String password;
+        private Set<HostPort> nodes = new HashSet<>();
+        private SerializerRegistry<MessageSerializer> serializerRegistry;
+        private ComponentProvider componentProvider;
 
         protected AbstractBuilder() {
         }
