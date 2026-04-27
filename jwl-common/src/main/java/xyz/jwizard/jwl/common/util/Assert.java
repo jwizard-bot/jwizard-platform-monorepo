@@ -19,9 +19,11 @@ import java.util.Collection;
 import java.util.Objects;
 
 import xyz.jwizard.jwl.common.bootstrap.CriticalBootstrapException;
+import xyz.jwizard.jwl.common.bootstrap.ForbiddenInstantiationException;
 
 public class Assert {
     private Assert() {
+        throw new ForbiddenInstantiationException(Assert.class);
     }
 
     public static <T> void notNull(T object, String message) {

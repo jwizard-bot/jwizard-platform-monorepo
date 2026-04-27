@@ -23,10 +23,13 @@ import java.util.function.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import xyz.jwizard.jwl.common.bootstrap.ForbiddenInstantiationException;
+
 public class IoUtil {
     private static final Logger LOG = LoggerFactory.getLogger(IoUtil.class);
 
     private IoUtil() {
+        throw new ForbiddenInstantiationException(IoUtil.class);
     }
 
     public static void thrownQuietly(RunnableWithException runnableWithException) {

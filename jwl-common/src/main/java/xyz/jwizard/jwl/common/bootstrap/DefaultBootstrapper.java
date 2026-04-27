@@ -45,6 +45,7 @@ public class DefaultBootstrapper {
     private static final String JWL_SUFFIX = ".jwl";
 
     private DefaultBootstrapper() {
+        throw new ForbiddenInstantiationException(DefaultBootstrapper.class);
     }
 
     public static void runNonBlocking(Class<?> primarySource) {

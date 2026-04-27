@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.common.util.math;
+package xyz.jwizard.jwl.common.bootstrap;
 
-import xyz.jwizard.jwl.common.bootstrap.ForbiddenInstantiationException;
+import java.io.Serial;
 
-public class MemSize {
-    private MemSize() {
-        throw new ForbiddenInstantiationException(MemSize.class);
-    }
+public class ForbiddenInstantiationException extends CriticalBootstrapException {
+    @Serial
+    private static final long serialVersionUID = 1L;
 
-    public static long of(long size, MemUnit unit) {
-        return unit.toBytes(size);
+    public ForbiddenInstantiationException(Class<?> clazz) {
+        super("Class instantiation: [" + clazz.getName() + "] is strictly forbidden");
     }
 }

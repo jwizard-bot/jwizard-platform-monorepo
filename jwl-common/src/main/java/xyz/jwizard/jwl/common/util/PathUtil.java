@@ -15,8 +15,11 @@
  */
 package xyz.jwizard.jwl.common.util;
 
+import xyz.jwizard.jwl.common.bootstrap.ForbiddenInstantiationException;
+
 public class PathUtil {
     private PathUtil() {
+        throw new ForbiddenInstantiationException(PathUtil.class);
     }
 
     public static String combinePaths(String prefix, String path) {

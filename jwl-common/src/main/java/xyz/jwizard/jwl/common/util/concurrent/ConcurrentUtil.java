@@ -19,8 +19,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.function.Consumer;
 
+import xyz.jwizard.jwl.common.bootstrap.ForbiddenInstantiationException;
+
 public class ConcurrentUtil {
     private ConcurrentUtil() {
+        throw new ForbiddenInstantiationException(ConcurrentUtil.class);
     }
 
     public static void await(Consumer<IoCallback> action) {

@@ -18,8 +18,11 @@ package xyz.jwizard.jwl.common.util;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 
+import xyz.jwizard.jwl.common.bootstrap.ForbiddenInstantiationException;
+
 public class CollectionUtil {
     private CollectionUtil() {
+        throw new ForbiddenInstantiationException(CollectionUtil.class);
     }
 
     @SafeVarargs

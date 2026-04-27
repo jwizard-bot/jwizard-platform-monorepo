@@ -15,8 +15,11 @@
  */
 package xyz.jwizard.jwl.common.util;
 
+import xyz.jwizard.jwl.common.bootstrap.ForbiddenInstantiationException;
+
 public class CastUtil {
     private CastUtil() {
+        throw new ForbiddenInstantiationException(CastUtil.class);
     }
 
     @SuppressWarnings("unchecked")

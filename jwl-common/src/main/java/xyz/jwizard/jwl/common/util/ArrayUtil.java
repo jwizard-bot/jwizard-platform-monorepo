@@ -18,8 +18,11 @@ package xyz.jwizard.jwl.common.util;
 import java.lang.reflect.Array;
 import java.util.Collection;
 
+import xyz.jwizard.jwl.common.bootstrap.ForbiddenInstantiationException;
+
 public class ArrayUtil {
     private ArrayUtil() {
+        throw new ForbiddenInstantiationException(ArrayUtil.class);
     }
 
     public static <T> T[] toArray(Collection<T> collection, Class<T> clazz) {

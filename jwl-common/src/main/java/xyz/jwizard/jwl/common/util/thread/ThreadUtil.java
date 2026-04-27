@@ -18,10 +18,13 @@ package xyz.jwizard.jwl.common.util.thread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import xyz.jwizard.jwl.common.bootstrap.ForbiddenInstantiationException;
+
 public class ThreadUtil {
     private static final Logger LOG = LoggerFactory.getLogger(ThreadUtil.class);
 
     private ThreadUtil() {
+        throw new ForbiddenInstantiationException(ThreadUtil.class);
     }
 
     public static void runAsync(String name, ThrowingRunnable task) {
