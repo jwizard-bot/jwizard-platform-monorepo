@@ -34,7 +34,7 @@ public class RequestTooLargeExceptionHandler implements ExceptionHandler {
     @Override
     public void handle(HttpRequest req, HttpResponse res, Throwable throwable) {
         LOG.warn("Request too large [{}]: {}", req.getPath(), throwable.getMessage());
-        res.setStatus(HttpStatus.PAYLOAD_TOO_LARGE);
+        res.setStatus(HttpStatus.PAYLOAD_TOO_LARGE_413);
         res.end();
     }
 }
