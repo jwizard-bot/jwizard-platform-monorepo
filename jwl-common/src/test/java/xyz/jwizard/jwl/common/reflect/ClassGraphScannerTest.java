@@ -35,7 +35,7 @@ class ClassGraphScannerTest {
         // given
         final String currentPackage = this.getClass().getPackageName();
         // when
-        try (ClassGraphScanner scanner = new ClassGraphScanner(currentPackage)) {
+        try (final ClassGraphScanner scanner = new ClassGraphScanner(currentPackage)) {
             final Set<Class<?>> foundClasses = scanner.getTypesAnnotatedWith(TestComponent.class);
             // then
             assertThat(foundClasses)
@@ -51,7 +51,7 @@ class ClassGraphScannerTest {
         // given
         final String nonExistentPackage = "xyz.jwizard.jwl.this.package.does.not.exist";
         // when
-        try (ClassGraphScanner scanner = new ClassGraphScanner(nonExistentPackage)) {
+        try (final ClassGraphScanner scanner = new ClassGraphScanner(nonExistentPackage)) {
             final Set<Class<?>> foundClasses = scanner.getTypesAnnotatedWith(TestComponent.class);
             // then
             assertThat(foundClasses).isEmpty();
@@ -64,7 +64,7 @@ class ClassGraphScannerTest {
         // given
         final String currentPackage = this.getClass().getPackageName();
         // when
-        try (ClassGraphScanner scanner = new ClassGraphScanner(currentPackage)) {
+        try (final ClassGraphScanner scanner = new ClassGraphScanner(currentPackage)) {
             final Set<Class<? extends BaseTestInterface>> foundClasses =
                 scanner.getSubtypesOf(BaseTestInterface.class);
             // then
@@ -83,7 +83,7 @@ class ClassGraphScannerTest {
         // given
         final String currentPackage = this.getClass().getPackageName();
         // when
-        try (ClassGraphScanner scanner = new ClassGraphScanner(currentPackage)) {
+        try (final ClassGraphScanner scanner = new ClassGraphScanner(currentPackage)) {
             final Set<Class<? extends BaseTestInterface>> foundClasses =
                 scanner.getInstantiableSubtypesOf(BaseTestInterface.class);
             // then
