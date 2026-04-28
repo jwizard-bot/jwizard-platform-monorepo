@@ -40,9 +40,4 @@ public class DummySecurityFilter implements HttpFilter {
         }
         return true;
     }
-
-    @Override
-    public int order() {
-        return Integer.MIN_VALUE;
-    }
 }

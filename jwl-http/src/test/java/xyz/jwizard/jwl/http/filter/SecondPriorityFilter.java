@@ -39,6 +39,6 @@ public class SecondPriorityFilter implements HttpFilter {
 
     @Override
     public int order() {
-        return 2;
+        return 50;
     }
 }

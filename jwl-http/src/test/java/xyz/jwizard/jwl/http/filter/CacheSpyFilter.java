@@ -43,6 +43,6 @@ public class CacheSpyFilter implements HttpFilter {
 
     @Override
     public int order() {
-        return 100;
+        return Integer.MIN_VALUE;
     }
 }

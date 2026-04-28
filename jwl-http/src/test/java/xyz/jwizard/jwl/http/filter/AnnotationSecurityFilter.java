@@ -40,7 +40,7 @@ public class AnnotationSecurityFilter extends SecureRouteFilter {
 
     @Override
     public int order() {
-        return -50;
+        return 1000;
     }
 }
 
