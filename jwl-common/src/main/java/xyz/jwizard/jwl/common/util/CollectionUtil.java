@@ -18,8 +18,10 @@ package xyz.jwizard.jwl.common.util;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.function.Predicate;
 
 import xyz.jwizard.jwl.common.bootstrap.ForbiddenInstantiationException;
 
@@ -46,5 +48,44 @@ public class CollectionUtil {
             Collections.addAll(result, rest);
         }
         return Collections.unmodifiableList(result);
+    }
+
+    // two-pointers algorithm (zero allocation), for O(n), instead of streams and O(nlogn)
+    public static <T> void consumeMergedSorted(List<T> list1, List<T> list2,
+                                               Comparator<? super T> comparator,
+                                               Predicate<T> action) {
+        if (action == null) {
+            return;
+        }
+        final List<T> l1 = (list1 == null) ? Collections.emptyList() : list1;
+        final List<T> l2 = (list2 == null) ? Collections.emptyList() : list2;
+
+        final Comparator<? super T> comp = (comparator != null)
+            ? comparator
+            : CastUtil.unsafeCast(Comparator.naturalOrder());
+
+        final int size1 = l1.size();
+        final int size2 = l2.size();
+
+        if (size1 == 0 && size2 == 0) {
+            return;
+        }
+        int index1 = 0;
+        int index2 = 0;
+        while (index1 < size1 || index2 < size2) {
+            T nextItem;
+            if (index1 == size1) {
+                nextItem = l2.get(index2++);
+            } else if (index2 == size2) {
+                nextItem = l1.get(index1++);
+            } else if (comp.compare(l1.get(index1), l2.get(index2)) <= 0) {
+                nextItem = l1.get(index1++);
+            } else {
+                nextItem = l2.get(index2++);
+            }
+            if (!action.test(nextItem)) {
+                break;
+            }
+        }
     }
 }
