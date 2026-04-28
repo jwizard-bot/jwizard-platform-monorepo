@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.http.filter;
+package xyz.jwizard.jwl.common;
 
-import xyz.jwizard.jwl.common.Ordered;
-import xyz.jwizard.jwl.http.HttpRequest;
-import xyz.jwizard.jwl.http.HttpResponse;
-import xyz.jwizard.jwl.http.route.Route;
+import java.util.Comparator;
 
-public interface HttpFilter extends Ordered {
-    boolean supports(Route route);
+public interface Ordered {
+    Comparator<Ordered> COMPARATOR = Comparator.comparingInt(Ordered::order).reversed();
 
-    // true = go forward, false = stop request
-    boolean preHandle(HttpRequest req, HttpResponse res) throws Exception;
+    // lower = started after
+    default int order() {
+        return Integer.MAX_VALUE;
+    }
 }

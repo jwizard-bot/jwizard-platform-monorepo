@@ -15,7 +15,6 @@
  */
 package xyz.jwizard.jwl.http;
 
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -75,7 +74,7 @@ public abstract class HttpServer extends IdempotentService {
         ignoredPaths = combinePaths(builder.ignoredPaths);
         filters = componentProvider.getInstancesOf(HttpFilter.class)
             .stream()
-            .sorted(Comparator.comparingInt(HttpFilter::order))
+            .sorted(HttpFilter.COMPARATOR)
             .toList();
         final Set<AnnotationValidator<?>> validators = componentProvider
             .getInstancesAnnotatedWith(Validator.class)
