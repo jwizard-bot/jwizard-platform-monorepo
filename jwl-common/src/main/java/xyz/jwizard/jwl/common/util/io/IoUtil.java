@@ -58,6 +58,10 @@ public class IoUtil {
         closeQuietly(closeable, AutoCloseable::close);
     }
 
+    public static void closeQuietly(AutoCloseable closeable) {
+        closeQuietly(closeable, AutoCloseable::close);
+    }
+
     public static void closeQuietly(Runnable runnable) {
         closeQuietly(runnable, Runnable::run);
     }
