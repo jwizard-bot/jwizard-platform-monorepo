@@ -19,6 +19,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import xyz.jwizard.jwl.common.bootstrap.ForbiddenInstantiationException;
+import xyz.jwizard.jwl.common.util.io.IoUtil;
 
 public class NetworkUtil {
     private static final String HTTP_SCHEME = "http://";
@@ -68,7 +69,11 @@ public class NetworkUtil {
         return uri != null && (uri.startsWith(HTTP_SCHEME) || uri.startsWith(HTTPS_SCHEME));
     }
 
-    public static String concatPaths(String baseUrl, String path) {
-        return baseUrl + (path.startsWith("/") ? path : "/" + path);
+    public static String concatPaths(String baseUrl, String uriPath) {
+        final String base = IoUtil.removeTrailingSlash(baseUrl);
+        if (!uriPath.startsWith("/")) {
+            uriPath = "/" + uriPath;
+        }
+        return base + uriPath;
     }
 }
