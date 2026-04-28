@@ -18,6 +18,8 @@ package xyz.jwizard.jwl.net.http.header;
 public enum CommonHttpHeaderValue implements HttpHeaderValue {
     APPLICATION_JSON_UTF_8("application/json; charset=utf-8"),
     TEXT_PLAIN_UTF_8("text/plain; charset=utf-8"),
+    APPLICATION_JSON("application/json"),
+    APPLICATION_X_WWW_FORM_URLENCODED("application/x-www-form-urlencoded"),
     ;
 
     private final String code;
