@@ -17,4 +17,6 @@ package xyz.jwizard.jwl.codec.serialization;
 
 public interface SerializerFormat {
     String getFormat();
+
+    String getMimeType();
 }

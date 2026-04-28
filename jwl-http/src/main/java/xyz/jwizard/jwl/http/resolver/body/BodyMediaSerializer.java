@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import xyz.jwizard.jwl.codec.serialization.SerializerFormat;
 import xyz.jwizard.jwl.codec.serialization.StandardSerializerFormat;
+import xyz.jwizard.jwl.common.util.CollectionUtil;
 import xyz.jwizard.jwl.common.util.math.MemSize;
 import xyz.jwizard.jwl.common.util.math.MemUnit;
 
@@ -32,15 +33,13 @@ enum BodyMediaSerializer {
         StandardSerializerFormat.JSON,
         true,
         MemSize.of(2, MemUnit.MB),
-        null,
-        "application/json"
+        null
     ),
     PROTOBUF(
         StandardSerializerFormat.PROTOBUF,
         false,
         MemSize.of(1, MemUnit.MB),
         null,
-        "application/protobuf",
         "application/x-protobuf"
     ),
     RAW(
@@ -48,7 +47,6 @@ enum BodyMediaSerializer {
         false,
         MemSize.of(5, MemUnit.MB),
         byte[].class,
-        "application/octet-stream",
         "image/*"
     ),
     ;
@@ -82,7 +80,7 @@ enum BodyMediaSerializer {
         this.validate = validate;
         this.maxSizeBytes = maxSizeBytes;
         this.targetClass = targetClass;
-        this.contentTypes = List.of(contentTypes);
+        this.contentTypes = CollectionUtil.listOf(format.getMimeType(), contentTypes);
     }
 
     static BodyMediaSerializer resolve(Class<?> targetType, String contentType) {

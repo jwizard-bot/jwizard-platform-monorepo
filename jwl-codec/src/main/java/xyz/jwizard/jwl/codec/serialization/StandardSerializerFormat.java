@@ -16,19 +16,26 @@
 package xyz.jwizard.jwl.codec.serialization;
 
 public enum StandardSerializerFormat implements SerializerFormat {
-    JSON("json"),
-    PROTOBUF("protobuf"),
-    RAW("raw"),
+    JSON("json", "application/json"),
+    PROTOBUF("protobuf", "application/x-protobuf"),
+    RAW("raw", "application/octet-stream"),
     ;
 
     private final String format;
+    private final String mimeType;
 
-    StandardSerializerFormat(String format) {
+    StandardSerializerFormat(String format, String mimeType) {
         this.format = format;
+        this.mimeType = mimeType;
     }
 
     @Override
     public String getFormat() {
         return format;
+    }
+
+    @Override
+    public String getMimeType() {
+        return mimeType;
     }
 }

@@ -34,6 +34,12 @@ public record EnvelopeSerializerFormat(
     }
 
     @Override
+    public String getMimeType() {
+        // application/x-jwl-[envelope]+[base]
+        return "application/x-jwl-" + envelopeDataType.getCode() + "+" + baseFormat.getFormat();
+    }
+
+    @Override
     @NonNull
     public String toString() {
         return getFormat();

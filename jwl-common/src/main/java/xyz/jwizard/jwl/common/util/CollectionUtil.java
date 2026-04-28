@@ -15,8 +15,11 @@
  */
 package xyz.jwizard.jwl.common.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 import xyz.jwizard.jwl.common.bootstrap.ForbiddenInstantiationException;
 
@@ -28,5 +31,20 @@ public class CollectionUtil {
     @SafeVarargs
     public static <T> LinkedHashSet<T> linkedSetOf(T... elements) {
         return new LinkedHashSet<>(Arrays.asList(elements));
+    }
+
+    @SafeVarargs
+    public static <T> List<T> listOf(T first, T... rest) {
+        if (first == null && (rest == null || rest.length == 0)) {
+            return Collections.emptyList();
+        }
+        final List<T> result = new ArrayList<>();
+        if (first != null) {
+            result.add(first);
+        }
+        if (rest != null) {
+            Collections.addAll(result, rest);
+        }
+        return Collections.unmodifiableList(result);
     }
 }
