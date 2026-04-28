@@ -37,6 +37,7 @@ import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.di.GuiceComponentProvider;
 import xyz.jwizard.jwl.common.reflect.ClassGraphScanner;
 import xyz.jwizard.jwl.common.reflect.ClassScanner;
+import xyz.jwizard.jwl.common.util.io.IoUtil;
 import xyz.jwizard.jwl.http.HttpServer;
 import xyz.jwizard.jwl.http.TestConstants;
 import xyz.jwizard.jwl.http.TestEnvelope;
@@ -50,12 +51,13 @@ import xyz.jwizard.jwl.net.http.header.CommonHttpHeaderName;
 public class JettyHttpServerIntegrationTest {
     private static HttpServer httpServer;
     private static int dynamicPort;
+    private static ClassScanner scanner;
+
     private final HttpClient httpClient = HttpClient.newHttpClient();
 
     @BeforeAll
     static void startServer() {
-        final String packageName = JettyHttpServerIntegrationTest.class.getPackageName();
-        final ClassScanner scanner = new ClassGraphScanner(packageName);
+        scanner = new ClassGraphScanner("xyz.jwizard.jwl.http");
         final ApplicationContext context = ApplicationContext.createDefault(scanner, Map.of(
             ComponentProvider.class, GuiceComponentProvider.class
         ));
@@ -74,6 +76,7 @@ public class JettyHttpServerIntegrationTest {
     @AfterAll
     static void stopServer() {
         httpServer.close();
+        IoUtil.closeQuietly(scanner);
     }
 
     private HttpResponse<String> get(String path) throws Exception {

@@ -42,6 +42,7 @@ import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.di.GuiceComponentProvider;
 import xyz.jwizard.jwl.common.reflect.ClassGraphScanner;
 import xyz.jwizard.jwl.common.reflect.ClassScanner;
+import xyz.jwizard.jwl.common.util.io.IoUtil;
 import xyz.jwizard.jwl.net.http.cookie.CommonCookieName;
 import xyz.jwizard.jwl.net.http.header.CommonHttpHeaderName;
 import xyz.jwizard.jwl.websocket.TestConstants;
@@ -61,13 +62,13 @@ import xyz.jwizard.jwl.websocket.registry.WsSubscriptionRegistry;
 class JettyWsServerIntegrationTest {
     private final JsonSerializer jsonSerializer = TestConstants.JSON_SERIALIZER;
 
+    private ClassScanner scanner;
     private WsServer server;
     private int port;
 
     @BeforeEach
     void startServer() {
-        final String packageName = JettyWsServerIntegrationTest.class.getPackageName();
-        final ClassScanner scanner = new ClassGraphScanner(packageName);
+        scanner = new ClassGraphScanner("xyz.jwizard.jwl.websocket");
         final InMemoryWsSessionRegistry registry = InMemoryWsSessionRegistry.createDefault();
         final ApplicationContext context = ApplicationContext.create(scanner, Map.of(
             ComponentProvider.class, GuiceComponentProvider.class
@@ -107,6 +108,7 @@ class JettyWsServerIntegrationTest {
     @AfterEach
     void stopServer() {
         server.close();
+        IoUtil.closeQuietly(scanner);
     }
 
     @Test

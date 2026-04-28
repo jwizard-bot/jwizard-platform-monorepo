@@ -43,6 +43,7 @@ import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.di.GuiceComponentProvider;
 import xyz.jwizard.jwl.common.reflect.ClassGraphScanner;
 import xyz.jwizard.jwl.common.reflect.ClassScanner;
+import xyz.jwizard.jwl.common.util.io.IoUtil;
 import xyz.jwizard.jwl.kv.KvKey;
 import xyz.jwizard.jwl.kv.TestKvKey;
 import xyz.jwizard.jwl.kv.jedis.factory.FactoryType;
@@ -65,11 +66,11 @@ class JedisServerIntegrationTest {
 
     private static JedisServer jedisServer;
     private static ComponentProvider componentProvider;
+    private static ClassScanner scanner;
 
     @BeforeAll
     static void setupAll() {
-        final String packageName = JedisServerIntegrationTest.class.getPackageName();
-        final ClassScanner scanner = new ClassGraphScanner(packageName);
+        scanner = new ClassGraphScanner("xyz.jwizard.jwl.kv");
         final ApplicationContext context = ApplicationContext.createDefault(scanner, Map.of(
             ComponentProvider.class, GuiceComponentProvider.class
         ));
@@ -91,6 +92,7 @@ class JedisServerIntegrationTest {
     @AfterAll
     static void tearDownAll() {
         jedisServer.close();
+        IoUtil.closeQuietly(scanner);
     }
 
     @Test
