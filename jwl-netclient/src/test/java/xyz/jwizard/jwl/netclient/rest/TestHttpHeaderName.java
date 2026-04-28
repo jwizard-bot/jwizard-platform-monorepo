@@ -13,16 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package xyz.jwizard.jwl.netclient.rest;
 
-dependencies {
-    implementation(libs.jetty.client)
-    implementation(libs.jetty.ws.client)
+import xyz.jwizard.jwl.net.http.header.HttpHeaderName;
 
-    implementation(project(":jwl-codec"))
-    implementation(project(":jwl-common"))
-    implementation(project(":jwl-net"))
+public enum TestHttpHeaderName implements HttpHeaderName {
+    X_CORRELATION_ID("X-Correlation-Id"),
+    X_ACTION_TYPE("X-Action-Type"),
+    X_REQUEST_SIGNATURE("X-Request-Signature"),
+    ;
 
-    testImplementation(libs.wiremock)
+    private final String code;
 
-    testImplementation(testFixtures(project(":jwl-common")))
+    TestHttpHeaderName(String code) {
+        this.code = code;
+    }
+
+    @Override
+    public String getCode() {
+        return code;
+    }
 }

@@ -13,16 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package xyz.jwizard.jwl.netclient.rest;
 
-dependencies {
-    implementation(libs.jetty.client)
-    implementation(libs.jetty.ws.client)
+import xyz.jwizard.jwl.net.http.header.HttpHeaderValue;
 
-    implementation(project(":jwl-codec"))
-    implementation(project(":jwl-common"))
-    implementation(project(":jwl-net"))
+public enum TestHttpHeaderValue implements HttpHeaderValue {
+    REQ("Req-%s-%s"),
+    SIG("SIG-%s-%s"),
+    UPDATE("UPDATE"),
+    ;
 
-    testImplementation(libs.wiremock)
+    private final String code;
 
-    testImplementation(testFixtures(project(":jwl-common")))
+    TestHttpHeaderValue(String code) {
+        this.code = code;
+    }
+
+    @Override
+    public String buildWithArgs(Object... args) {
+        return format(code, args);
+    }
 }
