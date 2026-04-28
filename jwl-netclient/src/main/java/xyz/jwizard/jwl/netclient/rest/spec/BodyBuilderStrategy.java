@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package xyz.jwizard.jwl.netclient.rest.spec;
 
-dependencies {
-    implementation(libs.jetty.client)
-    implementation(libs.jetty.ws.client)
+import xyz.jwizard.jwl.codec.serialization.MessageSerializer;
 
-    implementation(project(":jwl-codec"))
-    implementation(project(":jwl-common"))
-    implementation(project(":jwl-net"))
+public interface BodyBuilderStrategy<T> {
+    boolean supports(GenericRequestSpec spec);
 
-    testImplementation(testFixtures(project(":jwl-common")))
+    T buildContent(GenericRequestSpec spec, MessageSerializer serializer,
+                   HeaderConsumer headerConsumer);
 }

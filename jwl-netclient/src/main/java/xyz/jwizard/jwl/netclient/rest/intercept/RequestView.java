@@ -13,14 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package xyz.jwizard.jwl.netclient.rest.intercept;
 
-dependencies {
-    implementation(libs.jetty.client)
-    implementation(libs.jetty.ws.client)
+import java.util.Map;
 
-    implementation(project(":jwl-codec"))
-    implementation(project(":jwl-common"))
-    implementation(project(":jwl-net"))
+import xyz.jwizard.jwl.net.http.HttpMethod;
+import xyz.jwizard.jwl.netclient.rest.pool.UrlPool;
 
-    testImplementation(testFixtures(project(":jwl-common")))
+public interface RequestView {
+    HttpMethod getMethod();
+
+    String getUriPath();
+
+    UrlPool getPool();
+
+    Map<String, String> getHeaders();
+
+    Map<String, String> getQueryParams();
+
+    Map<String, String> getFormParams();
+
+    Object getBody();
 }

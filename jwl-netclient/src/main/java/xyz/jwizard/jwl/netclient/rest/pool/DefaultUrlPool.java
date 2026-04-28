@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package xyz.jwizard.jwl.netclient.rest.pool;
 
-dependencies {
-    implementation(libs.jetty.client)
-    implementation(libs.jetty.ws.client)
+public enum DefaultUrlPool implements UrlPool {
+    DEFAULT,
+    ;
 
-    implementation(project(":jwl-codec"))
-    implementation(project(":jwl-common"))
-    implementation(project(":jwl-net"))
-
-    testImplementation(testFixtures(project(":jwl-common")))
+    @Override
+    public String getPoolName() {
+        return name();
+    }
 }

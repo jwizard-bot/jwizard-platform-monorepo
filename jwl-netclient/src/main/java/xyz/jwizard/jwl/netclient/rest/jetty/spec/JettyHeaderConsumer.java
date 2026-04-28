@@ -13,14 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package xyz.jwizard.jwl.netclient.rest.jetty.spec;
 
-dependencies {
-    implementation(libs.jetty.client)
-    implementation(libs.jetty.ws.client)
+import org.eclipse.jetty.client.Request;
 
-    implementation(project(":jwl-codec"))
-    implementation(project(":jwl-common"))
-    implementation(project(":jwl-net"))
+import xyz.jwizard.jwl.net.http.header.HttpHeaderName;
+import xyz.jwizard.jwl.netclient.rest.spec.HeaderConsumer;
 
-    testImplementation(testFixtures(project(":jwl-common")))
+public class JettyHeaderConsumer implements HeaderConsumer {
+    private final Request request;
+
+    public JettyHeaderConsumer(Request request) {
+        this.request = request;
+    }
+
+    @Override
+    public void addHeader(HttpHeaderName name, String value) {
+        request.headers(h -> h.put(name.getCode(), value));
+    }
 }

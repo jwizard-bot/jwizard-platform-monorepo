@@ -13,14 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package xyz.jwizard.jwl.netclient.rest.spec;
 
-dependencies {
-    implementation(libs.jetty.client)
-    implementation(libs.jetty.ws.client)
+import xyz.jwizard.jwl.net.http.header.HttpHeaderName;
 
-    implementation(project(":jwl-codec"))
-    implementation(project(":jwl-common"))
-    implementation(project(":jwl-net"))
-
-    testImplementation(testFixtures(project(":jwl-common")))
+public interface HeaderConsumer {
+    void addHeader(HttpHeaderName name, String value);
 }

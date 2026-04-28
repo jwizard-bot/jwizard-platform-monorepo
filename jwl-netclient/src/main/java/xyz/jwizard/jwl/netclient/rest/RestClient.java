@@ -13,14 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package xyz.jwizard.jwl.netclient.rest;
 
-dependencies {
-    implementation(libs.jetty.client)
-    implementation(libs.jetty.ws.client)
+import xyz.jwizard.jwl.net.http.HttpMethod;
+import xyz.jwizard.jwl.netclient.rest.spec.RequestSpec;
 
-    implementation(project(":jwl-codec"))
-    implementation(project(":jwl-common"))
-    implementation(project(":jwl-net"))
+public interface RestClient {
+    RequestSpec get(String uri);
 
-    testImplementation(testFixtures(project(":jwl-common")))
+    RequestSpec post(String uri);
+
+    RequestSpec put(String uri);
+
+    RequestSpec patch(String uri);
+
+    RequestSpec delete(String uri);
+
+    RequestSpec request(HttpMethod method, String uri);
 }

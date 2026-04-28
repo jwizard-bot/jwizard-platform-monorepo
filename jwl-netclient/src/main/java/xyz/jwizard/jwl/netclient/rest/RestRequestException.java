@@ -13,14 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package xyz.jwizard.jwl.netclient.rest;
 
-dependencies {
-    implementation(libs.jetty.client)
-    implementation(libs.jetty.ws.client)
+import java.io.Serial;
 
-    implementation(project(":jwl-codec"))
-    implementation(project(":jwl-common"))
-    implementation(project(":jwl-net"))
+public class RestRequestException extends RuntimeException {
+    @Serial
+    private static final long serialVersionUID = 1L;
 
-    testImplementation(testFixtures(project(":jwl-common")))
+    public RestRequestException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

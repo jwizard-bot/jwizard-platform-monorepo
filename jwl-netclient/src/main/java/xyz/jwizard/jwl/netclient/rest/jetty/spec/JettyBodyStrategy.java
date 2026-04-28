@@ -13,14 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package xyz.jwizard.jwl.netclient.rest.jetty.spec;
 
-dependencies {
-    implementation(libs.jetty.client)
-    implementation(libs.jetty.ws.client)
+import org.eclipse.jetty.client.Request;
 
-    implementation(project(":jwl-codec"))
-    implementation(project(":jwl-common"))
-    implementation(project(":jwl-net"))
+import xyz.jwizard.jwl.netclient.rest.spec.BodyBuilderStrategy;
 
-    testImplementation(testFixtures(project(":jwl-common")))
+public interface JettyBodyStrategy extends BodyBuilderStrategy<Request.Content> {
 }
