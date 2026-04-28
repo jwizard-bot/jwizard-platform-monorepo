@@ -15,10 +15,9 @@
  */
 package xyz.jwizard.jwl.http.filter;
 
-import static xyz.jwizard.jwl.http.HttpServerIntegrationTest.TEST_PASSWORD;
-
 import xyz.jwizard.jwl.http.HttpRequest;
 import xyz.jwizard.jwl.http.HttpResponse;
+import xyz.jwizard.jwl.http.TestConstants;
 import xyz.jwizard.jwl.http.header.TestHttpHeaderName;
 import xyz.jwizard.jwl.http.header.TestHttpHeaderValue;
 import xyz.jwizard.jwl.net.http.HttpStatus;
@@ -31,7 +30,7 @@ public class AnnotationSecurityFilter extends SecureRouteFilter {
     @Override
     public boolean preHandle(HttpRequest req, HttpResponse res) {
         final String token = req.getHeader(CommonHttpHeaderName.AUTHORIZATION);
-        if (!TEST_PASSWORD.equals(token)) {
+        if (!TestConstants.TEST_PASSWORD.equals(token)) {
             res.setStatus(HttpStatus.UNAUTHORIZED_401);
             return false;
         }

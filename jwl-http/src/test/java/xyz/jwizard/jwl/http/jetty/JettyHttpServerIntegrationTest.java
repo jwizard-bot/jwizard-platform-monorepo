@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.http;
+package xyz.jwizard.jwl.http.jetty;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -31,32 +31,30 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import xyz.jwizard.jwl.codec.serialization.SerializerRegistry;
-import xyz.jwizard.jwl.codec.serialization.json.JacksonSerializer;
-import xyz.jwizard.jwl.codec.serialization.json.JsonSerializer;
 import xyz.jwizard.jwl.codec.serialization.raw.RawByteSerializer;
 import xyz.jwizard.jwl.common.di.ApplicationContext;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.di.GuiceComponentProvider;
 import xyz.jwizard.jwl.common.reflect.ClassGraphScanner;
 import xyz.jwizard.jwl.common.reflect.ClassScanner;
+import xyz.jwizard.jwl.http.HttpServer;
+import xyz.jwizard.jwl.http.TestConstants;
+import xyz.jwizard.jwl.http.TestEnvelope;
+import xyz.jwizard.jwl.http.TestUser;
 import xyz.jwizard.jwl.http.filter.CacheSpyFilter;
 import xyz.jwizard.jwl.http.header.TestHttpHeaderName;
 import xyz.jwizard.jwl.http.header.TestHttpHeaderValue;
-import xyz.jwizard.jwl.http.jetty.JettyHttpServer;
 import xyz.jwizard.jwl.net.http.HttpStatus;
 import xyz.jwizard.jwl.net.http.header.CommonHttpHeaderName;
 
-public class HttpServerIntegrationTest {
-    public static final String TEST_PASSWORD = "SecretToken-123";
-
-    private static final JsonSerializer SERIALIZER = JacksonSerializer.createDefaultStrictMapper();
+public class JettyHttpServerIntegrationTest {
     private static HttpServer httpServer;
     private static int dynamicPort;
     private final HttpClient httpClient = HttpClient.newHttpClient();
 
     @BeforeAll
     static void startServer() {
-        final String packageName = HttpServerIntegrationTest.class.getPackageName();
+        final String packageName = JettyHttpServerIntegrationTest.class.getPackageName();
         final ClassScanner scanner = new ClassGraphScanner(packageName);
         final ApplicationContext context = ApplicationContext.createDefault(scanner, Map.of(
             ComponentProvider.class, GuiceComponentProvider.class
@@ -64,7 +62,7 @@ public class HttpServerIntegrationTest {
         httpServer = JettyHttpServer.builder()
             .componentProvider(context.getComponentProvider())
             .serializerRegistry(SerializerRegistry.createDefault()
-                .register(SERIALIZER)
+                .register(TestConstants.SERIALIZER)
                 .register(RawByteSerializer.createDefault())
             )
             .port(0)
@@ -87,7 +85,7 @@ public class HttpServerIntegrationTest {
     }
 
     private HttpResponse<String> post(Object body) throws Exception {
-        final String json = SERIALIZER.serialize(body);
+        final String json = TestConstants.SERIALIZER.serialize(body);
         final HttpRequest request = HttpRequest.newBuilder()
             .uri(URI.create("http://localhost:" + dynamicPort + "/api/test"))
             .header("Content-Type", "application/json")
@@ -242,7 +240,7 @@ public class HttpServerIntegrationTest {
         // given
         final HttpRequest request = HttpRequest.newBuilder()
             .uri(URI.create("http://localhost:" + dynamicPort + "/api/private"))
-            .header(CommonHttpHeaderName.AUTHORIZATION.getCode(), TEST_PASSWORD)
+            .header(CommonHttpHeaderName.AUTHORIZATION.getCode(), TestConstants.TEST_PASSWORD)
             .GET()
             .build();
         // when
@@ -316,7 +314,7 @@ public class HttpServerIntegrationTest {
         final HttpResponse<String> response = httpClient
             .send(request, HttpResponse.BodyHandlers.ofString());
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.PAYLOAD_TOO_LARGE.getCode());
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.PAYLOAD_TOO_LARGE_413.getCode());
     }
 
     @Test
@@ -338,7 +336,7 @@ public class HttpServerIntegrationTest {
         final HttpResponse<String> response = httpClient
             .send(request, HttpResponse.BodyHandlers.ofString());
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.PAYLOAD_TOO_LARGE.getCode());
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.PAYLOAD_TOO_LARGE_413.getCode());
     }
 
     @Test

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.websocket;
+package xyz.jwizard.jwl.websocket.jetty;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -36,7 +36,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import xyz.jwizard.jwl.codec.envelope.MessageEnvelope;
-import xyz.jwizard.jwl.codec.serialization.json.JacksonSerializer;
 import xyz.jwizard.jwl.codec.serialization.json.JsonSerializer;
 import xyz.jwizard.jwl.common.di.ApplicationContext;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
@@ -45,11 +44,12 @@ import xyz.jwizard.jwl.common.reflect.ClassGraphScanner;
 import xyz.jwizard.jwl.common.reflect.ClassScanner;
 import xyz.jwizard.jwl.net.http.cookie.CommonCookieName;
 import xyz.jwizard.jwl.net.http.header.CommonHttpHeaderName;
+import xyz.jwizard.jwl.websocket.TestConstants;
+import xyz.jwizard.jwl.websocket.WsServer;
 import xyz.jwizard.jwl.websocket.auth.WsTokenAuthenticator;
 import xyz.jwizard.jwl.websocket.auth.handler.TestWsCookieAuthenticator;
 import xyz.jwizard.jwl.websocket.broadcast.TestWsTopic;
 import xyz.jwizard.jwl.websocket.dispatcher.ConcurrentLocalSessionDispatcher;
-import xyz.jwizard.jwl.websocket.jetty.JettyWsServer;
 import xyz.jwizard.jwl.websocket.listener.action.ActionRouterWsMessageListener;
 import xyz.jwizard.jwl.websocket.listener.action.TestOpCode;
 import xyz.jwizard.jwl.websocket.listener.action.WsOpCode;
@@ -58,18 +58,15 @@ import xyz.jwizard.jwl.websocket.registry.InMemoryWsSessionRegistry;
 import xyz.jwizard.jwl.websocket.registry.WsSerializerRegistry;
 import xyz.jwizard.jwl.websocket.registry.WsSubscriptionRegistry;
 
-class WsServerIntegrationTest {
-    private static final String SECRET_TOKEN = "super-secret-wizard-key";
-    private static final String SERVICE_NAME = "internal-microservice";
-
-    private final JsonSerializer jsonSerializer = JacksonSerializer.createLenientForMessaging();
+class JettyWsServerIntegrationTest {
+    private final JsonSerializer jsonSerializer = TestConstants.JSON_SERIALIZER;
 
     private WsServer server;
     private int port;
 
     @BeforeEach
     void startServer() {
-        final String packageName = WsServerIntegrationTest.class.getPackageName();
+        final String packageName = JettyWsServerIntegrationTest.class.getPackageName();
         final ClassScanner scanner = new ClassGraphScanner(packageName);
         final InMemoryWsSessionRegistry registry = InMemoryWsSessionRegistry.createDefault();
         final ApplicationContext context = ApplicationContext.create(scanner, Map.of(
@@ -92,8 +89,8 @@ class WsServerIntegrationTest {
             )
             .localSessionDispatcherFactory(ConcurrentLocalSessionDispatcher::createVirtual)
             .addAuthenticator(WsTokenAuthenticator.builder()
-                .expectedToken(SECRET_TOKEN)
-                .principalId(SERVICE_NAME)
+                .expectedToken(TestConstants.SECRET_TOKEN)
+                .principalId(TestConstants.SERVICE_NAME)
                 .withQueryParameterCheck("auth_token")
                 .build())
             .addAuthenticator(new TestWsCookieAuthenticator())
@@ -123,7 +120,7 @@ class WsServerIntegrationTest {
         final String url = String.format("ws://localhost:%d/v1?encoding=json&frame=text", port);
         // when
         final WebSocket webSocket = client.newWebSocketBuilder()
-            .header(CommonHttpHeaderName.X_JW_AUTH_TOKEN.getCode(), SECRET_TOKEN)
+            .header(CommonHttpHeaderName.X_JW_AUTH_TOKEN.getCode(), TestConstants.SECRET_TOKEN)
             .buildAsync(URI.create(url), new WebSocket.Listener() {
                 @Override
                 public void onOpen(WebSocket webSocket) {
@@ -152,7 +149,7 @@ class WsServerIntegrationTest {
         final HttpClient client = HttpClient.newBuilder().build();
         final String url = String.format("ws://localhost:%d/v1?encoding=json&frame=text", port);
         final WebSocket webSocket = client.newWebSocketBuilder()
-            .header(CommonHttpHeaderName.X_JW_AUTH_TOKEN.getCode(), SECRET_TOKEN)
+            .header(CommonHttpHeaderName.X_JW_AUTH_TOKEN.getCode(), TestConstants.SECRET_TOKEN)
             .buildAsync(URI.create(url), new WebSocket.Listener() {
                 @Override
                 public CompletionStage<?> onText(WebSocket webSocket, CharSequence data,
@@ -316,7 +313,7 @@ class WsServerIntegrationTest {
         final HttpClient client = HttpClient.newBuilder().build();
         final String url = String.format("ws://localhost:%d/v1?encoding=json&frame=text", port);
         final WebSocket webSocket = client.newWebSocketBuilder()
-            .header(CommonHttpHeaderName.X_JW_AUTH_TOKEN.getCode(), SECRET_TOKEN)
+            .header(CommonHttpHeaderName.X_JW_AUTH_TOKEN.getCode(), TestConstants.SECRET_TOKEN)
             .buildAsync(URI.create(url), new WebSocket.Listener() {
                 @Override
                 public CompletionStage<?> onText(WebSocket webSocket, CharSequence data, boolean last) {
@@ -344,10 +341,11 @@ class WsServerIntegrationTest {
         final HttpClient client = HttpClient.newBuilder().build();
         final String url = String.format("ws://localhost:%d/v1?encoding=json&frame=text", port);
         final WebSocket webSocket = client.newWebSocketBuilder()
-            .header(CommonHttpHeaderName.X_JW_AUTH_TOKEN.getCode(), SECRET_TOKEN)
+            .header(CommonHttpHeaderName.X_JW_AUTH_TOKEN.getCode(), TestConstants.SECRET_TOKEN)
             .buildAsync(URI.create(url), new WebSocket.Listener() {
                 @Override
-                public CompletionStage<?> onText(WebSocket webSocket, CharSequence data, boolean last) {
+                public CompletionStage<?> onText(WebSocket webSocket, CharSequence data,
+                                                 boolean last) {
                     responses.add(data.toString());
                     return null;
                 }
@@ -371,7 +369,7 @@ class WsServerIntegrationTest {
         final HttpClient client = HttpClient.newBuilder().build();
         final String url = String.format("ws://localhost:%d/v1?encoding=json&frame=binary", port);
         final WebSocket webSocket = client.newWebSocketBuilder()
-            .header(CommonHttpHeaderName.X_JW_AUTH_TOKEN.getCode(), SECRET_TOKEN)
+            .header(CommonHttpHeaderName.X_JW_AUTH_TOKEN.getCode(), TestConstants.SECRET_TOKEN)
             .buildAsync(URI.create(url), new WebSocket.Listener() {
                 @Override
                 public CompletionStage<?> onBinary(WebSocket webSocket, ByteBuffer data,

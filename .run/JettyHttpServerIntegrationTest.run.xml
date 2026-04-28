@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="HttpServerIntegrationTest" type="JUnit" factoryName="JUnit" folderName="jwl-http" nameIsGenerated="true">
+  <configuration default="false" name="JettyHttpServerIntegrationTest" type="JUnit" factoryName="JUnit" folderName="jwl-http" nameIsGenerated="true">
     <module name="jwizard-platform-monorepo.jwl-http.test" />
     <extension name="coverage">
       <pattern>
@@ -7,8 +7,8 @@
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>
-    <option name="PACKAGE_NAME" value="xyz.jwizard.jwl.http" />
-    <option name="MAIN_CLASS_NAME" value="xyz.jwizard.jwl.http.HttpServerIntegrationTest" />
+    <option name="PACKAGE_NAME" value="xyz.jwizard.jwl.http.jetty" />
+    <option name="MAIN_CLASS_NAME" value="xyz.jwizard.jwl.http.jetty.JettyHttpServerIntegrationTest" />
     <option name="METHOD_NAME" value="" />
     <option name="TEST_OBJECT" value="class" />
     <method v="2">
