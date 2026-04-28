@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.websocket.header;
+package xyz.jwizard.jwl.net.http.auth;
 
-import xyz.jwizard.jwl.common.Identifiable;
-
-public interface WsHeader extends Identifiable<String> {
+public interface AuthScheme {
+    String buildHeaderValue(String... credentials);
 }
