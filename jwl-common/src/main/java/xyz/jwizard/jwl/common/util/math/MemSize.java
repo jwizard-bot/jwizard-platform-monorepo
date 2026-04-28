@@ -25,4 +25,8 @@ public class MemSize {
     public static long of(long size, MemUnit unit) {
         return unit.toBytes(size);
     }
+
+    public static int of(int size, MemUnit unit) {
+        return Math.toIntExact(unit.toBytes(size));
+    }
 }
