@@ -52,17 +52,26 @@ public class ClassGraphScanner implements ClassScanner {
 
     @Override
     public <T> Set<Class<? extends T>> getSubtypesOf(Class<T> type) {
-        ClassInfoList classes;
-        if (type.isInterface()) {
-            classes = scanResult.getClassesImplementing(type.getName());
-        } else {
-            classes = scanResult.getSubclasses(type.getName());
-        }
-        return new HashSet<>(classes.loadClasses(type));
+        return new HashSet<>(getRawSubtypes(type).loadClasses(type));
+    }
+
+    @Override
+    public <T> Set<Class<? extends T>> getInstantiableSubtypesOf(Class<T> type) {
+        final ClassInfoList concreteClasses = getRawSubtypes(type)
+            .filter(info -> !info.isAbstract() && !info.isInterface());
+        return new HashSet<>(concreteClasses.loadClasses(type));
     }
 
     @Override
     public void close() {
         IoUtil.closeQuietly(scanResult);
+    }
+
+    private ClassInfoList getRawSubtypes(Class<?> type) {
+        if (type.isInterface()) {
+            return scanResult.getClassesImplementing(type.getName());
+        } else {
+            return scanResult.getSubclasses(type.getName());
+        }
     }
 }

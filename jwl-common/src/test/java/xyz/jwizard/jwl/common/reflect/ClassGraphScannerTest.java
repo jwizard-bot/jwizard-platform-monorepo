@@ -22,6 +22,12 @@ import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+interface BaseTestInterface {
+}
+
+interface SubInterface extends BaseTestInterface {
+}
+
 class ClassGraphScannerTest {
     @Test
     @DisplayName("should find only classes annotated with @TestComponent")
@@ -51,6 +57,42 @@ class ClassGraphScannerTest {
             assertThat(foundClasses).isEmpty();
         }
     }
+
+    @Test
+    @DisplayName("should find all subtypes (including abstract and interfaces)")
+    void shouldFindAllSubtypes() {
+        // given
+        final String currentPackage = this.getClass().getPackageName();
+        // when
+        try (ClassGraphScanner scanner = new ClassGraphScanner(currentPackage)) {
+            final Set<Class<? extends BaseTestInterface>> foundClasses =
+                scanner.getSubtypesOf(BaseTestInterface.class);
+            // then
+            assertThat(foundClasses)
+                .contains(
+                    AbstractTestImpl.class,
+                    ConcreteTestImpl.class,
+                    SubInterface.class
+                );
+        }
+    }
+
+    @Test
+    @DisplayName("should find only instantiable (concrete) subtypes")
+    void shouldFindOnlyInstantiableSubtypes() {
+        // given
+        final String currentPackage = this.getClass().getPackageName();
+        // when
+        try (ClassGraphScanner scanner = new ClassGraphScanner(currentPackage)) {
+            final Set<Class<? extends BaseTestInterface>> foundClasses =
+                scanner.getInstantiableSubtypesOf(BaseTestInterface.class);
+            // then
+            assertThat(foundClasses)
+                .containsExactly(ConcreteTestImpl.class)
+                .doesNotContain(AbstractTestImpl.class, SubInterface.class,
+                    BaseTestInterface.class);
+        }
+    }
 }
 
 @TestComponent
@@ -63,4 +105,10 @@ class ValidComponentTwo {
 
 // class without the annotation - should not be found
 class IgnoredComponent {
+}
+
+abstract class AbstractTestImpl implements BaseTestInterface {
+}
+
+class ConcreteTestImpl extends AbstractTestImpl {
 }
