@@ -18,6 +18,7 @@ package xyz.jwizard.jwl.net.http.header;
 public enum CommonHttpHeaderName implements HttpHeaderName {
     CONTENT_TYPE("Content-Type"),
     AUTHORIZATION("Authorization"),
+    USER_AGENT("User-Agent"),
     // x-custom
     X_JW_AUTH_TOKEN("x-jw-auth-token"),
     ;
