@@ -122,7 +122,7 @@ class JettyWsServerIntegrationTest {
         final String url = String.format("ws://localhost:%d/v1?encoding=json&frame=text", port);
         // when
         final WebSocket webSocket = client.newWebSocketBuilder()
-            .header(CommonHttpHeaderName.X_JW_AUTH_TOKEN.getCode(), TestConstants.SECRET_TOKEN)
+            .header(CommonHttpHeaderName.AUTHORIZATION.getCode(), TestConstants.SECRET_TOKEN)
             .buildAsync(URI.create(url), new WebSocket.Listener() {
                 @Override
                 public void onOpen(WebSocket webSocket) {
@@ -151,7 +151,7 @@ class JettyWsServerIntegrationTest {
         final HttpClient client = HttpClient.newBuilder().build();
         final String url = String.format("ws://localhost:%d/v1?encoding=json&frame=text", port);
         final WebSocket webSocket = client.newWebSocketBuilder()
-            .header(CommonHttpHeaderName.X_JW_AUTH_TOKEN.getCode(), TestConstants.SECRET_TOKEN)
+            .header(CommonHttpHeaderName.AUTHORIZATION.getCode(), TestConstants.SECRET_TOKEN)
             .buildAsync(URI.create(url), new WebSocket.Listener() {
                 @Override
                 public CompletionStage<?> onText(WebSocket webSocket, CharSequence data,
@@ -315,7 +315,7 @@ class JettyWsServerIntegrationTest {
         final HttpClient client = HttpClient.newBuilder().build();
         final String url = String.format("ws://localhost:%d/v1?encoding=json&frame=text", port);
         final WebSocket webSocket = client.newWebSocketBuilder()
-            .header(CommonHttpHeaderName.X_JW_AUTH_TOKEN.getCode(), TestConstants.SECRET_TOKEN)
+            .header(CommonHttpHeaderName.AUTHORIZATION.getCode(), TestConstants.SECRET_TOKEN)
             .buildAsync(URI.create(url), new WebSocket.Listener() {
                 @Override
                 public CompletionStage<?> onText(WebSocket webSocket, CharSequence data, boolean last) {
@@ -343,7 +343,7 @@ class JettyWsServerIntegrationTest {
         final HttpClient client = HttpClient.newBuilder().build();
         final String url = String.format("ws://localhost:%d/v1?encoding=json&frame=text", port);
         final WebSocket webSocket = client.newWebSocketBuilder()
-            .header(CommonHttpHeaderName.X_JW_AUTH_TOKEN.getCode(), TestConstants.SECRET_TOKEN)
+            .header(CommonHttpHeaderName.AUTHORIZATION.getCode(), TestConstants.SECRET_TOKEN)
             .buildAsync(URI.create(url), new WebSocket.Listener() {
                 @Override
                 public CompletionStage<?> onText(WebSocket webSocket, CharSequence data,
@@ -371,7 +371,7 @@ class JettyWsServerIntegrationTest {
         final HttpClient client = HttpClient.newBuilder().build();
         final String url = String.format("ws://localhost:%d/v1?encoding=json&frame=binary", port);
         final WebSocket webSocket = client.newWebSocketBuilder()
-            .header(CommonHttpHeaderName.X_JW_AUTH_TOKEN.getCode(), TestConstants.SECRET_TOKEN)
+            .header(CommonHttpHeaderName.AUTHORIZATION.getCode(), TestConstants.SECRET_TOKEN)
             .buildAsync(URI.create(url), new WebSocket.Listener() {
                 @Override
                 public CompletionStage<?> onBinary(WebSocket webSocket, ByteBuffer data,

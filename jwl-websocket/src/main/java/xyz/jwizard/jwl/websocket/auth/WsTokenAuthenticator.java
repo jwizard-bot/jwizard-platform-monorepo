@@ -48,7 +48,7 @@ public class WsTokenAuthenticator implements WsAuthenticator {
             LOG.trace("Attempting token authentication for configured principal: '{}'",
                 principalId);
         }
-        final String incomingToken = req.getHeader(CommonHttpHeaderName.X_JW_AUTH_TOKEN);
+        final String incomingToken = req.getHeader(CommonHttpHeaderName.AUTHORIZATION);
         if (expectedToken.equals(incomingToken)) {
             LOG.trace("Authentication successful via HTTP header for principal: '{}'", principalId);
             return principalId;
