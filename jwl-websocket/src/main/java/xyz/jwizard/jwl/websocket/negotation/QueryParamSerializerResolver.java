@@ -15,31 +15,21 @@
  */
 package xyz.jwizard.jwl.websocket.negotation;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import xyz.jwizard.jwl.codec.envelope.EnvelopeSerializer;
 import xyz.jwizard.jwl.codec.envelope.EnvelopeSerializerRegistry;
+import xyz.jwizard.jwl.codec.envelope.cache.DefaultEnvelopeSerializerCache;
+import xyz.jwizard.jwl.codec.envelope.cache.EnvelopeSerializerCache;
 import xyz.jwizard.jwl.common.util.Assert;
+import xyz.jwizard.jwl.common.util.CollectionUtil;
 import xyz.jwizard.jwl.websocket.WsHandshakeRequest;
 
-// with O(1) cache
 public class QueryParamSerializerResolver implements WsSerializerResolver {
-    private final Map<String, Map<String, EnvelopeSerializer<?>>> formatCache;
+    private final EnvelopeSerializerCache cache;
     private final String encodingParamName;
     private final String frameParamName;
 
     private QueryParamSerializerResolver(Builder builder) {
-        formatCache = builder.registry.getSerializers().stream()
-            .collect(Collectors.groupingBy(
-                s -> s.baseFormat().getFormat().toLowerCase(),
-                Collectors.toMap(
-                    s -> s.getCodecDataType().getCode().toLowerCase(),
-                    Function.identity()
-                )
-            ));
+        cache = builder.cache.init(builder.registry);
         encodingParamName = builder.encodingParamName;
         frameParamName = builder.frameParamName;
     }
@@ -50,31 +40,14 @@ public class QueryParamSerializerResolver implements WsSerializerResolver {
 
     @Override
     public EnvelopeSerializer<?> resolve(WsHandshakeRequest req) {
-        final String encoding = getFirst(req.getQueryParameter(encodingParamName));
-        if (encoding == null) {
-            return null;
-        }
-        final Map<String, EnvelopeSerializer<?>> frame = formatCache.get(encoding.toLowerCase());
-        if (frame == null) {
-            return null;
-        }
-        final String frm = getFirst(req.getQueryParameter(frameParamName));
-        if (frm == null) {
-            return null;
-        }
-        return frame.get(frm.toLowerCase());
-    }
-
-    private String getFirst(List<String> values) {
-        if (values == null || values.isEmpty()) {
-            return null;
-        }
-        final String first = values.getFirst();
-        return (first == null || first.isBlank()) ? null : first;
+        final String encoding = CollectionUtil.getFirst(req.getQueryParameter(encodingParamName));
+        final String frame = CollectionUtil.getFirst(req.getQueryParameter(frameParamName));
+        return cache.find(encoding, frame);
     }
 
     public static class Builder {
         private EnvelopeSerializerRegistry registry;
+        private EnvelopeSerializerCache cache = DefaultEnvelopeSerializerCache.createDefault();
         private String encodingParamName = "encoding";
         private String frameParamName = "frame";
 
@@ -83,6 +56,11 @@ public class QueryParamSerializerResolver implements WsSerializerResolver {
 
         public Builder registry(EnvelopeSerializerRegistry registry) {
             this.registry = registry;
+            return this;
+        }
+
+        public Builder cache(EnvelopeSerializerCache cache) {
+            this.cache = cache;
             return this;
         }
 
@@ -98,6 +76,7 @@ public class QueryParamSerializerResolver implements WsSerializerResolver {
 
         public WsSerializerResolver build() {
             Assert.notNull(registry, "EnvelopeSerializerRegistry cannot be null");
+            Assert.notNull(cache, "EnvelopeSerializerCache cannot be null");
             Assert.notNull(encodingParamName, "EncodingParamName cannot be null");
             Assert.notNull(frameParamName, "FrameParamName cannot be null");
             return new QueryParamSerializerResolver(this);
