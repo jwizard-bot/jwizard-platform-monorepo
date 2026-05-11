@@ -88,4 +88,12 @@ public class CollectionUtil {
             }
         }
     }
+
+    public static String getFirst(List<String> values) {
+        if (values == null || values.isEmpty()) {
+            return null;
+        }
+        final String first = values.getFirst();
+        return (first == null || first.isBlank()) ? null : first;
+    }
 }
