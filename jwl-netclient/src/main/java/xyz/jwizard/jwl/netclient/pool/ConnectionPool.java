@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.netclient.rest.pool;
+package xyz.jwizard.jwl.netclient.pool;
 
-import xyz.jwizard.jwl.netclient.pool.ConnectionPool;
-
-public interface UrlPool extends ConnectionPool {
+public interface ConnectionPool {
+    String getPoolName();
 }
