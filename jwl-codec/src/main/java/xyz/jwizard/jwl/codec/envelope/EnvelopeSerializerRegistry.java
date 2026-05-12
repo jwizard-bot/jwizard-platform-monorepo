@@ -17,8 +17,10 @@ package xyz.jwizard.jwl.codec.envelope;
 
 import xyz.jwizard.jwl.codec.envelope.json.JsonBinaryEnvelopeSerializer;
 import xyz.jwizard.jwl.codec.envelope.json.JsonTextEnvelopeSerializer;
+import xyz.jwizard.jwl.codec.envelope.protobuf.ProtobufEnvelopeSerializer;
 import xyz.jwizard.jwl.codec.serialization.SerializerRegistry;
 import xyz.jwizard.jwl.codec.serialization.json.JsonSerializer;
+import xyz.jwizard.jwl.codec.serialization.protobuf.ProtobufSerializer;
 
 public class EnvelopeSerializerRegistry extends SerializerRegistry<EnvelopeSerializer<?>> {
     private EnvelopeSerializerRegistry() {
@@ -29,12 +31,17 @@ public class EnvelopeSerializerRegistry extends SerializerRegistry<EnvelopeSeria
         return new EnvelopeSerializerRegistry();
     }
 
-    public EnvelopeSerializerRegistry registerJsonDefaults(JsonSerializer jsonSerializer) {
-        register(JsonTextEnvelopeSerializer.createDefault(jsonSerializer));
-        register(JsonBinaryEnvelopeSerializer.createDefault(jsonSerializer));
+    public EnvelopeSerializerRegistry registerJsonDefaults(JsonSerializer serializer) {
+        register(JsonTextEnvelopeSerializer.createDefault(serializer));
+        register(JsonBinaryEnvelopeSerializer.createDefault(serializer));
         return this;
     }
 
+    public EnvelopeSerializerRegistry registerProtobufDefaults(ProtobufSerializer serializer) {
+        register(ProtobufEnvelopeSerializer.createDefault(serializer));
+        return this;
+    }
+    
     @Override
     public EnvelopeSerializerRegistry register(EnvelopeSerializer<?> serializer) {
         super.register(serializer);

@@ -19,7 +19,6 @@ import java.time.Duration;
 import java.util.List;
 
 import xyz.jwizard.jwl.codec.envelope.EnvelopeSerializerRegistry;
-import xyz.jwizard.jwl.codec.envelope.protobuf.ProtobufEnvelopeSerializer;
 import xyz.jwizard.jwl.codec.serialization.json.JacksonSerializer;
 import xyz.jwizard.jwl.codec.serialization.protobuf.ProtobufSerializer;
 import xyz.jwizard.jwl.common.bootstrap.lifecycle.LifecycleHook;
@@ -61,8 +60,7 @@ class WsServerLifecycle implements LifecycleHook {
             .rateLimiter(TokenBucketRateLimiter.createDefault())
             .serializerRegistry(EnvelopeSerializerRegistry.createEnvelopeRegistry()
                 .registerJsonDefaults(JacksonSerializer.createLenientForMessaging())
-                .register(ProtobufEnvelopeSerializer
-                    .createDefault(ProtobufSerializer.createDefault(scanner)))
+                .registerProtobufDefaults(ProtobufSerializer.createDefault(scanner))
             )
             .serializerResolverFactory(registry -> QueryParamSerializerResolver.builder()
                 .registry(registry)
