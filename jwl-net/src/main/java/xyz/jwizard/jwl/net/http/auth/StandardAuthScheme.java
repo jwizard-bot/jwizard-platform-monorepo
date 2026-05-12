@@ -20,6 +20,7 @@ import java.util.function.Function;
 import xyz.jwizard.jwl.common.util.CodecUtil;
 
 public enum StandardAuthScheme implements AuthScheme {
+    BLANK("", 1, args -> args[0]),
     BEARER("Bearer", 1, args -> args[0]),
     BASIC("Basic", 2, args -> CodecUtil.encodeBase64(args[0] + ":" + args[1]));
 
@@ -44,6 +45,6 @@ public enum StandardAuthScheme implements AuthScheme {
             ));
         }
         final String formattedCredentials = formatter.apply(credentials);
-        return schemeName + " " + formattedCredentials;
+        return schemeName + (schemeName.isBlank() ? "" : " ") + formattedCredentials;
     }
 }
