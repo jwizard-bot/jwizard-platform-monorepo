@@ -64,7 +64,7 @@ public class JettyWsListenerAdapter implements Session.Listener.AutoDemanding {
         registry.register(sessionAdapter);
         try {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Invoking domainHandler.onConnect for session: {}", getSafeSessionId());
+                LOG.trace("Invoking onConnect for session: {}", getSafeSessionId());
             }
             lifecycleListener.onConnect(sessionAdapter);
         } catch (Exception ex) {
