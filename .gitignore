@@ -3,6 +3,7 @@
 !.idea/inspectionProfiles/
 !.idea/codeStyles/
 !.idea/copyright/
+!.idea/runConfigurations/
 
 .bin
 .gradle/
