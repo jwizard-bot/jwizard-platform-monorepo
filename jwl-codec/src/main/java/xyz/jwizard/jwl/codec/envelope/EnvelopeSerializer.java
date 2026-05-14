@@ -18,6 +18,7 @@ package xyz.jwizard.jwl.codec.envelope;
 import java.util.function.Function;
 
 import xyz.jwizard.jwl.codec.DataType;
+import xyz.jwizard.jwl.codec.UnsupportedDataTypeException;
 import xyz.jwizard.jwl.codec.serialization.Serializer;
 import xyz.jwizard.jwl.codec.serialization.SerializerFormat;
 
@@ -36,8 +37,7 @@ public interface EnvelopeSerializer<T> extends Serializer {
     byte[] serializeEnvelopeAsBytes(OpCode opCode, Object payload);
 
     default String serializeEnvelopeAsString(OpCode opCode, Object payload) {
-        throw new UnsupportedEnvelopeDataTypeException("Text frames are not supported by " +
-            format());
+        throw new UnsupportedDataTypeException("Text frames are not supported by " + format());
     }
 
     void serializeAndAccept(OpCode opCode, Object payload, EncodedPayloadVisitor visitor);
@@ -49,7 +49,6 @@ public interface EnvelopeSerializer<T> extends Serializer {
 
     default MessageEnvelope<?> deserializeEnvelope(String payload,
                                                    Function<Integer, Class<?>> typeResolver) {
-        throw new UnsupportedEnvelopeDataTypeException("Text frames are not supported by " +
-            format());
+        throw new UnsupportedDataTypeException("Text frames are not supported by " + format());
     }
 }

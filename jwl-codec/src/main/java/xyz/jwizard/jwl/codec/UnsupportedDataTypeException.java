@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.codec.envelope;
+package xyz.jwizard.jwl.codec;
 
 import java.io.Serial;
 
-public class UnsupportedEnvelopeDataTypeException extends RuntimeException {
+public class UnsupportedDataTypeException extends RuntimeException {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    public UnsupportedEnvelopeDataTypeException(String message) {
+    public UnsupportedDataTypeException(String message) {
         super(message);
     }
 }

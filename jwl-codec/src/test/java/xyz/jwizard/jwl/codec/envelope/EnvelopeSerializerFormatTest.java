@@ -24,6 +24,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import xyz.jwizard.jwl.codec.DataType;
+import xyz.jwizard.jwl.codec.UnsupportedDataTypeException;
 import xyz.jwizard.jwl.codec.serialization.SerializerFormat;
 import xyz.jwizard.jwl.codec.serialization.StandardSerializerFormat;
 
@@ -87,10 +88,10 @@ class EnvelopeSerializerFormatTest {
         assertThatThrownBy(() -> defaultSerializer
             .serializeEnvelopeAsString(TestOpCode.USER_DATA, "test")
         )
-            .isInstanceOf(UnsupportedEnvelopeDataTypeException.class)
+            .isInstanceOf(UnsupportedDataTypeException.class)
             .hasMessageContaining("Text frames are not supported by protobuf+binary");
         assertThatThrownBy(() -> defaultSerializer.deserializeEnvelope("{}", id -> String.class))
-            .isInstanceOf(UnsupportedEnvelopeDataTypeException.class)
+            .isInstanceOf(UnsupportedDataTypeException.class)
             .hasMessageContaining("Text frames are not supported by protobuf+binary");
     }
 }

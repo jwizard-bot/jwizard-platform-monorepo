@@ -25,11 +25,11 @@ import org.eclipse.jetty.websocket.api.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import xyz.jwizard.jwl.codec.UnsupportedDataTypeException;
 import xyz.jwizard.jwl.codec.envelope.EncodedPayloadVisitor;
 import xyz.jwizard.jwl.codec.envelope.EnvelopeSerializer;
 import xyz.jwizard.jwl.codec.envelope.MessageEnvelope;
 import xyz.jwizard.jwl.codec.envelope.OpCode;
-import xyz.jwizard.jwl.codec.envelope.UnsupportedEnvelopeDataTypeException;
 import xyz.jwizard.jwl.codec.serialization.MessageSerializerException;
 import xyz.jwizard.jwl.common.util.concurrent.ConcurrentUtil;
 import xyz.jwizard.jwl.websocket.WsSession;
@@ -90,7 +90,7 @@ public class JettyWsSessionAdapter implements WsSession, EncodedPayloadVisitor {
             opCode != null ? opCode.getCode() : "null");
         try {
             envelopeSerializer.serializeAndAccept(opCode, data, this);
-        } catch (UnsupportedEnvelopeDataTypeException | MessageSerializerException ex) {
+        } catch (UnsupportedDataTypeException | MessageSerializerException ex) {
             LOG.error("Message error for {}: {}", envelopeSerializer.format().getFormat(),
                 ex.getMessage());
         } catch (Exception ex) {
@@ -107,7 +107,7 @@ public class JettyWsSessionAdapter implements WsSession, EncodedPayloadVisitor {
         }
         try {
             envelopeSerializer.acceptRaw(payload, this);
-        } catch (UnsupportedEnvelopeDataTypeException | MessageSerializerException ex) {
+        } catch (UnsupportedDataTypeException | MessageSerializerException ex) {
             LOG.error("Message error for RAW adaptation: {}", ex.getMessage());
         } catch (Exception ex) {
             LOG.error("Unexpected error during RAW adaptation, sessionId: {}", sessionId, ex);

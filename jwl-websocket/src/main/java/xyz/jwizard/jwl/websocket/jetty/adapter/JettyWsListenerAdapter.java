@@ -22,8 +22,8 @@ import org.eclipse.jetty.websocket.api.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import xyz.jwizard.jwl.codec.UnsupportedDataTypeException;
 import xyz.jwizard.jwl.codec.envelope.EnvelopeSerializer;
-import xyz.jwizard.jwl.codec.envelope.UnsupportedEnvelopeDataTypeException;
 import xyz.jwizard.jwl.common.limit.RateLimiter;
 import xyz.jwizard.jwl.common.util.concurrent.ConcurrentOperationException;
 import xyz.jwizard.jwl.common.util.io.RunnableWithException;
@@ -131,7 +131,7 @@ public class JettyWsListenerAdapter implements Session.Listener.AutoDemanding {
             }
             action.run();
             completeCallback(callback, null);
-        } catch (UnsupportedEnvelopeDataTypeException ex) {
+        } catch (UnsupportedDataTypeException ex) {
             handleFatalProcessingError(ex, 1003, "Unsupported Frame Type", callback);
         } catch (ConcurrentOperationException ex) {
             handleFatalProcessingError(ex, 1011, "Server Overloaded", callback);
