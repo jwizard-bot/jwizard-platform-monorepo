@@ -24,11 +24,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import xyz.jwizard.jwl.codec.DataType;
+import xyz.jwizard.jwl.codec.EncodedPayloadVisitor;
 import xyz.jwizard.jwl.codec.UnsupportedDataTypeException;
 import xyz.jwizard.jwl.codec.serialization.SerializerFormat;
 import xyz.jwizard.jwl.codec.serialization.StandardSerializerFormat;
+import xyz.jwizard.jwl.codec.serialization.TypedSerializerFormat;
 
-class EnvelopeSerializerFormatTest {
+class TypedSerializerFormatTest {
     @Test
     @DisplayName("should properly combine base format and data type into full format string")
     void shouldCombineFormatAndDataType() {
@@ -36,7 +38,7 @@ class EnvelopeSerializerFormatTest {
         final SerializerFormat base = StandardSerializerFormat.JSON;
         final DataType type = DataType.TEXT;
         // when
-        final EnvelopeSerializerFormat format = EnvelopeSerializerFormat.from(base, type);
+        final TypedSerializerFormat format = TypedSerializerFormat.from(base, type);
         // then
         assertThat(format.getFormat()).isEqualTo("json+text");
         assertThat(format.toString()).isEqualTo("json+text");

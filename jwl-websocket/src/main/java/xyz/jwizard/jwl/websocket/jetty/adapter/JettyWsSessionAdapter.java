@@ -25,8 +25,8 @@ import org.eclipse.jetty.websocket.api.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import xyz.jwizard.jwl.codec.EncodedPayloadVisitor;
 import xyz.jwizard.jwl.codec.UnsupportedDataTypeException;
-import xyz.jwizard.jwl.codec.envelope.EncodedPayloadVisitor;
 import xyz.jwizard.jwl.codec.envelope.EnvelopeSerializer;
 import xyz.jwizard.jwl.codec.envelope.MessageEnvelope;
 import xyz.jwizard.jwl.codec.envelope.OpCode;

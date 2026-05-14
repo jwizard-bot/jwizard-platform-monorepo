@@ -25,9 +25,9 @@ import org.jspecify.annotations.Nullable;
 
 import xyz.jwizard.jwl.codec.DataType;
 import xyz.jwizard.jwl.codec.envelope.EnvelopeSerializer;
-import xyz.jwizard.jwl.codec.envelope.EnvelopeSerializerFormat;
 import xyz.jwizard.jwl.codec.envelope.EnvelopeSerializerRegistry;
 import xyz.jwizard.jwl.codec.serialization.StandardSerializerFormat;
+import xyz.jwizard.jwl.codec.serialization.TypedSerializerFormat;
 import xyz.jwizard.jwl.common.bootstrap.lifecycle.IdempotentService;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.limit.NoOpRateLimiter;
@@ -123,7 +123,7 @@ public abstract class WsServer extends IdempotentService {
             messageSink = builder.messageSink;
         }
         final EnvelopeSerializer<?> envelopeSerializer = serializerRegistry
-            .get(EnvelopeSerializerFormat.from(StandardSerializerFormat.JSON, DataType.BINARY));
+            .get(TypedSerializerFormat.from(StandardSerializerFormat.JSON, DataType.BINARY));
         return new WsMessageSinkBroadcaster(messageSink, envelopeSerializer);
     }
 

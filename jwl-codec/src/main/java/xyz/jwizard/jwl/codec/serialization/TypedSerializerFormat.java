@@ -13,20 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.codec.envelope;
+package xyz.jwizard.jwl.codec.serialization;
 
 import org.jspecify.annotations.NonNull;
 
 import xyz.jwizard.jwl.codec.DataType;
-import xyz.jwizard.jwl.codec.serialization.SerializerFormat;
 
-public record EnvelopeSerializerFormat(
+public record TypedSerializerFormat(
     SerializerFormat baseFormat,
     DataType dataType
 ) implements SerializerFormat {
-    public static EnvelopeSerializerFormat from(SerializerFormat format,
-                                                DataType dataType) {
-        return new EnvelopeSerializerFormat(format, dataType);
+    public static TypedSerializerFormat from(SerializerFormat format, DataType dataType) {
+        return new TypedSerializerFormat(format, dataType);
     }
 
     @Override
@@ -36,7 +34,7 @@ public record EnvelopeSerializerFormat(
 
     @Override
     public String getMimeType() {
-        // application/x-jwl-[envelope]+[base]
+        // application/x-jwl-[dataType]+[baseFormat]
         return "application/x-jwl-" + dataType.getCode() + "+" + baseFormat.getFormat();
     }
 

@@ -36,7 +36,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.google.protobuf.ByteString;
 
 import xyz.jwizard.jwl.codec.DataType;
-import xyz.jwizard.jwl.codec.envelope.EncodedPayloadVisitor;
+import xyz.jwizard.jwl.codec.EncodedPayloadVisitor;
 import xyz.jwizard.jwl.codec.envelope.MessageEnvelope;
 import xyz.jwizard.jwl.codec.envelope.TestOpCode;
 import xyz.jwizard.jwl.codec.serialization.StandardSerializerFormat;

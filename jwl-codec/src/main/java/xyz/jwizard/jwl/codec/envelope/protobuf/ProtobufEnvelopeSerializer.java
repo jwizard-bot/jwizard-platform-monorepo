@@ -21,7 +21,7 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.MessageLite;
 
 import xyz.jwizard.jwl.codec.DataType;
-import xyz.jwizard.jwl.codec.envelope.EncodedPayloadVisitor;
+import xyz.jwizard.jwl.codec.EncodedPayloadVisitor;
 import xyz.jwizard.jwl.codec.envelope.EnvelopeSerializer;
 import xyz.jwizard.jwl.codec.envelope.MessageEnvelope;
 import xyz.jwizard.jwl.codec.envelope.OpCode;

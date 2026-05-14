@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.codec.envelope;
+package xyz.jwizard.jwl.codec;
 
 public interface EncodedPayloadVisitor {
     void accept(byte[] payload);
