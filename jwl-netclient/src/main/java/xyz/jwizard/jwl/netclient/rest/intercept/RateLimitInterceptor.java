@@ -42,14 +42,14 @@ public class RateLimitInterceptor implements RequestInterceptor {
     @Override
     public void intercept(InterceptorContext context) {
         final RequestView view = context.getView();
-        final String poolName = view.getPool().getPoolName();
+        final String groupName = view.getGroup().getClientGroupName();
 
-        LOG.trace("Intercepting request for pool: {} (Method: {}, Path: {})", poolName,
-            view.getMethod(), view.getUriPath());
+        LOG.trace("Intercepting request for group: {} (method: {}, path: {})", groupName,
+            view.getMethod(), view.getUrl());
 
-        if (!rateLimiter.tryAcquire(poolName)) {
-            LOG.info("Rate limit exceeded for pool: {}, aborting request: {} {}", poolName,
-                view.getMethod(), view.getUriPath());
+        if (!rateLimiter.tryAcquire(groupName)) {
+            LOG.info("Rate limit exceeded for group: {}, aborting request: {} {}", groupName,
+                view.getMethod(), view.getUrl());
             final RestResponse<Void> tooManyRequestsResponse = new RestResponse<>(
                 HttpStatus.TOO_MANY_REQUESTS_429.getCode(),
                 Collections.emptyMap(),
@@ -57,7 +57,7 @@ public class RateLimitInterceptor implements RequestInterceptor {
             );
             context.abortWith(tooManyRequestsResponse);
         }
-        LOG.debug("Rate limit permit acquired for pool: {}", poolName);
+        LOG.debug("Rate limit permit acquired for group: {}", groupName);
     }
 
     @Override

@@ -13,14 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.netclient.rest.pool;
+package xyz.jwizard.jwl.netclient.group;
 
-public enum DefaultUrlPool implements UrlPool {
-    DEFAULT,
-    ;
+import java.util.Map;
 
-    @Override
-    public String getPoolName() {
-        return name();
-    }
+public interface ClientRegistry<T extends ClientGroupConfig> {
+    void register(ClientGroup clientGroup, T config);
+
+    void register(T config);
+
+    T getConfig(ClientGroup clientGroup);
+
+    Map<ClientGroup, T> getConfigs();
 }

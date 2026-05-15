@@ -13,25 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.netclient.rest.intercept;
+package xyz.jwizard.jwl.netclient.group;
 
-import java.util.Map;
+public interface ClientGroup {
+    ClientGroup GLOBAL = () -> "GLOBAL";
 
-import xyz.jwizard.jwl.net.http.HttpMethod;
-import xyz.jwizard.jwl.netclient.group.ClientGroup;
-
-public interface RequestView {
-    HttpMethod getMethod();
-
-    String getUrl();
-
-    ClientGroup getGroup();
-
-    Map<String, String> getHeaders();
-
-    Map<String, String> getQueryParams();
-
-    Map<String, String> getFormParams();
-
-    Object getBody();
+    String getClientGroupName();
 }

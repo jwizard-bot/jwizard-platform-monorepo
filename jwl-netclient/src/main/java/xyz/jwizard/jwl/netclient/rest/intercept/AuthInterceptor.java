@@ -40,10 +40,10 @@ public class AuthInterceptor implements RequestInterceptor {
         final boolean hasCustomAuth = context.getView().getHeaders()
             .containsKey(authHeaderName);
         if (!hasCustomAuth) {
-            LOG.trace("Applying pool auth scheme: {}", scheme);
+            LOG.trace("Applying group auth scheme: {}", scheme);
             context.setAuth(scheme, credentials);
         } else {
-            LOG.trace("Skipping pool auth, request already has custom authorization.");
+            LOG.trace("Skipping group auth, request already has custom authorization.");
         }
     }
 

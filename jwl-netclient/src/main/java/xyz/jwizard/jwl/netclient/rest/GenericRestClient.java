@@ -17,24 +17,15 @@ package xyz.jwizard.jwl.netclient.rest;
 
 import java.time.Duration;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import xyz.jwizard.jwl.codec.serialization.MessageSerializer;
 import xyz.jwizard.jwl.codec.serialization.SerializerRegistry;
-import xyz.jwizard.jwl.common.bootstrap.lifecycle.IdempotentService;
 import xyz.jwizard.jwl.common.reflect.ClassScanner;
 import xyz.jwizard.jwl.common.util.Assert;
-import xyz.jwizard.jwl.common.util.CastUtil;
-import xyz.jwizard.jwl.netclient.rest.pool.BaseUrlRegistryPool;
-import xyz.jwizard.jwl.netclient.rest.pool.DefaultUrlPool;
-import xyz.jwizard.jwl.netclient.rest.pool.PoolConfig;
-import xyz.jwizard.jwl.netclient.rest.pool.UrlPool;
+import xyz.jwizard.jwl.netclient.NetworkClient;
+import xyz.jwizard.jwl.netclient.rest.group.RestClientGroupConfig;
 
-public abstract class GenericRestClient extends IdempotentService implements RestClient {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
-
-    protected final BaseUrlRegistryPool baseUrlRegistryPool;
+public abstract class GenericRestClient extends NetworkClient<RestClientGroupConfig>
+    implements RestClient {
     protected final Duration connectTimeout;
     protected final boolean followRedirects;
     protected final int maxRedirects;
@@ -42,7 +33,7 @@ public abstract class GenericRestClient extends IdempotentService implements Res
     protected final ClassScanner scanner;
 
     protected GenericRestClient(AbstractBuilder<?> builder) {
-        baseUrlRegistryPool = builder.baseUrlRegistryPool;
+        super(builder);
         connectTimeout = builder.connectTimeout;
         followRedirects = builder.followRedirects;
         maxRedirects = builder.maxRedirects;
@@ -50,8 +41,8 @@ public abstract class GenericRestClient extends IdempotentService implements Res
         scanner = builder.scanner;
     }
 
-    protected abstract static class AbstractBuilder<B extends AbstractBuilder<B>> {
-        private final BaseUrlRegistryPool baseUrlRegistryPool = new BaseUrlRegistryPool();
+    protected abstract static class AbstractBuilder<B extends AbstractBuilder<B>>
+        extends AbstractBaseBuilder<RestClientGroupConfig, B> {
         private Duration connectTimeout = Duration.ofMinutes(1);
         private boolean followRedirects = true;
         private int maxRedirects = 8;
@@ -59,20 +50,7 @@ public abstract class GenericRestClient extends IdempotentService implements Res
         private ClassScanner scanner;
 
         protected AbstractBuilder() {
-        }
-
-        protected B self() {
-            return CastUtil.unsafeCast(this);
-        }
-
-        public B defaultPool(String baseUrl, PoolConfig config) {
-            baseUrlRegistryPool.register(DefaultUrlPool.DEFAULT, baseUrl, config);
-            return self();
-        }
-
-        public B pool(UrlPool urlPool, String baseUrl, PoolConfig config) {
-            baseUrlRegistryPool.register(urlPool, baseUrl, config);
-            return self();
+            super();
         }
 
         public B connectTimeout(Duration connectTimeout) {

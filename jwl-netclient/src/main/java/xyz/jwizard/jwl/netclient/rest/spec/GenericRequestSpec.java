@@ -37,21 +37,21 @@ import xyz.jwizard.jwl.net.http.HttpMethod;
 import xyz.jwizard.jwl.net.http.HttpStatus;
 import xyz.jwizard.jwl.net.http.auth.AuthScheme;
 import xyz.jwizard.jwl.net.http.header.HttpHeaderName;
+import xyz.jwizard.jwl.netclient.group.ClientGroup;
+import xyz.jwizard.jwl.netclient.group.ClientRegistry;
 import xyz.jwizard.jwl.netclient.rest.RestRequestException;
 import xyz.jwizard.jwl.netclient.rest.RestResponse;
+import xyz.jwizard.jwl.netclient.rest.group.RestClientGroupConfig;
 import xyz.jwizard.jwl.netclient.rest.intercept.InterceptorContext;
 import xyz.jwizard.jwl.netclient.rest.intercept.RequestInterceptor;
 import xyz.jwizard.jwl.netclient.rest.intercept.RequestView;
-import xyz.jwizard.jwl.netclient.rest.pool.BaseUrlRegistryPool;
-import xyz.jwizard.jwl.netclient.rest.pool.DefaultUrlPool;
-import xyz.jwizard.jwl.netclient.rest.pool.UrlPool;
 import xyz.jwizard.jwl.netclient.rest.retry.RetryPolicy;
 
 public abstract class GenericRequestSpec implements RequestSpec, RequestView {
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
-    protected final BaseUrlRegistryPool baseUrlRegistryPool;
-    protected final String uriPath;
+    protected final ClientRegistry<RestClientGroupConfig> clientRegistry;
+    protected final String url;
     protected final HttpMethod method;
     protected final SerializerRegistry<MessageSerializer> serializerRegistry;
 
@@ -60,7 +60,7 @@ public abstract class GenericRequestSpec implements RequestSpec, RequestView {
     protected final Map<String, String> queryParams = new LinkedHashMap<>();
     protected final Map<String, String> formParams = new LinkedHashMap<>();
 
-    protected UrlPool urlPool;
+    protected ClientGroup clientGroup;
     protected MessageSerializer messageSerializer;
     protected Object body;
     protected Duration requestTimeout;
@@ -96,26 +96,26 @@ public abstract class GenericRequestSpec implements RequestSpec, RequestView {
     private boolean localInterceptorsSorted = true;
     private boolean serializerOverridden = false;
 
-    protected GenericRequestSpec(BaseUrlRegistryPool baseUrlRegistryPool, String uriPath,
-                                 HttpMethod method,
+    protected GenericRequestSpec(ClientRegistry<RestClientGroupConfig> clientRegistry,
+                                 String url, HttpMethod method,
                                  SerializerRegistry<MessageSerializer> serializerRegistry) {
-        this.baseUrlRegistryPool = baseUrlRegistryPool;
-        this.uriPath = uriPath;
+        this.clientRegistry = clientRegistry;
+        this.url = url;
         this.method = method;
         this.serializerRegistry = serializerRegistry;
-        urlPool = DefaultUrlPool.DEFAULT;
-        messageSerializer = updateSerializerFromPool(urlPool);
-        requestRetryPolicy = baseUrlRegistryPool.getRetryPolicy(urlPool);
+        clientGroup = ClientGroup.GLOBAL;
+        messageSerializer = updateSerializerFromPool(clientGroup);
+        requestRetryPolicy = clientRegistry.getConfig(clientGroup).getRetryPolicy();
     }
 
     @Override
-    public RequestSpec pool(UrlPool urlPool) {
-        this.urlPool = urlPool;
+    public RequestSpec group(ClientGroup clientGroup) {
+        this.clientGroup = clientGroup;
         if (!serializerOverridden) {
-            messageSerializer = updateSerializerFromPool(urlPool);
+            messageSerializer = updateSerializerFromPool(clientGroup);
         }
         if (requestRetryPolicy == null) {
-            requestRetryPolicy = baseUrlRegistryPool.getRetryPolicy(urlPool);
+            requestRetryPolicy = clientRegistry.getConfig(clientGroup).getRetryPolicy();
         }
         return this;
     }
@@ -188,13 +188,13 @@ public abstract class GenericRequestSpec implements RequestSpec, RequestView {
     }
 
     @Override
-    public String getUriPath() {
-        return uriPath;
+    public String getUrl() {
+        return url;
     }
 
     @Override
-    public UrlPool getPool() {
-        return urlPool;
+    public ClientGroup getGroup() {
+        return clientGroup;
     }
 
     @Override
@@ -220,18 +220,18 @@ public abstract class GenericRequestSpec implements RequestSpec, RequestView {
     @Override
     public final <T> RestResponse<T> send(Class<T> responseType) {
         abortedResponse = null;
-        List<RequestInterceptor> poolInterceptors = Collections.emptyList();
-        if (urlPool != null) {
-            poolInterceptors = baseUrlRegistryPool.getInterceptors(urlPool);
+        List<RequestInterceptor> groupInterceptors = Collections.emptyList();
+        if (clientGroup != null) {
+            groupInterceptors = clientRegistry.getConfig(clientGroup).getInterceptors();
         }
         if (!localInterceptorsSorted && !interceptors.isEmpty()) {
             interceptors.sort(Ordered.COMPARATOR);
             localInterceptorsSorted = true;
         }
-        log.trace("Executing interceptors for {} {} (pool: {})", method, uriPath,
-            urlPool != null ? urlPool.getPoolName() : "none");
+        log.trace("Executing interceptors for {} {} (group: {})", method, url,
+            clientGroup != null ? clientGroup.getClientGroupName() : "none");
         CollectionUtil.consumeMergedSorted(
-            poolInterceptors,
+            groupInterceptors,
             interceptors,
             Ordered.COMPARATOR,
             interceptor -> {
@@ -239,7 +239,7 @@ public abstract class GenericRequestSpec implements RequestSpec, RequestView {
                 interceptor.intercept(reusableContext);
                 if (abortedResponse != null) {
                     log.debug("Request aborted by interceptor: {} for {} {}",
-                        interceptor.getClass().getSimpleName(), method, uriPath);
+                        interceptor.getClass().getSimpleName(), method, url);
                 }
                 return abortedResponse == null;
             }
@@ -248,7 +248,7 @@ public abstract class GenericRequestSpec implements RequestSpec, RequestView {
             return CastUtil.unsafeCast(abortedResponse);
         }
         try {
-            log.debug("Starting request execution: {} {} (retry policy: {})", method, uriPath,
+            log.debug("Starting request execution: {} {} (retry policy: {})", method, url,
                 requestRetryPolicy.getClass().getSimpleName());
             return RetryExecutor.executeSync(
                 () -> onSend(responseType),
@@ -258,7 +258,7 @@ public abstract class GenericRequestSpec implements RequestSpec, RequestView {
                     final boolean retryable = isRetryableStatus(response.getStatus());
                     if (retryable) {
                         log.debug("Received retryable status code: {} for {} {}",
-                            response.getStatus(), method, uriPath);
+                            response.getStatus(), method, url);
                     }
                     return retryable;
                 },
@@ -272,23 +272,20 @@ public abstract class GenericRequestSpec implements RequestSpec, RequestView {
             if (ex instanceof RestRequestException) {
                 throw (RestRequestException) ex;
             }
-            log.error("Request failed definitively: {} {} - {}", method, uriPath, ex.getMessage());
+            log.error("Request failed definitively: {} {} - {}", method, url, ex.getMessage());
             throw new RestRequestException(String.format("Request failed: %s %s", method.name(),
-                uriPath), ex);
+                url), ex);
         }
     }
 
     protected abstract <T> RestResponse<T> onSend(Class<T> responseType);
 
-    protected String resolveFullUri() {
-        if (NetworkUtil.isAbsoluteUrl(uriPath)) {
-            return uriPath;
+    protected String resolveFullUrl() {
+        if (NetworkUtil.isAbsoluteUrl(url)) {
+            return url;
         }
-        final String baseUrl = baseUrlRegistryPool.getUrl(urlPool);
-        if (baseUrl == null) {
-            throw new IllegalStateException("Base URL not found in registry for pool: " + urlPool);
-        }
-        return NetworkUtil.concatPaths(baseUrl, uriPath);
+        final String baseUrl = clientRegistry.getConfig(clientGroup).getUrl();
+        return NetworkUtil.concatPaths(baseUrl, url);
     }
 
     protected <T> T parseResponseBody(byte[] responseBytes, Class<T> responseType) {
@@ -299,8 +296,8 @@ public abstract class GenericRequestSpec implements RequestSpec, RequestView {
         return parsedBody;
     }
 
-    private MessageSerializer updateSerializerFromPool(UrlPool pool) {
-        return serializerRegistry.get(baseUrlRegistryPool.getFormat(pool));
+    private MessageSerializer updateSerializerFromPool(ClientGroup clientGroup) {
+        return serializerRegistry.get(clientRegistry.getConfig(clientGroup).getDefaultFormat());
     }
 
     private boolean isRetryableStatus(HttpStatus status) {

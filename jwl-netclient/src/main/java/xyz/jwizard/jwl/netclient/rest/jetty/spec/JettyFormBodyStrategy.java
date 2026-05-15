@@ -40,7 +40,7 @@ public class JettyFormBodyStrategy implements JettyBodyStrategy {
     @Override
     public Request.Content buildContent(GenericRequestSpec spec, MessageSerializer serializer,
                                         HeaderConsumer headerConsumer) {
-        LOG.trace("Building form-urlencoded body for request: {}", spec.getUriPath());
+        LOG.trace("Building form-urlencoded body for request: {}", spec.getUrl());
         if (spec.getBody() != null) {
             throw new IllegalStateException("Cannot use both form parameters and raw body in " +
                 "the same request");

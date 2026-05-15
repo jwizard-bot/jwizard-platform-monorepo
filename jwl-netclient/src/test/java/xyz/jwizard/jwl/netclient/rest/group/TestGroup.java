@@ -13,8 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.netclient.pool;
+package xyz.jwizard.jwl.netclient.rest.group;
 
-public interface ConnectionPool {
-    String getPoolName();
+import xyz.jwizard.jwl.netclient.group.ClientGroup;
+
+public enum TestGroup implements ClientGroup {
+    LIMITED_GROUP,
+    OVERRIDE_GROUP,
+    ;
+
+    @Override
+    public String getClientGroupName() {
+        return name();
+    }
 }

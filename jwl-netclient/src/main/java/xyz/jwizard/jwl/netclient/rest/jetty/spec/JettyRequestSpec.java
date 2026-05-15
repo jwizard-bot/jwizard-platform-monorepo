@@ -35,9 +35,10 @@ import xyz.jwizard.jwl.codec.serialization.SerializerRegistry;
 import xyz.jwizard.jwl.common.bootstrap.CriticalBootstrapException;
 import xyz.jwizard.jwl.common.reflect.ClassScanner;
 import xyz.jwizard.jwl.net.http.HttpMethod;
+import xyz.jwizard.jwl.netclient.group.ClientRegistry;
 import xyz.jwizard.jwl.netclient.rest.RestRequestException;
 import xyz.jwizard.jwl.netclient.rest.RestResponse;
-import xyz.jwizard.jwl.netclient.rest.pool.BaseUrlRegistryPool;
+import xyz.jwizard.jwl.netclient.rest.group.RestClientGroupConfig;
 import xyz.jwizard.jwl.netclient.rest.spec.GenericRequestSpec;
 
 public class JettyRequestSpec extends GenericRequestSpec {
@@ -46,11 +47,11 @@ public class JettyRequestSpec extends GenericRequestSpec {
     private final HttpClient client;
     private final List<JettyBodyStrategy> bodyStrategies;
 
-    public JettyRequestSpec(HttpClient client, BaseUrlRegistryPool baseUrlRegistryPool,
-                            String uriPath, HttpMethod method,
+    public JettyRequestSpec(HttpClient client, ClientRegistry<RestClientGroupConfig> clientRegistry,
+                            String url, HttpMethod method,
                             SerializerRegistry<MessageSerializer> serializerRegistry,
                             ClassScanner scanner) {
-        super(baseUrlRegistryPool, uriPath, method, serializerRegistry);
+        super(clientRegistry, url, method, serializerRegistry);
         this.client = client;
         bodyStrategies = loadRequestBodyStrategies(scanner);
     }
@@ -58,7 +59,7 @@ public class JettyRequestSpec extends GenericRequestSpec {
     @Override
     public <T> RestResponse<T> onSend(Class<T> responseType) {
         Request request = null;
-        final String fullUri = resolveFullUri();
+        final String fullUri = resolveFullUrl();
         try {
             LOG.debug("Sending {} request to: {}", method.name(), fullUri);
             request = client.newRequest(fullUri).method(method.name());
@@ -95,7 +96,7 @@ public class JettyRequestSpec extends GenericRequestSpec {
         } catch (Exception ex) {
             LOG.error("HTTP request failed, method: {}, uri: {}, error: {}", method.name(), fullUri,
                 ex.getMessage());
-            final String failUri = request != null ? request.getURI().toString() : uriPath;
+            final String failUri = request != null ? request.getURI().toASCIIString() : url;
             throw new RestRequestException(String.format("HTTP request failed: %s %s",
                 method.name(), failUri), ex);
         }

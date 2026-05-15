@@ -57,10 +57,10 @@ import xyz.jwizard.jwl.netclient.rest.GenericRestClient;
 import xyz.jwizard.jwl.netclient.rest.RestResponse;
 import xyz.jwizard.jwl.netclient.rest.TestHttpHeaderName;
 import xyz.jwizard.jwl.netclient.rest.TestHttpHeaderValue;
+import xyz.jwizard.jwl.netclient.rest.group.RestClientGroupConfig;
+import xyz.jwizard.jwl.netclient.rest.group.TestGroup;
 import xyz.jwizard.jwl.netclient.rest.intercept.CorrelationInterceptor;
 import xyz.jwizard.jwl.netclient.rest.intercept.SignatureInterceptor;
-import xyz.jwizard.jwl.netclient.rest.pool.PoolConfig;
-import xyz.jwizard.jwl.netclient.rest.pool.TestPool;
 
 class JettyRestClientIntegrationTest {
     private static final String USER_AGENT = "JWL-Test-Bot/1.0";
@@ -100,12 +100,15 @@ class JettyRestClientIntegrationTest {
             .maxConnectionsPerHost(10)
             .maxQueuedRequests(1024)
             .maxHeadersSize(8, MemUnit.KB)
-            .defaultPool(wireMockUrl, PoolConfig.builder()
-                .userAgent(USER_AGENT)
+            .defaultClientGroup(RestClientGroupConfig.builder()
+                .url(wireMockUrl)
+                .principalName(USER_AGENT)
                 .retryOnSafeMethods(3, Duration.ofMillis(500))
                 .build()
             )
-            .pool(TestPool.LIMITED_POOL, wireMockUrl, PoolConfig.builder()
+            .clientGroup(TestGroup.LIMITED_GROUP, RestClientGroupConfig.builder()
+                .url(wireMockUrl)
+                .principalName(USER_AGENT)
                 .rateLimit(TokenBucketRateLimiter.builder()
                     .capacity(5)
                     .refillTokens(1)
@@ -113,7 +116,9 @@ class JettyRestClientIntegrationTest {
                     .build())
                 .build()
             )
-            .pool(TestPool.OVERRIDE_POOL, wireMockUrl, PoolConfig.builder()
+            .clientGroup(TestGroup.OVERRIDE_GROUP, RestClientGroupConfig.builder()
+                .url(wireMockUrl)
+                .principalName(USER_AGENT)
                 .auth(StandardAuthScheme.BASIC, "admin", "secret")
                 .build()
             )
@@ -216,13 +221,13 @@ class JettyRestClientIntegrationTest {
         );
         for (int i = 0; i < tokens; i++) {
             final RestResponse<Void> okResponse = client.get(path)
-                .pool(TestPool.LIMITED_POOL)
+                .group(TestGroup.LIMITED_GROUP)
                 .send();
             assertThat(okResponse.getStatus().getCode()).isEqualTo(HttpStatus.OK_200.getCode());
         }
         // when
         final RestResponse<Void> rateLimitedResponse = client.get(path)
-            .pool(TestPool.LIMITED_POOL)
+            .group(TestGroup.LIMITED_GROUP)
             .send();
         // then
         assertThat(rateLimitedResponse.getStatus()).isEqualTo(HttpStatus.TOO_MANY_REQUESTS_429);
@@ -317,7 +322,7 @@ class JettyRestClientIntegrationTest {
     }
 
     @Test
-    @DisplayName("should override pool Basic Auth with request-specific Bearer Auth")
+    @DisplayName("should override group Basic Auth with request-specific Bearer Auth")
     void shouldOverridePoolAuthWithRequestAuth() {
         // given
         final String path = "/api/secure";
@@ -330,7 +335,7 @@ class JettyRestClientIntegrationTest {
             .willReturn(aResponse().withStatus(HttpStatus.OK_200.getCode())));
         // when
         final RestResponse<Void> response = client.get(path)
-            .pool(TestPool.OVERRIDE_POOL)
+            .group(TestGroup.OVERRIDE_GROUP)
             .bearerAuth(bearer)
             .send();
         // then
@@ -360,7 +365,7 @@ class JettyRestClientIntegrationTest {
     }
 
     @Test
-    @DisplayName("should strictly obey request-level retry limit and ignore higher pool limit")
+    @DisplayName("should strictly obey request-level retry limit and ignore higher group limit")
     void shouldObeyRequestLevelRetryLimit() {
         // given
         final String path = "/api/fail-fast";

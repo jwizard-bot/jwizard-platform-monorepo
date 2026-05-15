@@ -103,12 +103,12 @@ public class JettyRestClient extends GenericRestClient {
     }
 
     @Override
-    public RequestSpec request(HttpMethod method, String uri) {
-        log.trace("Creating new JettyRequestSpec: {} {}", method, uri);
+    public RequestSpec request(HttpMethod method, String url) {
+        log.trace("Creating new JettyRequestSpec: {} {}", method, url);
         return new JettyRequestSpec(
             jettyClient,
-            baseUrlRegistryPool,
-            uri,
+            clientsRegistry,
+            url,
             method,
             serializerRegistry,
             scanner

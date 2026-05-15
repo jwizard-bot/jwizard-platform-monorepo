@@ -31,7 +31,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import xyz.jwizard.jwl.common.limit.RateLimiter;
 import xyz.jwizard.jwl.net.http.HttpStatus;
-import xyz.jwizard.jwl.netclient.rest.pool.UrlPool;
+import xyz.jwizard.jwl.netclient.group.ClientGroup;
 
 @ExtendWith(MockitoExtension.class)
 class RateLimitInterceptorTest {
@@ -42,7 +42,7 @@ class RateLimitInterceptorTest {
     @Mock
     private RequestView view;
     @Mock
-    private UrlPool pool;
+    private ClientGroup clientGroup;
 
     private RateLimitInterceptor interceptor;
 
@@ -50,8 +50,8 @@ class RateLimitInterceptorTest {
     void setUp() {
         interceptor = new RateLimitInterceptor(rateLimiter);
         lenient().when(context.getView()).thenReturn(view);
-        lenient().when(view.getPool()).thenReturn(pool);
-        lenient().when(pool.getPoolName()).thenReturn("DISCORD_API");
+        lenient().when(view.getGroup()).thenReturn(clientGroup);
+        lenient().when(clientGroup.getClientGroupName()).thenReturn("DISCORD_API");
     }
 
     @Test

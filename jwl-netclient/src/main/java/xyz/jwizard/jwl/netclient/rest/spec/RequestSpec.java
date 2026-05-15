@@ -23,12 +23,12 @@ import xyz.jwizard.jwl.net.http.auth.StandardAuthScheme;
 import xyz.jwizard.jwl.net.http.header.CommonHttpHeaderName;
 import xyz.jwizard.jwl.net.http.header.HttpHeaderName;
 import xyz.jwizard.jwl.net.http.header.HttpHeaderValue;
+import xyz.jwizard.jwl.netclient.group.ClientGroup;
 import xyz.jwizard.jwl.netclient.rest.RestResponse;
 import xyz.jwizard.jwl.netclient.rest.intercept.RequestInterceptor;
-import xyz.jwizard.jwl.netclient.rest.pool.UrlPool;
 
 public interface RequestSpec {
-    RequestSpec pool(UrlPool urlPool);
+    RequestSpec group(ClientGroup clientGroup);
 
     default RequestSpec header(HttpHeaderName name, HttpHeaderValue value, Object... args) {
         return unsafeHeader(name, value.buildWithArgs(args));

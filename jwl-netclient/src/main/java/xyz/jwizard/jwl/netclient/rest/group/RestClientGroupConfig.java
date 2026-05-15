@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.netclient.rest.pool;
+package xyz.jwizard.jwl.netclient.rest.group;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -23,24 +23,25 @@ import xyz.jwizard.jwl.codec.serialization.SerializerFormat;
 import xyz.jwizard.jwl.codec.serialization.StandardSerializerFormat;
 import xyz.jwizard.jwl.common.Ordered;
 import xyz.jwizard.jwl.common.limit.RateLimiter;
-import xyz.jwizard.jwl.common.util.ArrayUtil;
 import xyz.jwizard.jwl.net.http.HttpMethod;
 import xyz.jwizard.jwl.net.http.auth.AuthScheme;
+import xyz.jwizard.jwl.netclient.group.GenericClientGroupConfig;
 import xyz.jwizard.jwl.netclient.rest.intercept.AuthInterceptor;
 import xyz.jwizard.jwl.netclient.rest.intercept.RateLimitInterceptor;
 import xyz.jwizard.jwl.netclient.rest.intercept.RequestInterceptor;
 import xyz.jwizard.jwl.netclient.rest.intercept.UserAgentInterceptor;
 import xyz.jwizard.jwl.netclient.rest.retry.RetryPolicy;
 
-public class PoolConfig {
+public class RestClientGroupConfig extends GenericClientGroupConfig {
     private final SerializerFormat defaultFormat;
     private final RetryPolicy retryPolicy;
     private final List<RequestInterceptor> interceptors;
 
-    private PoolConfig(Builder builder) {
+    private RestClientGroupConfig(Builder builder) {
+        super(builder);
         defaultFormat = builder.defaultFormat;
         retryPolicy = builder.retryPolicy;
-        interceptors = new ArrayList<>(builder.interceptors);
+        interceptors = builder.interceptors;
     }
 
     public static Builder builder() {
@@ -55,11 +56,11 @@ public class PoolConfig {
         return retryPolicy;
     }
 
-    public RequestInterceptor[] getInterceptors() {
-        return ArrayUtil.toArray(interceptors, RequestInterceptor.class);
+    public List<RequestInterceptor> getInterceptors() {
+        return interceptors;
     }
 
-    public static class Builder {
+    public static class Builder extends AbstractBuilder<Builder, RestClientGroupConfig> {
         private final List<RequestInterceptor> interceptors = new ArrayList<>();
         private SerializerFormat defaultFormat = StandardSerializerFormat.JSON;
         private RetryPolicy retryPolicy = RetryPolicy.none();
@@ -95,11 +96,6 @@ public class PoolConfig {
             return this;
         }
 
-        public Builder userAgent(String userAgent) {
-            interceptors.add(new UserAgentInterceptor(userAgent));
-            return this;
-        }
-
         public Builder auth(AuthScheme scheme, String... credentials) {
             return auth(Integer.MAX_VALUE, scheme, credentials);
         }
@@ -119,9 +115,18 @@ public class PoolConfig {
             return this;
         }
 
-        public PoolConfig build() {
+        @Override
+        public Builder principalName(String principalName) {
+            super.principalName(principalName);
+            interceptors.add(new UserAgentInterceptor(principalName));
+            return this;
+        }
+
+        @Override
+        public RestClientGroupConfig build() {
+            super.validate();
             interceptors.sort(Ordered.COMPARATOR);
-            return new PoolConfig(this);
+            return new RestClientGroupConfig(this);
         }
     }
 }
