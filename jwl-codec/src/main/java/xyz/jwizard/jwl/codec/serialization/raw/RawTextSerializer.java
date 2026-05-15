@@ -26,12 +26,12 @@ import xyz.jwizard.jwl.codec.serialization.StandardSerializerFormat;
 import xyz.jwizard.jwl.codec.serialization.TypedMessageSerializer;
 import xyz.jwizard.jwl.common.util.CastUtil;
 
-public class RawStringSerializer implements MessageSerializer, TypedMessageSerializer<String> {
-    private RawStringSerializer() {
+public class RawTextSerializer implements MessageSerializer, TypedMessageSerializer<String> {
+    private RawTextSerializer() {
     }
 
-    public static RawStringSerializer createDefault() {
-        return new RawStringSerializer();
+    public static RawTextSerializer createDefault() {
+        return new RawTextSerializer();
     }
 
     @Override

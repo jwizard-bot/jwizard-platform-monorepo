@@ -27,8 +27,8 @@ import xyz.jwizard.jwl.codec.DataType;
 import xyz.jwizard.jwl.codec.serialization.MessageSerializerException;
 import xyz.jwizard.jwl.codec.serialization.StandardSerializerFormat;
 
-class RawStringSerializerTest {
-    private final RawStringSerializer serializer = RawStringSerializer.createDefault();
+class RawTextSerializerTest {
+    private final RawTextSerializer serializer = RawTextSerializer.createDefault();
 
     @Test
     @DisplayName("should return the same string on serialization")
