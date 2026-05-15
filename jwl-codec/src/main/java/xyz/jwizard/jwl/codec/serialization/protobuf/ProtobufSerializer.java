@@ -29,13 +29,16 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.MessageLite;
 import com.google.protobuf.Parser;
 
+import xyz.jwizard.jwl.codec.DataType;
+import xyz.jwizard.jwl.codec.EncodedPayloadVisitor;
 import xyz.jwizard.jwl.codec.serialization.MessageSerializer;
 import xyz.jwizard.jwl.codec.serialization.SerializerFormat;
 import xyz.jwizard.jwl.codec.serialization.StandardSerializerFormat;
+import xyz.jwizard.jwl.codec.serialization.TypedMessageSerializer;
 import xyz.jwizard.jwl.common.reflect.ClassScanner;
 import xyz.jwizard.jwl.common.util.CastUtil;
 
-public class ProtobufSerializer implements MessageSerializer {
+public class ProtobufSerializer implements MessageSerializer, TypedMessageSerializer<byte[]> {
     private static final Logger LOG = LoggerFactory.getLogger(ProtobufSerializer.class);
     private static final Map<Class<?>, Parser<?>> PARSER_CACHE = new ConcurrentHashMap<>();
 
@@ -115,5 +118,25 @@ public class ProtobufSerializer implements MessageSerializer {
         return !type.isInterface()
             && !Modifier.isAbstract(type.getModifiers())
             && !type.getName().startsWith("com.google.protobuf");
+    }
+
+    @Override
+    public DataType getCodecDataType() {
+        return DataType.BINARY;
+    }
+
+    @Override
+    public byte[] serializePayload(Object payload) {
+        return serializeToBytes(payload);
+    }
+
+    @Override
+    public <T> T deserializePayload(byte[] payload, Class<T> type) {
+        return deserializeFromBytes(payload, type);
+    }
+
+    @Override
+    public void serializeAndAccept(Object payload, EncodedPayloadVisitor visitor) {
+        visitor.accept(serializePayload(payload));
     }
 }

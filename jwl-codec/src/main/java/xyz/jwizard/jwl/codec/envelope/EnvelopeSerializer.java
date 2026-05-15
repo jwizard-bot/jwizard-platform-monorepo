@@ -17,20 +17,19 @@ package xyz.jwizard.jwl.codec.envelope;
 
 import java.util.function.Function;
 
-import xyz.jwizard.jwl.codec.DataType;
+import xyz.jwizard.jwl.codec.EncodedPayloadVisitor;
 import xyz.jwizard.jwl.codec.UnsupportedDataTypeException;
-import xyz.jwizard.jwl.codec.serialization.Serializer;
 import xyz.jwizard.jwl.codec.serialization.SerializerFormat;
+import xyz.jwizard.jwl.codec.serialization.TypedSerializer;
+import xyz.jwizard.jwl.codec.serialization.TypedSerializerFormat;
 
-public interface EnvelopeSerializer<T> extends Serializer {
+public interface EnvelopeSerializer<T> extends TypedSerializer {
     SerializerFormat baseFormat();
 
     @Override
     default SerializerFormat format() {
-        return EnvelopeSerializerFormat.from(baseFormat(), getCodecDataType());
+        return TypedSerializerFormat.from(baseFormat(), getCodecDataType());
     }
-
-    DataType getCodecDataType();
 
     T serializeForSession(OpCode opCode, Object payload);
 

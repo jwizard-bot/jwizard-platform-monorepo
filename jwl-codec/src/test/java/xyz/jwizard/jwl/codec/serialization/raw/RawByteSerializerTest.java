@@ -17,15 +17,25 @@ package xyz.jwizard.jwl.codec.serialization.raw;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.verify;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import xyz.jwizard.jwl.codec.DataType;
+import xyz.jwizard.jwl.codec.EncodedPayloadVisitor;
 import xyz.jwizard.jwl.codec.serialization.MessageSerializerException;
 import xyz.jwizard.jwl.codec.serialization.StandardSerializerFormat;
 
+@ExtendWith(MockitoExtension.class)
 class RawByteSerializerTest {
     private final RawByteSerializer serializer = RawByteSerializer.createDefault();
+
+    @Mock
+    private EncodedPayloadVisitor visitorMock;
 
     @Test
     @DisplayName("should return the same byte array on serialization")
@@ -84,5 +94,18 @@ class RawByteSerializerTest {
     @DisplayName("should return correct format")
     void shouldReturnRawFormat() {
         assertThat(serializer.format()).isEqualTo(StandardSerializerFormat.RAW);
+    }
+
+    @Test
+    @DisplayName("should pass raw byte array directly to visitor")
+    void shouldDelegateBinaryOperations() {
+        // given
+        final RawByteSerializer serializer = RawByteSerializer.createDefault();
+        final byte[] inputPayload = {0x01, 0x02, 0x03};
+        // when
+        serializer.serializeAndAccept(inputPayload, visitorMock);
+        // then
+        assertThat(serializer.getCodecDataType()).isEqualTo(DataType.BINARY);
+        verify(visitorMock).accept(inputPayload);
     }
 }

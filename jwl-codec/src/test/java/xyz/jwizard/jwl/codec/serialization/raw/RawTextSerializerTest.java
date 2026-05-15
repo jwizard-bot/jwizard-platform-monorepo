@@ -17,18 +17,27 @@ package xyz.jwizard.jwl.codec.serialization.raw;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.verify;
 
 import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import xyz.jwizard.jwl.codec.DataType;
+import xyz.jwizard.jwl.codec.EncodedPayloadVisitor;
 import xyz.jwizard.jwl.codec.serialization.MessageSerializerException;
 import xyz.jwizard.jwl.codec.serialization.StandardSerializerFormat;
 
+@ExtendWith(MockitoExtension.class)
 class RawTextSerializerTest {
     private final RawTextSerializer serializer = RawTextSerializer.createDefault();
+
+    @Mock
+    private EncodedPayloadVisitor visitorMock;
 
     @Test
     @DisplayName("should return the same string on serialization")
@@ -116,5 +125,18 @@ class RawTextSerializerTest {
     @DisplayName("should return TEXT data type")
     void shouldReturnTextDataType() {
         assertThat(serializer.getCodecDataType()).isEqualTo(DataType.TEXT);
+    }
+
+    @Test
+    @DisplayName("should pass raw string directly to visitor")
+    void shouldDelegateTextOperations() {
+        // given
+        final RawTextSerializer serializer = RawTextSerializer.createDefault();
+        final String inputPayload = "Hello JWizard RAW Mode!";
+        // when
+        serializer.serializeAndAccept(inputPayload, visitorMock);
+        // then
+        assertThat(serializer.getCodecDataType()).isEqualTo(DataType.TEXT);
+        verify(visitorMock).accept(inputPayload);
     }
 }

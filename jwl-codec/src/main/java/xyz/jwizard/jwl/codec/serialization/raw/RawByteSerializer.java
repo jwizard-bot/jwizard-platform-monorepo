@@ -15,12 +15,15 @@
  */
 package xyz.jwizard.jwl.codec.serialization.raw;
 
+import xyz.jwizard.jwl.codec.DataType;
+import xyz.jwizard.jwl.codec.EncodedPayloadVisitor;
 import xyz.jwizard.jwl.codec.serialization.MessageSerializer;
 import xyz.jwizard.jwl.codec.serialization.MessageSerializerException;
 import xyz.jwizard.jwl.codec.serialization.StandardSerializerFormat;
+import xyz.jwizard.jwl.codec.serialization.TypedMessageSerializer;
 import xyz.jwizard.jwl.common.util.CastUtil;
 
-public class RawByteSerializer implements MessageSerializer {
+public class RawByteSerializer implements MessageSerializer, TypedMessageSerializer<byte[]> {
     private RawByteSerializer() {
     }
 
@@ -55,5 +58,25 @@ public class RawByteSerializer implements MessageSerializer {
     @Override
     public StandardSerializerFormat format() {
         return StandardSerializerFormat.RAW;
+    }
+
+    @Override
+    public DataType getCodecDataType() {
+        return DataType.BINARY;
+    }
+
+    @Override
+    public byte[] serializePayload(Object payload) {
+        return serializeToBytes(payload);
+    }
+
+    @Override
+    public <T> T deserializePayload(byte[] payload, Class<T> type) {
+        return deserializeFromBytes(payload, type);
+    }
+
+    @Override
+    public void serializeAndAccept(Object payload, EncodedPayloadVisitor visitor) {
+        visitor.accept(serializePayload(payload));
     }
 }

@@ -17,9 +17,12 @@ package xyz.jwizard.jwl.codec.serialization.protobuf;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
+import java.util.Collections;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -31,26 +34,34 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.google.protobuf.MessageLite;
 
+import xyz.jwizard.jwl.codec.DataType;
+import xyz.jwizard.jwl.codec.EncodedPayloadVisitor;
 import xyz.jwizard.jwl.codec.serialization.StandardSerializerFormat;
 import xyz.jwizard.jwl.common.reflect.ClassScanner;
 
 @ExtendWith(MockitoExtension.class)
 class ProtobufSerializerTest {
     @Mock
-    private ClassScanner scanner;
+    private ClassScanner scannerMock;
 
     private ProtobufSerializer serializer;
+
+    @Mock
+    private EncodedPayloadVisitor visitorMock;
+
+    @Mock
+    private MessageLite messageLiteMock;
 
     @BeforeEach
     void setUp() {
         // given
-        when(scanner.getSubtypesOf(com.google.protobuf.MessageLite.class))
+        when(scannerMock.getSubtypesOf(MessageLite.class))
             .thenReturn(Set.of(
                 TestMessage.class,
                 ComplexMessage.class
             ));
         // when
-        serializer = ProtobufSerializer.createDefault(scanner);
+        serializer = ProtobufSerializer.createDefault(scannerMock);
     }
 
     @Test
@@ -122,6 +133,21 @@ class ProtobufSerializerTest {
         assertThat(result.getDescription()).isEqualTo("root-container");
         assertThat(result.getCoreData().getId()).isEqualTo(99);
         assertThat(result.getCoreData().getValue()).isEqualTo("nested-content");
+    }
+
+    @Test
+    @DisplayName("should serialize MessageLite to bytes and pass to visitor")
+    void shouldDelegateBinaryOperations() {
+        // given
+        given(scannerMock.getSubtypesOf(MessageLite.class)).willReturn(Collections.emptySet());
+        final ProtobufSerializer serializer = ProtobufSerializer.createDefault(scannerMock);
+        final byte[] expectedBytes = {0x0A, 0x0B, 0x0C};
+        given(messageLiteMock.toByteArray()).willReturn(expectedBytes);
+        // when
+        serializer.serializeAndAccept(messageLiteMock, visitorMock);
+        // then
+        assertThat(serializer.getCodecDataType()).isEqualTo(DataType.BINARY);
+        verify(visitorMock).accept(expectedBytes);
     }
 }
 
