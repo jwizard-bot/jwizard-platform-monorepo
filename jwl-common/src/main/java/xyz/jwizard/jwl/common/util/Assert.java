@@ -16,6 +16,7 @@
 package xyz.jwizard.jwl.common.util;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Objects;
 
 import xyz.jwizard.jwl.common.bootstrap.CriticalBootstrapException;
@@ -36,6 +37,10 @@ public class Assert {
 
     public static void notNullAll(Collection<?> collection, String message) {
         state(collection != null && collection.stream().allMatch(Objects::nonNull), message);
+    }
+
+    public static void notNullAll(Map<?, ?> collection, String message) {
+        notNullAll(collection.values(), message);
     }
 
     public static void state(boolean expression, String message) {
