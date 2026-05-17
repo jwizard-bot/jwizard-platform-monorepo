@@ -15,7 +15,6 @@
  */
 package xyz.jwizard.jwl.common.di;
 
-import java.util.Collections;
 import java.util.Map;
 
 import com.google.inject.Guice;
@@ -45,7 +44,7 @@ public class ApplicationContext {
 
     public static ApplicationContext createDefault(ClassScanner scanner,
                                                    Map<Class<?>, Class<?>> components) {
-        return create(scanner, components, Collections.emptyMap());
+        return create(scanner, components, Map.of());
     }
 
     public ComponentProvider getComponentProvider() {

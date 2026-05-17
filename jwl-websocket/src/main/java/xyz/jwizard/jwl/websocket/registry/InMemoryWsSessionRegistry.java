@@ -16,7 +16,7 @@
 package xyz.jwizard.jwl.websocket.registry;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -78,7 +78,7 @@ public class InMemoryWsSessionRegistry implements WsSessionRegistry {
         final Map<String, WsSession> subs = subscriptions.get(topic);
         if (subs == null) {
             LOG.trace("No subscribers found for topic: {}", topic);
-            return Collections.emptyList();
+            return List.of();
         }
         return subs.values();
     }

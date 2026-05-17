@@ -15,7 +15,6 @@
  */
 package xyz.jwizard.jwl.common.bootstrap.lifecycle;
 
-import java.util.Collections;
 import java.util.List;
 
 import xyz.jwizard.jwl.common.di.ComponentProvider;
@@ -24,7 +23,7 @@ import xyz.jwizard.jwl.common.reflect.ClassScanner;
 public interface LifecycleHook {
     // defines hook classes witch must be started before this hook
     default List<Class<? extends LifecycleHook>> dependsOn() {
-        return Collections.emptyList();
+        return List.of();
     }
 
     void onStart(ComponentProvider componentProvider, ClassScanner scanner);

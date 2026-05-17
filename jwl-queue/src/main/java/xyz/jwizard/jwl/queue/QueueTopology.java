@@ -15,7 +15,6 @@
  */
 package xyz.jwizard.jwl.queue;
 
-import java.util.Collections;
 import java.util.Map;
 
 import xyz.jwizard.jwl.queue.exchange.DefaultExchangeType;
@@ -43,7 +42,7 @@ public record QueueTopology(
         private boolean durable = true;
         private boolean exclusive = false;
         private boolean autoDelete = false;
-        private Map<String, Object> arguments = Collections.emptyMap();
+        private Map<String, Object> arguments = Map.of();
 
         private String exchangeName;
         private ExchangeType exchangeType = DefaultExchangeType.DIRECT;

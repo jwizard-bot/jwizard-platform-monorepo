@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import xyz.jwizard.jwl.common.bootstrap.ForbiddenInstantiationException;
@@ -31,14 +32,14 @@ public class CollectionUtil {
     }
 
     @SafeVarargs
-    public static <T> LinkedHashSet<T> linkedSetOf(T... elements) {
+    public static <T> Set<T> linkedSetOf(T... elements) {
         return new LinkedHashSet<>(Arrays.asList(elements));
     }
 
     @SafeVarargs
     public static <T> List<T> listOf(T first, T... rest) {
         if (first == null && (rest == null || rest.length == 0)) {
-            return Collections.emptyList();
+            return List.of();
         }
         final List<T> result = new ArrayList<>();
         if (first != null) {
@@ -57,8 +58,8 @@ public class CollectionUtil {
         if (action == null) {
             return;
         }
-        final List<T> l1 = (list1 == null) ? Collections.emptyList() : list1;
-        final List<T> l2 = (list2 == null) ? Collections.emptyList() : list2;
+        final List<T> l1 = (list1 == null) ? List.of() : list1;
+        final List<T> l2 = (list2 == null) ? List.of() : list2;
 
         final Comparator<? super T> comp = (comparator != null)
             ? comparator

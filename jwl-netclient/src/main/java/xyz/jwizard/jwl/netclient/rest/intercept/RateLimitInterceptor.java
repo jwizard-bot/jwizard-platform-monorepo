@@ -15,7 +15,7 @@
  */
 package xyz.jwizard.jwl.netclient.rest.intercept;
 
-import java.util.Collections;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +52,7 @@ public class RateLimitInterceptor implements RequestInterceptor {
                 view.getMethod(), view.getUrl());
             final RestResponse<Void> tooManyRequestsResponse = new RestResponse<>(
                 HttpStatus.TOO_MANY_REQUESTS_429.getCode(),
-                Collections.emptyMap(),
+                Map.of(),
                 null
             );
             context.abortWith(tooManyRequestsResponse);

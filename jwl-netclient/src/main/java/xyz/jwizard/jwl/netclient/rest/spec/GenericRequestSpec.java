@@ -17,7 +17,6 @@ package xyz.jwizard.jwl.netclient.rest.spec;
 
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -220,7 +219,7 @@ public abstract class GenericRequestSpec implements RequestSpec, RequestView {
     @Override
     public final <T> RestResponse<T> send(Class<T> responseType) {
         abortedResponse = null;
-        List<RequestInterceptor> groupInterceptors = Collections.emptyList();
+        List<RequestInterceptor> groupInterceptors = List.of();
         if (clientGroup != null) {
             groupInterceptors = clientRegistry.getConfig(clientGroup).getInterceptors();
         }

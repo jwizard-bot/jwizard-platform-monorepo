@@ -22,7 +22,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
-import java.util.Collections;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -139,7 +138,7 @@ class ProtobufSerializerTest {
     @DisplayName("should serialize MessageLite to bytes and pass to visitor")
     void shouldDelegateBinaryOperations() {
         // given
-        given(scannerMock.getSubtypesOf(MessageLite.class)).willReturn(Collections.emptySet());
+        given(scannerMock.getSubtypesOf(MessageLite.class)).willReturn(Set.of());
         final ProtobufSerializer serializer = ProtobufSerializer.createDefault(scannerMock);
         final byte[] expectedBytes = {0x0A, 0x0B, 0x0C};
         given(messageLiteMock.toByteArray()).willReturn(expectedBytes);
