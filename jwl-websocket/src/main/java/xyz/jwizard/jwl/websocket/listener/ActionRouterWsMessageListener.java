@@ -16,10 +16,10 @@
 package xyz.jwizard.jwl.websocket.listener;
 
 import xyz.jwizard.jwl.codec.envelope.MessageEnvelope;
+import xyz.jwizard.jwl.codec.envelope.StandardOpCode;
 import xyz.jwizard.jwl.net.envelope.bus.EnvelopeBusListener;
 import xyz.jwizard.jwl.websocket.WsSession;
 import xyz.jwizard.jwl.websocket.listener.action.HeartbeatAction;
-import xyz.jwizard.jwl.websocket.listener.action.WsOpCode;
 
 public class ActionRouterWsMessageListener extends EnvelopeBusListener<WsSession> {
     private ActionRouterWsMessageListener(Builder builder) {
@@ -34,13 +34,13 @@ public class ActionRouterWsMessageListener extends EnvelopeBusListener<WsSession
     @Override
     protected void handleProcessUnknownAction(WsSession session, MessageEnvelope<?> envelope) {
         super.handleProcessUnknownAction(session, envelope);
-        session.sendEnvelope(WsOpCode.UNKNOWN_ACTION);
+        session.sendEnvelope(StandardOpCode.UNKNOWN_ACTION);
     }
 
     @Override
     protected void handleProcessingError(WsSession session, Exception ex) {
         super.handleProcessingError(session, ex);
-        session.sendEnvelope(WsOpCode.INVALID_PAYLOAD);
+        session.sendEnvelope(StandardOpCode.INVALID_PAYLOAD);
     }
 
     public static class Builder extends AbstractBuilder<WsSession, Builder> {

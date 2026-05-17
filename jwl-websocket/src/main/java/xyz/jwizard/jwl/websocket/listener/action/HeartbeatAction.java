@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import xyz.jwizard.jwl.codec.envelope.OpCode;
+import xyz.jwizard.jwl.codec.envelope.StandardOpCode;
 import xyz.jwizard.jwl.net.envelope.EnvelopeAction;
 import xyz.jwizard.jwl.websocket.WsSession;
 
@@ -30,12 +31,12 @@ public class HeartbeatAction implements EnvelopeAction<WsSession, Void> {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Heartbeat received from session: {}", session.getSessionId());
         }
-        session.sendEnvelope(WsOpCode.HEARTBEAT);
+        session.sendEnvelope(StandardOpCode.HEARTBEAT);
     }
 
     @Override
     public OpCode opCode() {
-        return WsOpCode.HEARTBEAT;
+        return StandardOpCode.HEARTBEAT;
     }
 
     @Override

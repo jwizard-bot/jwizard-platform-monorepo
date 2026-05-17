@@ -24,13 +24,13 @@ import org.slf4j.LoggerFactory;
 
 import xyz.jwizard.jwl.codec.UnsupportedDataTypeException;
 import xyz.jwizard.jwl.codec.envelope.EnvelopeSerializer;
+import xyz.jwizard.jwl.codec.envelope.StandardOpCode;
 import xyz.jwizard.jwl.common.limit.RateLimiter;
 import xyz.jwizard.jwl.common.util.concurrent.ConcurrentOperationException;
 import xyz.jwizard.jwl.common.util.io.RunnableWithException;
 import xyz.jwizard.jwl.net.bus.RawBusListener;
 import xyz.jwizard.jwl.net.lifecycle.NetworkSessionLifecycleListener;
 import xyz.jwizard.jwl.websocket.WsSession;
-import xyz.jwizard.jwl.websocket.listener.action.WsOpCode;
 import xyz.jwizard.jwl.websocket.registry.WsSessionRegistry;
 
 public class JettyWsListenerAdapter implements Session.Listener.AutoDemanding {
@@ -124,7 +124,7 @@ public class JettyWsListenerAdapter implements Session.Listener.AutoDemanding {
             if (!rateLimiter.tryAcquire(principalId)) {
                 LOG.warn("Rate limit exceeded for session {}, dropping message.", sessionId);
                 if (sessionAdapter != null) {
-                    sessionAdapter.sendEnvelope(WsOpCode.RATE_LIMIT_EXCEEDED);
+                    sessionAdapter.sendEnvelope(StandardOpCode.RATE_LIMIT_EXCEEDED);
                 }
                 completeCallback(callback, null);
                 return;
@@ -139,7 +139,7 @@ public class JettyWsListenerAdapter implements Session.Listener.AutoDemanding {
             lifecycleListener.onError(sessionAdapter, ex);
             LOG.error("Business logic error in session: {}", sessionId, ex);
             if (sessionAdapter != null) {
-                sessionAdapter.sendEnvelope(WsOpCode.INTERNAL_ERROR);
+                sessionAdapter.sendEnvelope(StandardOpCode.INTERNAL_ERROR);
             }
             completeCallback(callback, null);
         } catch (Exception ex) {

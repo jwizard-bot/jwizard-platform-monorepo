@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.websocket.listener.action;
+package xyz.jwizard.jwl.codec.envelope;
 
-import xyz.jwizard.jwl.codec.envelope.OpCode;
-
-public enum WsOpCode implements OpCode {
+public enum StandardOpCode implements OpCode {
     RATE_LIMIT_EXCEEDED(0x01, 0x01),    // 65537 (0x010001)
     UNKNOWN_ACTION(0x01, 0x02),         // 65538 (0x010002)
     INVALID_PAYLOAD(0x01, 0x03),        // 65539 (0x010003)
@@ -27,7 +25,7 @@ public enum WsOpCode implements OpCode {
 
     private final int code;
 
-    WsOpCode(int category, int action) {
+    StandardOpCode(int category, int action) {
         code = OpCode.combine(category, action);
     }
 

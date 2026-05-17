@@ -37,6 +37,7 @@ import org.junit.jupiter.api.Test;
 
 import xyz.jwizard.jwl.codec.envelope.EnvelopeSerializerRegistry;
 import xyz.jwizard.jwl.codec.envelope.MessageEnvelope;
+import xyz.jwizard.jwl.codec.envelope.StandardOpCode;
 import xyz.jwizard.jwl.codec.serialization.json.JsonSerializer;
 import xyz.jwizard.jwl.common.di.ApplicationContext;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
@@ -55,7 +56,6 @@ import xyz.jwizard.jwl.websocket.broadcast.TestWsTopic;
 import xyz.jwizard.jwl.websocket.dispatcher.ConcurrentLocalSessionDispatcher;
 import xyz.jwizard.jwl.websocket.listener.ActionRouterWsMessageListener;
 import xyz.jwizard.jwl.websocket.listener.action.TestOpCode;
-import xyz.jwizard.jwl.websocket.listener.action.WsOpCode;
 import xyz.jwizard.jwl.websocket.negotation.QueryParamSerializerResolver;
 import xyz.jwizard.jwl.websocket.registry.InMemoryWsSessionRegistry;
 import xyz.jwizard.jwl.websocket.registry.WsSubscriptionRegistry;
@@ -163,7 +163,7 @@ class JettyWsServerIntegrationTest {
             }).join();
         // {"op": 65541, "data": null}
         final String heartbeatRequest = jsonSerializer.serialize(new MessageEnvelope<>(
-            WsOpCode.HEARTBEAT.getCode(),
+            StandardOpCode.HEARTBEAT.getCode(),
             null
         ));
         // when
@@ -172,7 +172,7 @@ class JettyWsServerIntegrationTest {
         final String rawResponse = responses.poll(5, TimeUnit.SECONDS);
         assertThat(rawResponse).isNotNull();
         final Map<?, ?> responseEnvelope = jsonSerializer.deserialize(rawResponse, Map.class);
-        assertThat(responseEnvelope.get("op")).isEqualTo(WsOpCode.HEARTBEAT.getCode());
+        assertThat(responseEnvelope.get("op")).isEqualTo(StandardOpCode.HEARTBEAT.getCode());
         // cleanup
         webSocket.sendClose(WebSocket.NORMAL_CLOSURE, "bye").join();
     }
@@ -188,7 +188,7 @@ class JettyWsServerIntegrationTest {
         final String url = String.format(
             "ws://localhost:%d/v1?encoding=json&frame=text", port);
         final MessageEnvelope<Void> requestEnvelope = new MessageEnvelope<>(
-            WsOpCode.HEARTBEAT.getCode(), null);
+            StandardOpCode.HEARTBEAT.getCode(), null);
         final String jsonRequest = jsonSerializer.serialize(requestEnvelope);
         // when
         final WebSocket webSocket = client.newWebSocketBuilder()
@@ -210,7 +210,7 @@ class JettyWsServerIntegrationTest {
         final Map<?, ?> responseMap = jsonSerializer.deserialize(rawResponse, Map.class);
         assertThat(responseMap.get("op"))
             .as("Response OP code should match HEARTBEAT")
-            .isEqualTo(WsOpCode.HEARTBEAT.getCode());
+            .isEqualTo(StandardOpCode.HEARTBEAT.getCode());
         // cleanup
         webSocket.sendClose(WebSocket.NORMAL_CLOSURE, "test-finished").join();
     }
@@ -331,7 +331,7 @@ class JettyWsServerIntegrationTest {
         final String rawResponse = responses.poll(5, TimeUnit.SECONDS);
         assertThat(rawResponse).isNotNull();
         final Map<?, ?> responseEnvelope = jsonSerializer.deserialize(rawResponse, Map.class);
-        assertThat(responseEnvelope.get("op")).isEqualTo(WsOpCode.UNKNOWN_ACTION.getCode());
+        assertThat(responseEnvelope.get("op")).isEqualTo(StandardOpCode.UNKNOWN_ACTION.getCode());
         // cleanup
         webSocket.sendClose(WebSocket.NORMAL_CLOSURE, "bye").join();
     }
@@ -359,7 +359,7 @@ class JettyWsServerIntegrationTest {
         final String rawResponse = responses.poll(5, TimeUnit.SECONDS);
         assertThat(rawResponse).isNotNull();
         final Map<?, ?> responseEnvelope = jsonSerializer.deserialize(rawResponse, Map.class);
-        assertThat(responseEnvelope.get("op")).isEqualTo(WsOpCode.INVALID_PAYLOAD.getCode());
+        assertThat(responseEnvelope.get("op")).isEqualTo(StandardOpCode.INVALID_PAYLOAD.getCode());
         // cleanup
         webSocket.sendClose(WebSocket.NORMAL_CLOSURE, "bye").join();
     }
@@ -385,7 +385,7 @@ class JettyWsServerIntegrationTest {
                 }
             }).join();
         final String heartbeatRequest = jsonSerializer.serialize(new MessageEnvelope<>(
-            WsOpCode.HEARTBEAT.getCode(),
+            StandardOpCode.HEARTBEAT.getCode(),
             null
         ));
         final byte[] payloadBytes = heartbeatRequest.getBytes(StandardCharsets.UTF_8);
@@ -396,7 +396,7 @@ class JettyWsServerIntegrationTest {
         assertThat(rawResponse).isNotNull();
         final String responseString = new String(rawResponse, StandardCharsets.UTF_8);
         final Map<?, ?> responseEnvelope = jsonSerializer.deserialize(responseString, Map.class);
-        assertThat(responseEnvelope.get("op")).isEqualTo(WsOpCode.HEARTBEAT.getCode());
+        assertThat(responseEnvelope.get("op")).isEqualTo(StandardOpCode.HEARTBEAT.getCode());
         // cleanup
         webSocket.sendClose(WebSocket.NORMAL_CLOSURE, "bye").join();
     }
