@@ -18,7 +18,9 @@ package xyz.jwizard.jwl.sql.jdbc;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -178,10 +180,10 @@ class JdbcSqlClientIntegrationTest {
         // given
         final UUID id = UUID.randomUUID();
         final String jsonPayload = "{\"key\": \"value\", \"active\": true}";
-        final LocalDateTime createdAt = LocalDateTime.now().withNano(0);
+        final Instant createdAt = Instant.now().truncatedTo(ChronoUnit.SECONDS);
         final int inserted = db.update(
             "INSERT INTO documents (id, payload, created_at) VALUES (?, ?::jsonb, ?)",
-            id, jsonPayload, createdAt
+            id, jsonPayload, Timestamp.from(createdAt)
         );
         assertEquals(1, inserted);
         // when
@@ -190,7 +192,7 @@ class JdbcSqlClientIntegrationTest {
             rs -> new Document(
                 rs.getObject("id", UUID.class),
                 rs.getString("payload"),
-                rs.getObject("created_at", LocalDateTime.class)
+                rs.getTimestamp("created_at").toInstant()
             ),
             id
         );
@@ -205,5 +207,5 @@ class JdbcSqlClientIntegrationTest {
 record User(int id, String username, int age) {
 }
 
-record Document(UUID id, String payload, LocalDateTime createdAt) {
+record Document(UUID id, String payload, Instant createdAt) {
 }
