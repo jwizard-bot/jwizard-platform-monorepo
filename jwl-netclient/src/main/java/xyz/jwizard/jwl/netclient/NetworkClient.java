@@ -55,7 +55,7 @@ public abstract class NetworkClient<T extends ClientGroupConfig> extends Idempot
 
         protected void validate() {
             Assert.notNull(clientsRegistry, "ClientsRegistry cannot be null");
-            Assert.notNullAll(clientsRegistry.getConfigs(),
+            Assert.notNullAll(clientsRegistry.getEntries(),
                 "All ClientGroupConfigs must be initialized");
         }
     }

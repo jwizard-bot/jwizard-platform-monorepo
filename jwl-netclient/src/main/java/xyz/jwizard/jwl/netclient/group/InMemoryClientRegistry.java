@@ -15,18 +15,12 @@
  */
 package xyz.jwizard.jwl.netclient.group;
 
-import java.util.HashMap;
-import java.util.Map;
+import xyz.jwizard.jwl.common.registry.GenericConcurrentRegistry;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-public class InMemoryClientRegistry<T extends ClientGroupConfig> implements ClientRegistry<T> {
-    private static final Logger LOG = LoggerFactory.getLogger(InMemoryClientRegistry.class);
-
-    private final Map<ClientGroup, T> configs = new HashMap<>();
-
+public class InMemoryClientRegistry<T extends ClientGroupConfig>
+    extends GenericConcurrentRegistry<ClientGroup, T> implements ClientRegistry<T> {
     private InMemoryClientRegistry() {
+        super();
     }
 
     public static <T extends ClientGroupConfig> ClientRegistry<T> createDefault() {
@@ -35,43 +29,14 @@ public class InMemoryClientRegistry<T extends ClientGroupConfig> implements Clie
 
     @Override
     public void register(ClientGroup clientGroup, T config) {
-        final String clientGroupName = clientGroup.getClientGroupName();
-        if (configs.containsKey(clientGroup)) {
-            LOG.warn("Overwriting existing configuration for client group: {}", clientGroupName);
-        } else {
-            LOG.info("Registering client group: {} -> {}", clientGroupName, config.getUrl());
-        }
-        configs.put(clientGroup, config);
+        super.register(clientGroup, config);
     }
 
     @Override
     public void register(T config) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Registering configuration under default GLOBAL client group");
+        if (log.isDebugEnabled()) {
+            log.debug("Registering configuration under default GLOBAL client group");
         }
-        register(ClientGroup.GLOBAL, config);
-    }
-
-    @Override
-    public T getConfig(ClientGroup clientGroup) {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Fetching configuration for client group: {}",
-                clientGroup.getClientGroupName());
-        }
-        final T groupConfig = configs.get(clientGroup);
-        if (groupConfig == null) {
-            throw new IllegalStateException("Requested config for unknown client group: " +
-                clientGroup.getClientGroupName());
-        }
-        return groupConfig;
-    }
-
-    @Override
-    public Map<ClientGroup, T> getConfigs() {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Retrieving all registered client group configurations (total: {})",
-                configs.size());
-        }
-        return configs;
+        super.register(ClientGroup.GLOBAL, config);
     }
 }

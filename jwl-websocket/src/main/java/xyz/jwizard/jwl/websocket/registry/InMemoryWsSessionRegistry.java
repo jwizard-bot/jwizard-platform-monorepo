@@ -21,21 +21,18 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import xyz.jwizard.jwl.common.registry.GenericConcurrentRegistry;
 import xyz.jwizard.jwl.websocket.WsSession;
 import xyz.jwizard.jwl.websocket.broadcast.WsTopic;
 
-public class InMemoryWsSessionRegistry implements WsSessionRegistry {
-    private static final Logger LOG = LoggerFactory.getLogger(InMemoryWsSessionRegistry.class);
-
-    private final Map<String, WsSession> activeSessions = new ConcurrentHashMap<>();
-    private final Map<String, Map<String, WsSession>> subscriptions = new ConcurrentHashMap<>();
+public class InMemoryWsSessionRegistry extends GenericConcurrentRegistry<String, WsSession>
+    implements WsSessionRegistry {
     // for optimization
+    private final Map<String, Map<String, WsSession>> subscriptions = new ConcurrentHashMap<>();
     private final Map<String, Set<String>> sessionTopics = new ConcurrentHashMap<>();
 
     private InMemoryWsSessionRegistry() {
+        super();
     }
 
     public static InMemoryWsSessionRegistry createDefault() {
@@ -44,15 +41,15 @@ public class InMemoryWsSessionRegistry implements WsSessionRegistry {
 
     @Override
     public void register(WsSession session) {
-        activeSessions.put(session.getSessionId(), session);
-        LOG.debug("Session registered: {} (total active: {})", session.getSessionId(),
-            activeSessions.size());
+        super.register(session.getSessionId(), session);
+        log.debug("Session registered: {} (total active: {})", session.getSessionId(),
+            getEntries().size());
     }
 
     @Override
     public void unregister(WsSession session) {
         final String sid = session.getSessionId();
-        activeSessions.remove(sid);
+        super.remove(sid);
         final Set<String> topics = sessionTopics.remove(sid);
         final int topicsCount = (topics != null) ? topics.size() : 0;
         if (topics == null) {
@@ -62,25 +59,21 @@ public class InMemoryWsSessionRegistry implements WsSessionRegistry {
             subscriptions.computeIfPresent(topic, (t, subs) -> {
                 subs.remove(sid);
                 if (subs.isEmpty()) {
-                    LOG.trace("Topic '{}' became empty and was removed during unregister of {}",
-                        t, sid);
+                    log.trace("Topic '{}' became empty and was removed during unregister of {}", t,
+                        sid);
                     return null;
                 }
                 return subs;
             });
         }
-        LOG.debug("Session unregistered: {} (was in {} topics, remaining sessions: {})",
-            sid, topicsCount, activeSessions.size());
+        log.debug("Session unregistered: {} (was in {} topics, remaining sessions: {})", sid,
+            topicsCount, getEntries().size());
     }
 
     @Override
     public Collection<WsSession> getUnsafeSubscribers(String topic) {
         final Map<String, WsSession> subs = subscriptions.get(topic);
-        if (subs == null) {
-            LOG.trace("No subscribers found for topic: {}", topic);
-            return List.of();
-        }
-        return subs.values();
+        return (subs == null) ? List.of() : subs.values();
     }
 
     @Override
@@ -88,11 +81,11 @@ public class InMemoryWsSessionRegistry implements WsSessionRegistry {
         final String sid = session.getSessionId();
         final String topicName = topic.getTopic();
         subscriptions.computeIfAbsent(topicName, k -> {
-            LOG.trace("Creating new topic bucket: {}", k);
+            log.trace("Creating new topic bucket: {}", k);
             return new ConcurrentHashMap<>();
         }).put(sid, session);
         sessionTopics.computeIfAbsent(sid, k -> ConcurrentHashMap.newKeySet()).add(topicName);
-        LOG.debug("Session {} subscribed to '{}'", sid, topicName);
+        log.debug("Session {} subscribed to '{}'", sid, topicName);
     }
 
     @Override
@@ -102,7 +95,7 @@ public class InMemoryWsSessionRegistry implements WsSessionRegistry {
         subscriptions.computeIfPresent(topicName, (t, subs) -> {
             subs.remove(sid);
             if (subs.isEmpty()) {
-                LOG.trace("Topic '{}' removed because last subscriber {} left", t, sid);
+                log.trace("Topic '{}' removed because last subscriber {} left", t, sid);
                 return null;
             }
             return subs;
@@ -111,7 +104,7 @@ public class InMemoryWsSessionRegistry implements WsSessionRegistry {
             topics.remove(topicName);
             return topics.isEmpty() ? null : topics;
         });
-        LOG.debug("Session {} unsubscribed from '{}'", sid, topicName);
+        log.debug("Session {} unsubscribed from '{}'", sid, topicName);
     }
 
     @Override
@@ -121,6 +114,6 @@ public class InMemoryWsSessionRegistry implements WsSessionRegistry {
 
     @Override
     public Collection<WsSession> getAllSessions() {
-        return activeSessions.values();
+        return super.getAll();
     }
 }

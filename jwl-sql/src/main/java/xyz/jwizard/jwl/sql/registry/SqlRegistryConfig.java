@@ -13,15 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.netclient.rest.pool;
+package xyz.jwizard.jwl.sql.registry;
 
-public enum TestPool implements UrlPool {
-    LIMITED_POOL,
-    OVERRIDE_POOL,
-    ;
+import xyz.jwizard.jwl.sql.SqlClientFactory;
+import xyz.jwizard.jwl.sql.config.SqlDatabaseConfig;
 
-    @Override
-    public String getPoolName() {
-        return name();
-    }
+record SqlRegistryConfig(SqlDatabaseConfig config, SqlClientFactory factory) {
 }

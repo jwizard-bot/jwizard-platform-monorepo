@@ -70,7 +70,7 @@ class JdbcSqlClientIntegrationTest {
             .build();
 
         registry.startAll();
-        db = registry.get(postgres.getDatabaseName());
+        db = registry.getClient(postgres.getDatabaseName());
 
         db.update("""
                 CREATE TABLE users (

@@ -15,14 +15,11 @@
  */
 package xyz.jwizard.jwl.codec.serialization;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import xyz.jwizard.jwl.common.registry.GenericConcurrentRegistry;
 
-public class SerializerRegistry<S extends Serializer> {
-    private final Map<String, S> serializers = new ConcurrentHashMap<>();
-
+public class SerializerRegistry<S extends Serializer> extends GenericConcurrentRegistry<String, S> {
     protected SerializerRegistry() {
+        super();
     }
 
     public static SerializerRegistry<MessageSerializer> createDefault() {
@@ -34,19 +31,11 @@ public class SerializerRegistry<S extends Serializer> {
     }
 
     public SerializerRegistry<S> register(S serializer) {
-        serializers.put(serializer.format().getFormat(), serializer);
+        super.register(serializer.format().getFormat(), serializer);
         return this;
     }
 
-    public S get(SerializerFormat key) {
-        final S serializer = serializers.get(key.getFormat());
-        if (serializer == null) {
-            throw new IllegalArgumentException("no registered serializer for key: " + key);
-        }
-        return serializer;
-    }
-
-    public Collection<S> getSerializers() {
-        return serializers.values();
+    public S get(SerializerFormat format) {
+        return super.get(format.getFormat());
     }
 }

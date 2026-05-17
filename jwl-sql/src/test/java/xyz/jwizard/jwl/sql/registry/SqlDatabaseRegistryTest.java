@@ -51,7 +51,7 @@ class SqlDatabaseRegistryTest {
             .register(config, JdbcSqlClient::new)
             .build();
         // when
-        final SqlClient client = registry.get("test_db");
+        final SqlClient client = registry.getClient("test_db");
         // then
         assertNotNull(client);
     }
@@ -67,7 +67,7 @@ class SqlDatabaseRegistryTest {
             .databaseName("duplicate_db")
             .build();
         // when & then
-        final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+        final IllegalStateException exception = assertThrows(IllegalStateException.class,
             () -> SqlDatabaseRegistry.builder()
                 .poolFactory(mockPoolFactory)
                 .register(config, JdbcSqlClient::new)
@@ -84,8 +84,8 @@ class SqlDatabaseRegistryTest {
             .poolFactory(mockPoolFactory)
             .build();
         // when & then
-        final IllegalStateException exception = assertThrows(IllegalStateException.class,
-            () -> registry.get("ghost_db"));
-        assertTrue(exception.getMessage().contains("No SQL client registered"));
+        final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+            () -> registry.getClient("ghost_db"));
+        assertTrue(exception.getMessage().contains("No registered element found"));
     }
 }

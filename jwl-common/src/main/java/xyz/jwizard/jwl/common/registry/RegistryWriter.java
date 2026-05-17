@@ -13,9 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.websocket.listener.action.pool;
+package xyz.jwizard.jwl.common.registry;
 
-import xyz.jwizard.jwl.common.Identifiable;
+public interface RegistryWriter<K, V> {
+    void register(K key, V value);
 
-public interface WsActionPool extends Identifiable<String> {
+    boolean remove(K key);
+
+    boolean removeDirect(K key, V value);
+
+    void clear();
 }

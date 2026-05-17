@@ -42,7 +42,7 @@ public class DefaultEnvelopeSerializerCache implements EnvelopeSerializerCache {
 
     @Override
     public EnvelopeSerializerCache init(EnvelopeSerializerRegistry registry) {
-        cache.putAll(registry.getSerializers().stream()
+        cache.putAll(registry.getAll().stream()
             .collect(Collectors.groupingBy(
                 s -> StringUtil.toLowerCase(s.baseFormat().getFormat()),
                 Collectors.toMap(

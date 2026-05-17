@@ -13,12 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.netclient.group;
+package xyz.jwizard.jwl.common.registry;
 
-import xyz.jwizard.jwl.common.registry.RegistryReader;
-import xyz.jwizard.jwl.common.registry.RegistryWriter;
+import java.util.Collection;
+import java.util.Map;
 
-public interface ClientRegistry<T extends ClientGroupConfig>
-    extends RegistryReader<ClientGroup, T>, RegistryWriter<ClientGroup, T> {
-    void register(T config);
+public interface RegistryReader<K, V> {
+    V get(K key);
+
+    V getOrNull(K key);
+
+    Collection<V> getAll();
+
+    Map<K, V> getEntries();
 }

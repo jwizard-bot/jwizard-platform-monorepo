@@ -64,7 +64,7 @@ class SerializerRegistryTest {
         // then
         assertThatThrownBy(() -> registry.get(StandardSerializerFormat.RAW))
             .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("no registered serializer for key: RAW");
+            .hasMessageContaining("No registered element found for key:");
     }
 
     @Test
@@ -75,10 +75,10 @@ class SerializerRegistryTest {
         registry.register(jsonSerializer);
         final Serializer newJsonSerializer = mock(Serializer.class);
         when(newJsonSerializer.format()).thenReturn(StandardSerializerFormat.JSON);
-        // when
-        registry.register(newJsonSerializer);
-        // then
-        assertThat(registry.get(StandardSerializerFormat.JSON)).isEqualTo(newJsonSerializer);
+        // when & then
+        assertThatThrownBy(() -> registry.register(newJsonSerializer))
+            .isInstanceOf(IllegalStateException.class)
+            .hasMessageContaining("is already registered");
     }
 
     @Test
@@ -90,7 +90,7 @@ class SerializerRegistryTest {
         registry.register(jsonSerializer);
         registry.register(protobufSerializer);
         // when
-        final Collection<Serializer> all = registry.getSerializers();
+        final Collection<Serializer> all = registry.getAll();
         // then
         assertThat(all).hasSize(2).containsExactlyInAnyOrder(jsonSerializer, protobufSerializer);
     }

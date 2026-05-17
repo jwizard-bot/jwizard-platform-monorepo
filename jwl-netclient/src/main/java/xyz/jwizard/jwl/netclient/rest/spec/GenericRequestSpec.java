@@ -104,7 +104,7 @@ public abstract class GenericRequestSpec implements RequestSpec, RequestView {
         this.serializerRegistry = serializerRegistry;
         clientGroup = ClientGroup.GLOBAL;
         messageSerializer = updateSerializerFromPool(clientGroup);
-        requestRetryPolicy = clientRegistry.getConfig(clientGroup).getRetryPolicy();
+        requestRetryPolicy = clientRegistry.get(clientGroup).getRetryPolicy();
     }
 
     @Override
@@ -114,7 +114,7 @@ public abstract class GenericRequestSpec implements RequestSpec, RequestView {
             messageSerializer = updateSerializerFromPool(clientGroup);
         }
         if (requestRetryPolicy == null) {
-            requestRetryPolicy = clientRegistry.getConfig(clientGroup).getRetryPolicy();
+            requestRetryPolicy = clientRegistry.get(clientGroup).getRetryPolicy();
         }
         return this;
     }
@@ -221,7 +221,7 @@ public abstract class GenericRequestSpec implements RequestSpec, RequestView {
         abortedResponse = null;
         List<RequestInterceptor> groupInterceptors = List.of();
         if (clientGroup != null) {
-            groupInterceptors = clientRegistry.getConfig(clientGroup).getInterceptors();
+            groupInterceptors = clientRegistry.get(clientGroup).getInterceptors();
         }
         if (!localInterceptorsSorted && !interceptors.isEmpty()) {
             interceptors.sort(Ordered.COMPARATOR);
@@ -283,7 +283,7 @@ public abstract class GenericRequestSpec implements RequestSpec, RequestView {
         if (NetworkUtil.isAbsoluteUrl(url)) {
             return url;
         }
-        final String baseUrl = clientRegistry.getConfig(clientGroup).getUrl();
+        final String baseUrl = clientRegistry.get(clientGroup).getUrl();
         return NetworkUtil.concatPaths(baseUrl, url);
     }
 
@@ -296,7 +296,7 @@ public abstract class GenericRequestSpec implements RequestSpec, RequestView {
     }
 
     private MessageSerializer updateSerializerFromPool(ClientGroup clientGroup) {
-        return serializerRegistry.get(clientRegistry.getConfig(clientGroup).getDefaultFormat());
+        return serializerRegistry.get(clientRegistry.get(clientGroup).getDefaultFormat());
     }
 
     private boolean isRetryableStatus(HttpStatus status) {
