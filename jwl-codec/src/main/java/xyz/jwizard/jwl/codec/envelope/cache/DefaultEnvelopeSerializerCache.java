@@ -44,7 +44,7 @@ public class DefaultEnvelopeSerializerCache implements EnvelopeSerializerCache {
     public EnvelopeSerializerCache init(EnvelopeSerializerRegistry registry) {
         cache.putAll(registry.getAll().stream()
             .collect(Collectors.groupingBy(
-                s -> StringUtil.toLowerCase(s.baseFormat().getFormat()),
+                s -> StringUtil.toLowerCase(s.getBaseFormat().getFormatName()),
                 Collectors.toMap(
                     s -> StringUtil.toLowerCase(s.getCodecDataType().getCode()),
                     Function.identity()

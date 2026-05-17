@@ -60,7 +60,7 @@ class JsonEnvelopeDeserializationTest {
         when(jsonSerializerMock.deserialize(any(String.class), eq(Map.class))).thenReturn(mockTree);
         when(jsonSerializerMock.convert("test_payload", String.class)).thenReturn("test_payload");
         // when
-        final MessageEnvelope<?> envelope = serializer.deserializeEnvelope("{}", typeResolver);
+        final MessageEnvelope<?> envelope = serializer.unwrap("{}", typeResolver);
         // then
         assertThat(envelope.op()).isEqualTo(TestOpCode.USER_DATA.getCode());
         assertThat(envelope.data()).isEqualTo("test_payload");
@@ -73,7 +73,7 @@ class JsonEnvelopeDeserializationTest {
         final Map<String, Object> mockTree = Map.of("data", "no_op_here");
         when(jsonSerializerMock.deserialize(any(String.class), eq(Map.class))).thenReturn(mockTree);
         // then
-        assertThatThrownBy(() -> serializer.deserializeEnvelope("{}", typeResolver))
+        assertThatThrownBy(() -> serializer.unwrap("{}", typeResolver))
             .isInstanceOf(JsonSerializerException.class)
             .hasMessageContaining("Missing or invalid 'op' field");
     }
@@ -86,7 +86,7 @@ class JsonEnvelopeDeserializationTest {
         final Map<String, Object> mockTree = Map.of("op", nonExistingOpCode);
         when(jsonSerializerMock.deserialize(any(String.class), eq(Map.class))).thenReturn(mockTree);
         // when
-        final MessageEnvelope<?> envelope = serializer.deserializeEnvelope("{}", typeResolver);
+        final MessageEnvelope<?> envelope = serializer.unwrap("{}", typeResolver);
         // then
         assertThat(envelope).isNotNull();
         assertThat(envelope.op()).isEqualTo(nonExistingOpCode);

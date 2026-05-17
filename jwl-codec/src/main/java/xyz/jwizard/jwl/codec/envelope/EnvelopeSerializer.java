@@ -32,6 +32,7 @@ public interface EnvelopeSerializer<T> extends UnifiedMessageCodec {
 
     void acceptRaw(byte[] rawPayload, EncodedPayloadVisitor visitor);
 
+    @Override
     default MessageEnvelope<?> unwrap(String payload, Function<Integer, Class<?>> typeResolver) {
         throw new UnsupportedDataTypeException("Text frames are not supported by " + getFormat());
     }

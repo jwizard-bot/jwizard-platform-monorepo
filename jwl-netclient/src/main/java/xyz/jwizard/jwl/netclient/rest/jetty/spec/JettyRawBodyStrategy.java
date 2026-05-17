@@ -39,8 +39,9 @@ public class JettyRawBodyStrategy implements JettyBodyStrategy {
     @Override
     public Request.Content buildContent(GenericRequestSpec spec, MessageSerializer serializer,
                                         HeaderConsumer headerConsumer) {
-        final String mimeType = serializer.format().getMimeType();
-        LOG.trace("Building raw body, format: {}, mime type: {}", serializer.format().getFormat(),
+        final String mimeType = serializer.getFormat().getMimeType();
+        LOG.trace("Building raw body, format: {}, mime type: {}", serializer.getFormat()
+                .getFormatName(),
             mimeType);
         if (mimeType != null) {
             headerConsumer.addHeader(CommonHttpHeaderName.CONTENT_TYPE, mimeType);

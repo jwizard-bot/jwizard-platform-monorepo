@@ -92,7 +92,7 @@ class TypedSerializerFormatTest {
         )
             .isInstanceOf(UnsupportedDataTypeException.class)
             .hasMessageContaining("Text frames are not supported by protobuf+binary");
-        assertThatThrownBy(() -> defaultSerializer.deserializeEnvelope("{}", id -> String.class))
+        assertThatThrownBy(() -> defaultSerializer.unwrap("{}", id -> String.class))
             .isInstanceOf(UnsupportedDataTypeException.class)
             .hasMessageContaining("Text frames are not supported by protobuf+binary");
     }

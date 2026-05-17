@@ -15,12 +15,8 @@
  */
 package xyz.jwizard.jwl.net;
 
-public interface NetworkSession {
-    String getSessionId();
+public interface CloseCode {
+    int getCode();
 
-    String getPrincipalId();
-
-    void close(CloseCode closeCode);
-
-    boolean isClosed();
+    String getDefaultReason();
 }

@@ -59,7 +59,7 @@ class JsonEnvelopeSerializersTest {
         when(jsonSerializerMock.serialize(any())).thenReturn(mockJson);
         // when
         assertThat(textSerializer.getCodecDataType()).isEqualTo(DataType.TEXT);
-        textSerializer.serializeAndAccept(TestOpCode.USER_DATA, "hello", visitorMock);
+        textSerializer.serializeAndAcceptEnvelope(TestOpCode.USER_DATA, "hello", visitorMock);
         // then
         verify(visitorMock).accept(mockJson);
         // when
@@ -79,7 +79,7 @@ class JsonEnvelopeSerializersTest {
         when(jsonSerializerMock.serializeToBytes(any())).thenReturn(mockBytes);
         // when
         assertThat(binarySerializer.getCodecDataType()).isEqualTo(DataType.BINARY);
-        binarySerializer.serializeAndAccept(TestOpCode.USER_DATA, "hello", visitorMock);
+        binarySerializer.serializeAndAcceptEnvelope(TestOpCode.USER_DATA, "hello", visitorMock);
         // then
         verify(visitorMock).accept(mockBytes);
         // when
