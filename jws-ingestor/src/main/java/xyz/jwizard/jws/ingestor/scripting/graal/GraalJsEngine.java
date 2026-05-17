@@ -156,8 +156,8 @@ public class GraalJsEngine extends IdempotentService implements JsEngine {
         private Builder() {
         }
 
-        public Builder withLibrary(ScriptFile ScriptFile) {
-            this.libraries.add(ScriptFile);
+        public Builder withLibrary(ScriptFile scriptFile) {
+            this.libraries.add(scriptFile);
             return this;
         }
 
