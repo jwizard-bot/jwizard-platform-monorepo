@@ -13,5 +13,6 @@ buildSrc/.kotlin
 out/
 **/src/**/node_modules/
 **/src/**/generated/
+**/src/**/generated_tests/
 
 .env
