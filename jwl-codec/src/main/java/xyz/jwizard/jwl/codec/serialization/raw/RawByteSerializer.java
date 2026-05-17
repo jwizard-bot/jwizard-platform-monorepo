@@ -36,8 +36,8 @@ public class RawByteSerializer implements MessageSerializer, TypedMessageSeriali
         if (value == null) {
             return new byte[0];
         }
-        if (value instanceof byte[]) {
-            return (byte[]) value;
+        if (value instanceof byte[] array) {
+            return array;
         }
         throw new MessageSerializerException(
             "RawByteSerializer can only handle byte[], but received: " + value.getClass().getName()

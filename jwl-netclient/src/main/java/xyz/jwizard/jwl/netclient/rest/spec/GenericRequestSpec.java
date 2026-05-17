@@ -269,8 +269,8 @@ public abstract class GenericRequestSpec implements RequestSpec, RequestView {
                 }
             );
         } catch (Exception ex) {
-            if (ex instanceof RestRequestException) {
-                throw (RestRequestException) ex;
+            if (ex instanceof RestRequestException restRequestEx) {
+                throw restRequestEx;
             }
             log.error("Request failed definitively: {} {} - {}", method, url, ex.getMessage());
             throw new RestRequestException(String.format("Request failed: %s %s", method.name(),

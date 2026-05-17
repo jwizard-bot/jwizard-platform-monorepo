@@ -55,8 +55,8 @@ public class ProtobufSerializer implements MessageSerializer, TypedMessageSerial
         if (value == null) {
             return new byte[0];
         }
-        if (value instanceof MessageLite) {
-            return ((MessageLite) value).toByteArray();
+        if (value instanceof MessageLite message) {
+            return message.toByteArray();
         }
         throw new ProtobufSerializerException(
             "ProtobufSerializer can only handle com.google.protobuf.MessageLite, but received: "

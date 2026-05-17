@@ -44,8 +44,8 @@ public class ConcurrentUtil {
             future.join();
         } catch (CompletionException ex) {
             final Throwable cause = ex.getCause();
-            if (cause instanceof RuntimeException) {
-                throw (RuntimeException) cause;
+            if (cause instanceof RuntimeException runtimeEx) {
+                throw runtimeEx;
             }
             throw new ConcurrentOperationException(cause);
         }
