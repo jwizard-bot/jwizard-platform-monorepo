@@ -61,8 +61,8 @@ public class ConcurrentLocalSessionDispatcher implements LocalSessionDispatcher 
             LOG.trace("Broadcasting RAW payload to {} sessions (topic: {})", sessions.size(),
                 topic != null ? topic : "GLOBAL");
         }
-        for (WsSession session : sessions) {
-            executorService.submit(() -> send(session, payload));
+        for (final WsSession session : sessions) {
+            executorService.execute(() -> send(session, payload));
         }
     }
 
