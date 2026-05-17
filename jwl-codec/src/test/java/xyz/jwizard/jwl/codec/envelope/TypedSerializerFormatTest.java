@@ -40,7 +40,7 @@ class TypedSerializerFormatTest {
         // when
         final TypedSerializerFormat format = TypedSerializerFormat.from(base, type);
         // then
-        assertThat(format.getFormat()).isEqualTo("json+text");
+        assertThat(format.getFormatName()).isEqualTo("json+text");
         assertThat(format.toString()).isEqualTo("json+text");
         assertThat(format.baseFormat()).isEqualTo(base);
         assertThat(format.dataType()).isEqualTo(type);
@@ -52,7 +52,7 @@ class TypedSerializerFormatTest {
         // given
         EnvelopeSerializer<byte[]> defaultSerializer = new EnvelopeSerializer<>() {
             @Override
-            public SerializerFormat baseFormat() {
+            public SerializerFormat getBaseFormat() {
                 return StandardSerializerFormat.PROTOBUF;
             }
 
@@ -72,8 +72,8 @@ class TypedSerializerFormatTest {
             }
 
             @Override
-            public void serializeAndAccept(OpCode opCode, Object payload,
-                                           EncodedPayloadVisitor visitor) {
+            public void serializeAndAcceptEnvelope(OpCode opCode, Object payload,
+                                                   EncodedPayloadVisitor visitor) {
             }
 
             @Override
@@ -81,8 +81,8 @@ class TypedSerializerFormatTest {
             }
 
             @Override
-            public MessageEnvelope<?> deserializeEnvelope(byte[] payload,
-                                                          Function<Integer, Class<?>> typeResolver) {
+            public MessageEnvelope<?> unwrap(byte[] payload,
+                                             Function<Integer, Class<?>> typeResolver) {
                 return null;
             }
         };

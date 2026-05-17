@@ -31,11 +31,11 @@ public class SerializerRegistry<S extends Serializer> extends GenericConcurrentR
     }
 
     public SerializerRegistry<S> register(S serializer) {
-        super.register(serializer.format().getFormat(), serializer);
+        super.register(serializer.getFormat().getFormatName(), serializer);
         return this;
     }
 
     public S get(SerializerFormat format) {
-        return super.get(format.getFormat());
+        return super.get(format.getFormatName());
     }
 }

@@ -18,36 +18,21 @@ package xyz.jwizard.jwl.codec.envelope;
 import java.util.function.Function;
 
 import xyz.jwizard.jwl.codec.EncodedPayloadVisitor;
+import xyz.jwizard.jwl.codec.UnifiedMessageCodec;
 import xyz.jwizard.jwl.codec.UnsupportedDataTypeException;
-import xyz.jwizard.jwl.codec.serialization.SerializerFormat;
-import xyz.jwizard.jwl.codec.serialization.TypedSerializer;
-import xyz.jwizard.jwl.codec.serialization.TypedSerializerFormat;
 
-public interface EnvelopeSerializer<T> extends TypedSerializer {
-    SerializerFormat baseFormat();
-
-    @Override
-    default SerializerFormat format() {
-        return TypedSerializerFormat.from(baseFormat(), getCodecDataType());
-    }
-
+public interface EnvelopeSerializer<T> extends UnifiedMessageCodec {
     T serializeForSession(OpCode opCode, Object payload);
 
     byte[] serializeEnvelopeAsBytes(OpCode opCode, Object payload);
 
     default String serializeEnvelopeAsString(OpCode opCode, Object payload) {
-        throw new UnsupportedDataTypeException("Text frames are not supported by " + format());
+        throw new UnsupportedDataTypeException("Text frames are not supported by " + getFormat());
     }
-
-    void serializeAndAccept(OpCode opCode, Object payload, EncodedPayloadVisitor visitor);
 
     void acceptRaw(byte[] rawPayload, EncodedPayloadVisitor visitor);
 
-    MessageEnvelope<?> deserializeEnvelope(byte[] payload,
-                                           Function<Integer, Class<?>> typeResolver);
-
-    default MessageEnvelope<?> deserializeEnvelope(String payload,
-                                                   Function<Integer, Class<?>> typeResolver) {
-        throw new UnsupportedDataTypeException("Text frames are not supported by " + format());
+    default MessageEnvelope<?> unwrap(String payload, Function<Integer, Class<?>> typeResolver) {
+        throw new UnsupportedDataTypeException("Text frames are not supported by " + getFormat());
     }
 }

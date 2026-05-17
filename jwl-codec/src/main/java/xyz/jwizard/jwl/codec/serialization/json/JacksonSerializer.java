@@ -121,7 +121,7 @@ public class JacksonSerializer implements JsonSerializer {
     }
 
     @Override
-    public SerializerFormat format() {
+    public SerializerFormat getFormat() {
         return StandardSerializerFormat.JSON;
     }
 

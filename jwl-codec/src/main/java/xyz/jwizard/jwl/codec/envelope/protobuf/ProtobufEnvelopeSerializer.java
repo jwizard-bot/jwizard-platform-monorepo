@@ -42,7 +42,7 @@ public class ProtobufEnvelopeSerializer implements EnvelopeSerializer<byte[]> {
     }
 
     @Override
-    public SerializerFormat baseFormat() {
+    public SerializerFormat getBaseFormat() {
         return StandardSerializerFormat.PROTOBUF;
     }
 
@@ -74,7 +74,8 @@ public class ProtobufEnvelopeSerializer implements EnvelopeSerializer<byte[]> {
     }
 
     @Override
-    public void serializeAndAccept(OpCode opCode, Object payload, EncodedPayloadVisitor visitor) {
+    public void serializeAndAcceptEnvelope(OpCode opCode, Object payload,
+                                           EncodedPayloadVisitor visitor) {
         visitor.accept(serializeForSession(opCode, payload));
     }
 
@@ -84,8 +85,7 @@ public class ProtobufEnvelopeSerializer implements EnvelopeSerializer<byte[]> {
     }
 
     @Override
-    public MessageEnvelope<?> deserializeEnvelope(byte[] payload,
-                                                  Function<Integer, Class<?>> typeResolver) {
+    public MessageEnvelope<?> unwrap(byte[] payload, Function<Integer, Class<?>> typeResolver) {
         final RawWsEnvelope protoEnvelope = protobufSerializer
             .deserializeFromBytes(payload, RawWsEnvelope.class);
         final int op = protoEnvelope.getOp();

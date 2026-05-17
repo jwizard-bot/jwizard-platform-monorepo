@@ -15,6 +15,11 @@
  */
 package xyz.jwizard.jwl.common.util;
 
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,5 +75,25 @@ public class StringUtil {
             return new byte[0];
         }
         return str.getBytes(StandardCharsets.UTF_8);
+    }
+
+    public static String truncateToUtf8Bytes(String text, int maxBytes) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
+        final byte[] bytes = text.getBytes(StandardCharsets.UTF_8);
+        if (bytes.length <= maxBytes) {
+            return text;
+        }
+        final CharsetDecoder decoder = StandardCharsets.UTF_8.newDecoder()
+            .onMalformedInput(CodingErrorAction.IGNORE)
+            .onUnmappableCharacter(CodingErrorAction.IGNORE);
+        try {
+            final ByteBuffer buffer = ByteBuffer.wrap(bytes, 0, maxBytes);
+            final CharBuffer decoded = decoder.decode(buffer);
+            return decoded.toString();
+        } catch (CharacterCodingException ex) {
+            return "";
+        }
     }
 }

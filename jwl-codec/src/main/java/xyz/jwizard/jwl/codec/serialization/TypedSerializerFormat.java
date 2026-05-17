@@ -28,19 +28,19 @@ public record TypedSerializerFormat(
     }
 
     @Override
-    public String getFormat() {
-        return baseFormat.getFormat() + "+" + dataType.getCode();
+    public String getFormatName() {
+        return baseFormat.getFormatName() + "+" + dataType.getCode();
     }
 
     @Override
     public String getMimeType() {
         // application/x-jwl-[dataType]+[baseFormat]
-        return "application/x-jwl-" + dataType.getCode() + "+" + baseFormat.getFormat();
+        return "application/x-jwl-" + dataType.getCode() + "+" + baseFormat.getFormatName();
     }
 
     @Override
     @NonNull
     public String toString() {
-        return getFormat();
+        return getFormatName();
     }
 }

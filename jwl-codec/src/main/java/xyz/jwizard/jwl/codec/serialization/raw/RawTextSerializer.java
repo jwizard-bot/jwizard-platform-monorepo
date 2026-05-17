@@ -46,7 +46,7 @@ public class RawTextSerializer implements MessageSerializer, TypedMessageSeriali
     }
 
     @Override
-    public SerializerFormat format() {
+    public SerializerFormat getFormat() {
         return StandardSerializerFormat.RAW;
     }
 

@@ -62,9 +62,9 @@ class ProtobufEnvelopeSerializerTest {
     @Test
     @DisplayName("should have proper base format and BINARY data type")
     void shouldHaveProperFormats() {
-        assertThat(serializer.baseFormat()).isEqualTo(StandardSerializerFormat.PROTOBUF);
+        assertThat(serializer.getBaseFormat()).isEqualTo(StandardSerializerFormat.PROTOBUF);
         assertThat(serializer.getCodecDataType()).isEqualTo(DataType.BINARY);
-        assertThat(serializer.format().getFormat()).isEqualTo("protobuf+binary");
+        assertThat(serializer.getFormat().getFormatName()).isEqualTo("protobuf+binary");
     }
 
     @Test
@@ -89,7 +89,7 @@ class ProtobufEnvelopeSerializerTest {
             .build();
         final int expectedOp = TestOpCode.USER_DATA.getCode();
         // when
-        serializer.serializeAndAccept(TestOpCode.USER_DATA, payload, visitorMock);
+        serializer.serializeAndAcceptEnvelope(TestOpCode.USER_DATA, payload, visitorMock);
         // then
         verify(visitorMock).accept(bytesCaptor.capture());
         final byte[] outputBytes = bytesCaptor.getValue();
@@ -122,8 +122,7 @@ class ProtobufEnvelopeSerializerTest {
         final Function<Integer, Class<?>> typeResolver = code -> code == op
             ? TestMessage.class : null;
         // when
-        final MessageEnvelope<?> result = serializer
-            .deserializeEnvelope(networkBytes, typeResolver);
+        final MessageEnvelope<?> result = serializer.unwrap(networkBytes, typeResolver);
         // then
         assertThat(result.op()).isEqualTo(op);
         assertThat(result.data()).isInstanceOf(TestMessage.class);
@@ -136,7 +135,7 @@ class ProtobufEnvelopeSerializerTest {
     @DisplayName("should serialize null payload as EMPTY ByteString inside envelope")
     void shouldHandleNullPayload() throws Exception {
         // when
-        serializer.serializeAndAccept(TestOpCode.USER_DATA, null, visitorMock);
+        serializer.serializeAndAcceptEnvelope(TestOpCode.USER_DATA, null, visitorMock);
         // then
         verify(visitorMock).accept(bytesCaptor.capture());
         final RawWsEnvelope envelope = RawWsEnvelope.parseFrom(bytesCaptor.getValue());

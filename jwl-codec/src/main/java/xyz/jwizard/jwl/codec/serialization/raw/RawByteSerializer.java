@@ -56,7 +56,7 @@ public class RawByteSerializer implements MessageSerializer, TypedMessageSeriali
     }
 
     @Override
-    public StandardSerializerFormat format() {
+    public StandardSerializerFormat getFormat() {
         return StandardSerializerFormat.RAW;
     }
 

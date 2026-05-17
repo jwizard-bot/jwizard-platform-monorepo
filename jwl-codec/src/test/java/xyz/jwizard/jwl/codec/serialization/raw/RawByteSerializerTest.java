@@ -94,7 +94,7 @@ class RawByteSerializerTest {
     @Test
     @DisplayName("should return correct format")
     void shouldReturnRawFormat() {
-        assertThat(serializer.format()).isEqualTo(StandardSerializerFormat.RAW);
+        assertThat(serializer.getFormat()).isEqualTo(StandardSerializerFormat.RAW);
     }
 
     @Test

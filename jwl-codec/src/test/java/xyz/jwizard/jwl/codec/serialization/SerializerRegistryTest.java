@@ -48,8 +48,8 @@ class SerializerRegistryTest {
     @DisplayName("should register and retrieve serializer by format")
     void shouldRegisterAndGetSerializer() {
         // given
-        when(jsonSerializer.format()).thenReturn(StandardSerializerFormat.JSON);
-        when(protobufSerializer.format()).thenReturn(StandardSerializerFormat.PROTOBUF);
+        when(jsonSerializer.getFormat()).thenReturn(StandardSerializerFormat.JSON);
+        when(protobufSerializer.getFormat()).thenReturn(StandardSerializerFormat.PROTOBUF);
         // when
         registry.register(jsonSerializer);
         registry.register(protobufSerializer);
@@ -71,10 +71,10 @@ class SerializerRegistryTest {
     @DisplayName("should overwrite serializer when registering with same format")
     void shouldOverwriteOnDuplicateRegistration() {
         // given
-        when(jsonSerializer.format()).thenReturn(StandardSerializerFormat.JSON);
+        when(jsonSerializer.getFormat()).thenReturn(StandardSerializerFormat.JSON);
         registry.register(jsonSerializer);
         final Serializer newJsonSerializer = mock(Serializer.class);
-        when(newJsonSerializer.format()).thenReturn(StandardSerializerFormat.JSON);
+        when(newJsonSerializer.getFormat()).thenReturn(StandardSerializerFormat.JSON);
         // when & then
         assertThatThrownBy(() -> registry.register(newJsonSerializer))
             .isInstanceOf(IllegalStateException.class)
@@ -85,8 +85,8 @@ class SerializerRegistryTest {
     @DisplayName("should return all registered serializers")
     void shouldReturnAllSerializers() {
         // given
-        when(jsonSerializer.format()).thenReturn(StandardSerializerFormat.JSON);
-        when(protobufSerializer.format()).thenReturn(StandardSerializerFormat.PROTOBUF);
+        when(jsonSerializer.getFormat()).thenReturn(StandardSerializerFormat.JSON);
+        when(protobufSerializer.getFormat()).thenReturn(StandardSerializerFormat.PROTOBUF);
         registry.register(jsonSerializer);
         registry.register(protobufSerializer);
         // when
@@ -99,7 +99,7 @@ class SerializerRegistryTest {
     @DisplayName("should support fluent api for registration")
     void shouldSupportFluentApi() {
         // given
-        when(jsonSerializer.format()).thenReturn(StandardSerializerFormat.JSON);
+        when(jsonSerializer.getFormat()).thenReturn(StandardSerializerFormat.JSON);
         // when
         final SerializerRegistry<Serializer> returnedRegistry = registry.register(jsonSerializer);
         // then

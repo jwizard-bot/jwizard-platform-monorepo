@@ -35,6 +35,7 @@ import com.google.protobuf.MessageLite;
 
 import xyz.jwizard.jwl.codec.DataType;
 import xyz.jwizard.jwl.codec.EncodedPayloadVisitor;
+import xyz.jwizard.jwl.codec.serialization.SerializerFormat;
 import xyz.jwizard.jwl.codec.serialization.StandardSerializerFormat;
 import xyz.jwizard.jwl.common.reflect.ClassScanner;
 
@@ -108,7 +109,7 @@ class ProtobufSerializerTest {
     @DisplayName("should return correct format for protobuf")
     void shouldReturnFormat() {
         // when
-        final var format = serializer.format();
+        final SerializerFormat format = serializer.getFormat();
         // then
         assertThat(format).isEqualTo(StandardSerializerFormat.PROTOBUF);
     }

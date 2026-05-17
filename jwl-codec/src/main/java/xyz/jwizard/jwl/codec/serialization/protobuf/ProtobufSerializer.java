@@ -83,7 +83,7 @@ public class ProtobufSerializer implements MessageSerializer, TypedMessageSerial
     }
 
     @Override
-    public SerializerFormat format() {
+    public SerializerFormat getFormat() {
         return StandardSerializerFormat.PROTOBUF;
     }
 

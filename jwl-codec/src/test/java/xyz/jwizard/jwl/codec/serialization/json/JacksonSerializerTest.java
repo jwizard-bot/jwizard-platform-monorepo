@@ -128,7 +128,7 @@ class JacksonSerializerTest {
     @DisplayName("should return correct serializer format")
     void shouldReturnCorrectFormat() {
         // when
-        final SerializerFormat format = strict.format();
+        final SerializerFormat format = strict.getFormat();
         // then
         assertThat(format).isEqualTo(StandardSerializerFormat.JSON);
     }

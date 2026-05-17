@@ -34,20 +34,18 @@ public abstract class JsonEnvelopeSerializer<T> implements EnvelopeSerializer<T>
     }
 
     @Override
-    public SerializerFormat baseFormat() {
+    public SerializerFormat getBaseFormat() {
         return StandardSerializerFormat.JSON;
     }
 
     @Override
-    public MessageEnvelope<?> deserializeEnvelope(byte[] payload,
-                                                  Function<Integer, Class<?>> typeResolver) {
+    public MessageEnvelope<?> unwrap(byte[] payload, Function<Integer, Class<?>> typeResolver) {
         final Map<?, ?> tree = serializer.deserializeFromBytes(payload, Map.class);
         return parseMapToEnvelope(tree, typeResolver);
     }
 
     @Override
-    public MessageEnvelope<?> deserializeEnvelope(String payload,
-                                                  Function<Integer, Class<?>> typeResolver) {
+    public MessageEnvelope<?> unwrap(String payload, Function<Integer, Class<?>> typeResolver) {
         final Map<?, ?> tree = serializer.deserialize(payload, Map.class);
         return parseMapToEnvelope(tree, typeResolver);
     }

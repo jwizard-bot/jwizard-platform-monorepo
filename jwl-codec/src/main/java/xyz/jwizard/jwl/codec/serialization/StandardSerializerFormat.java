@@ -30,7 +30,7 @@ public enum StandardSerializerFormat implements SerializerFormat {
     }
 
     @Override
-    public String getFormat() {
+    public String getFormatName() {
         return format;
     }
 
