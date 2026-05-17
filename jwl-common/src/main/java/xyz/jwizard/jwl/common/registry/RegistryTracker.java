@@ -13,13 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.jwizard.jwl.websocket.registry;
+package xyz.jwizard.jwl.common.registry;
 
-import java.util.Collection;
+public interface RegistryTracker<V> {
+    void register(V value);
 
-import xyz.jwizard.jwl.common.registry.RegistryTracker;
-import xyz.jwizard.jwl.websocket.WsSession;
-
-public interface WsSessionRegistry extends RegistryTracker<WsSession>, WsSubscriptionRegistry {
-    Collection<WsSession> getUnsafeSubscribers(String topic);
+    void unregister(V value);
 }
