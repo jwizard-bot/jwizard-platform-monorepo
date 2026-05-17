@@ -30,7 +30,7 @@ import xyz.jwizard.jwl.common.bootstrap.lifecycle.IdempotentService;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.reflect.TypeReference;
 import xyz.jwizard.jwl.common.util.Assert;
-import xyz.jwizard.jwl.common.util.CastUtil;
+import xyz.jwizard.jwl.common.util.StringUtil;
 import xyz.jwizard.jwl.kv.pubsub.PubSubBroadcaster;
 import xyz.jwizard.jwl.kv.pubsub.PubSubRegistrar;
 import xyz.jwizard.jwl.kv.pubsub.subscriber.KvSubscriber;
@@ -114,7 +114,7 @@ public abstract class KvServer extends IdempotentService implements KeyValueStor
             strategies.get(mode).accept(sub);
 
             log.debug("Auto-registered {} subscriber: [{}] on '{}'",
-                mode.name().toLowerCase(), sub.getClass().getSimpleName(), channelStr);
+                StringUtil.toLowerCase(mode.name()), sub.getClass().getSimpleName(), channelStr);
         }
         if (!validSubscribers.isEmpty()) {
             log.info("Successfully registered {} {} subscribers", validSubscribers.size(),

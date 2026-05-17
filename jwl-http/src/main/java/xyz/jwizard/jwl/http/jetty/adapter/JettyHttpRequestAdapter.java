@@ -22,6 +22,7 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.util.MultiMap;
 import org.eclipse.jetty.util.UrlEncoded;
 
+import xyz.jwizard.jwl.common.util.StringUtil;
 import xyz.jwizard.jwl.http.HttpRequest;
 import xyz.jwizard.jwl.net.http.header.CommonHttpHeaderName;
 import xyz.jwizard.jwl.net.http.header.HttpHeaderName;
@@ -92,6 +93,6 @@ public class JettyHttpRequestAdapter implements HttpRequest {
         final String rawType = (semicolonIndex != -1)
             ? contentType.substring(0, semicolonIndex)
             : contentType;
-        return rawType.trim().toLowerCase();
+        return StringUtil.toLowerCase(rawType.trim());
     }
 }

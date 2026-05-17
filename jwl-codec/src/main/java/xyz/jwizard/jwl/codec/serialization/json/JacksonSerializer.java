@@ -20,6 +20,7 @@ import java.io.OutputStream;
 
 import xyz.jwizard.jwl.codec.serialization.SerializerFormat;
 import xyz.jwizard.jwl.codec.serialization.StandardSerializerFormat;
+import xyz.jwizard.jwl.common.util.StringUtil;
 
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.DeserializationFeature;
@@ -125,6 +126,7 @@ public class JacksonSerializer implements JsonSerializer {
     }
 
     private String getCleanMessage(JacksonException ex) {
-        return ex.getOriginalMessage().split(";")[0].trim();
+        final String exStr = StringUtil.splitAndGetFirst(ex.getOriginalMessage().trim(), ';');
+        return exStr == null ? "" : exStr;
     }
 }

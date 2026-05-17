@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import xyz.jwizard.jwl.codec.envelope.EnvelopeSerializer;
 import xyz.jwizard.jwl.codec.envelope.EnvelopeSerializerRegistry;
+import xyz.jwizard.jwl.common.util.StringUtil;
 
 // for O(1)
 public class DefaultEnvelopeSerializerCache implements EnvelopeSerializerCache {
@@ -43,9 +44,9 @@ public class DefaultEnvelopeSerializerCache implements EnvelopeSerializerCache {
     public EnvelopeSerializerCache init(EnvelopeSerializerRegistry registry) {
         cache.putAll(registry.getSerializers().stream()
             .collect(Collectors.groupingBy(
-                s -> s.baseFormat().getFormat().toLowerCase(),
+                s -> StringUtil.toLowerCase(s.baseFormat().getFormat()),
                 Collectors.toMap(
-                    s -> s.getCodecDataType().getCode().toLowerCase(),
+                    s -> StringUtil.toLowerCase(s.getCodecDataType().getCode()),
                     Function.identity()
                 )
             )));
@@ -65,12 +66,13 @@ public class DefaultEnvelopeSerializerCache implements EnvelopeSerializerCache {
                 frame);
             return null;
         }
-        final Map<String, EnvelopeSerializer<?>> frames = cache.get(encoding.toLowerCase());
+        final Map<String, EnvelopeSerializer<?>> frames = cache
+            .get(StringUtil.toLowerCase(encoding));
         if (frames == null) {
             LOG.debug("No serializers found for encoding: '{}'", encoding);
             return null;
         }
-        final EnvelopeSerializer<?> serializer = frames.get(frame.toLowerCase());
+        final EnvelopeSerializer<?> serializer = frames.get(StringUtil.toLowerCase(frame));
         if (serializer != null) {
             LOG.debug("Successfully resolved serializer: {} for [{} / {}]",
                 serializer.getClass().getSimpleName(), encoding, frame);

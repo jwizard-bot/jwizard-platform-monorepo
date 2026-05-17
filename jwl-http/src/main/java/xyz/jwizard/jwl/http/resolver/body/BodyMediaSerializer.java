@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import xyz.jwizard.jwl.codec.serialization.SerializerFormat;
 import xyz.jwizard.jwl.codec.serialization.StandardSerializerFormat;
 import xyz.jwizard.jwl.common.util.CollectionUtil;
+import xyz.jwizard.jwl.common.util.StringUtil;
 import xyz.jwizard.jwl.common.util.math.MemSize;
 import xyz.jwizard.jwl.common.util.math.MemUnit;
 
@@ -119,7 +120,7 @@ enum BodyMediaSerializer {
             return;
         }
         for (final String type : mapping.contentTypes) {
-            final String normalizedType = type.toLowerCase();
+            final String normalizedType = StringUtil.toLowerCase(type);
             if (normalizedType.endsWith("/*")) {
                 final String prefix = normalizedType.substring(0, normalizedType.length() - 1);
                 BY_PREFIX_TYPE.put(prefix, mapping);

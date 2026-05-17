@@ -29,6 +29,7 @@ import xyz.jwizard.jwl.codec.DataType;
 import xyz.jwizard.jwl.codec.EncodedPayloadVisitor;
 import xyz.jwizard.jwl.codec.serialization.MessageSerializerException;
 import xyz.jwizard.jwl.codec.serialization.StandardSerializerFormat;
+import xyz.jwizard.jwl.common.util.StringUtil;
 
 @ExtendWith(MockitoExtension.class)
 class RawByteSerializerTest {
@@ -41,7 +42,7 @@ class RawByteSerializerTest {
     @DisplayName("should return the same byte array on serialization")
     void shouldSerializeRawBytes() {
         // given
-        final byte[] input = "hello jwizard".getBytes();
+        final byte[] input = StringUtil.getBytes("hello jwizard");
         // when
         final byte[] result = serializer.serializeToBytes(input);
         // then

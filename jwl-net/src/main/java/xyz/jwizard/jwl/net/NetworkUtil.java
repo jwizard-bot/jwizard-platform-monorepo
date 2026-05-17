@@ -19,8 +19,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import xyz.jwizard.jwl.common.bootstrap.ForbiddenInstantiationException;
+import xyz.jwizard.jwl.common.util.StringUtil;
 import xyz.jwizard.jwl.common.util.io.IoUtil;
 
 public class NetworkUtil {
@@ -35,14 +37,14 @@ public class NetworkUtil {
         if (address == null || address.isBlank()) {
             throw new IllegalArgumentException("Address string cannot be null or empty");
         }
-        final String[] parts = address.split(":");
-        if (parts.length != 2) {
+        final List<String> parts = StringUtil.split(address, ':');
+        if (parts.size() != 2) {
             throw new IllegalArgumentException("Invalid address format. Expected 'host:port', " +
                 "but got: '" + address + "'");
         }
         try {
-            final String host = parts[0].trim();
-            final int port = Integer.parseInt(parts[1].trim());
+            final String host = parts.getFirst().trim();
+            final int port = Integer.parseInt(parts.getLast().trim());
             return HostPort.from(host, port);
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Invalid port number in address definition: '" +
