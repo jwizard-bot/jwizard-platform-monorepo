@@ -15,7 +15,15 @@
  */
 package xyz.jwizard.jwl.net;
 
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 public interface CloseCode {
+    static Set<Integer> ofCodes(CloseCode... closeCodes) {
+        return Arrays.stream(closeCodes).map(CloseCode::getCode).collect(Collectors.toSet());
+    }
+
     int getCode();
 
     String getDefaultReason();
