@@ -31,6 +31,11 @@ public class Assert {
         state(object != null, message);
     }
 
+    public static <T> T notNullAndGet(T object, String message) {
+        state(object != null, message);
+        return object;
+    }
+
     public static void notEmpty(Collection<?> collection, String message) {
         state(collection != null && !collection.isEmpty(), message);
     }
