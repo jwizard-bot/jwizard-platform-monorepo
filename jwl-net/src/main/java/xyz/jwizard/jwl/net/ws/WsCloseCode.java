@@ -21,7 +21,6 @@ import xyz.jwizard.jwl.net.CloseCode;
 public enum WsCloseCode implements CloseCode {
     NORMAL(1000, "Normal closure"),
     REPLACED_SESSION(1000, "Replaced by new session"),
-    GOING_AWAY(1001, "Going away"),
     UNSUPPORTED_FRAME_TYPE(1003, "Unsupported frame type"),
     INTERNAL_SERVER_ERROR(1011, "Internal server error"),
     SERVER_OVERLOADED(1011, "Server overloaded"),
