@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package xyz.jwizard.netclient.websocket.protobuf;
+
+option java_package = "xyz.jwizard.jwl.netclient.websocket.protobuf";
+option java_outer_classname = "TestPayloadProto";
+option java_multiple_files = false;
+
+message MyMessage {
+    int32 id = 1;
+    string content = 2;
+}
