@@ -15,10 +15,13 @@
  */
 package xyz.jwizard.jwl.net;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Map;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -195,5 +198,33 @@ public class NetworkUtilTest {
         final String result = NetworkUtil.addQueryParameter(malformed, "a", "b");
         // then
         assertTrue(result.endsWith("?a=b") || result.endsWith("&a=b"));
+    }
+
+    @Test
+    @DisplayName("should correctly parse query parameters from a valid URI")
+    void shouldParseQueryParameters() {
+        // given
+        final String uri = "ws://localhost:8080/v1?encoding=raw&frame=binary&token=secret123";
+        // when
+        final Map<String, String> params = NetworkUtil.getQueryParameters(uri);
+        // then
+        assertThat(params).hasSize(3)
+            .containsEntry("encoding", "raw")
+            .containsEntry("frame", "binary")
+            .containsEntry("token", "secret123");
+    }
+
+    @Test
+    @DisplayName("should ignore fragment and return empty map for uri without parameters")
+    void shouldHandleFragmentAndEmptyQuery() {
+        // given
+        final String uriWithFragment = "ws://localhost:8080/v1#section1";
+        final String uriClean = "ws://localhost:8080/v1";
+        // when
+        final Map<String, String> paramsFragment = NetworkUtil.getQueryParameters(uriWithFragment);
+        final Map<String, String> paramsClean = NetworkUtil.getQueryParameters(uriClean);
+        // then
+        assertThat(paramsFragment).isEmpty();
+        assertThat(paramsClean).isEmpty();
     }
 }

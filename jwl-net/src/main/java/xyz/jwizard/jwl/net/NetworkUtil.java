@@ -17,9 +17,12 @@ package xyz.jwizard.jwl.net;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import xyz.jwizard.jwl.common.bootstrap.ForbiddenInstantiationException;
 import xyz.jwizard.jwl.common.util.StringUtil;
@@ -99,5 +102,35 @@ public class NetworkUtil {
         final String encodedValue = URLEncoder.encode(value, StandardCharsets.UTF_8);
         final String separator = uriWithoutFragment.contains("?") ? "&" : "?";
         return uriWithoutFragment + separator + encodedKey + "=" + encodedValue + fragment;
+    }
+
+    public static Map<String, String> getQueryParameters(String originalUri) {
+        if (originalUri == null || originalUri.isEmpty()) {
+            return Map.of();
+        }
+        try {
+            final int hashIdx = originalUri.indexOf('#');
+            final String uriToParse = (hashIdx != -1)
+                ? originalUri.substring(0, hashIdx)
+                : originalUri;
+            final URI uri = new URI(uriToParse);
+            final String query = uri.getQuery();
+            if (query == null || query.isEmpty()) {
+                return Map.of();
+            }
+            final Map<String, String> queryParams = new HashMap<>();
+            final List<String> pairs = StringUtil.split(query, '&');
+            for (final String pair : pairs) {
+                final String[] keyValue = pair.split("=", 2);
+                final String key = URLDecoder.decode(keyValue[0], StandardCharsets.UTF_8);
+                final String value = (keyValue.length > 1)
+                    ? URLDecoder.decode(keyValue[1], StandardCharsets.UTF_8)
+                    : "";
+                queryParams.put(key, value);
+            }
+            return queryParams;
+        } catch (Exception ex) {
+            return Map.of();
+        }
     }
 }
