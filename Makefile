@@ -12,7 +12,14 @@ build:
 build-cache:
 	./gradlew build --continue
 
+.PHONY: format-check
+format-check:
+	./gradlew spotlessCheck
+
+.PHONY: format-apply
+format-apply:
+	./gradlew spotlessApply
 
 include Makefile.docker
-include Makefile.jws
+include Makefile.jw
 include Makefile.tools
