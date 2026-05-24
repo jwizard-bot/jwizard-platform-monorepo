@@ -16,6 +16,6 @@
   ~ Please refer to the LICENSE file in the root directory for full restrictions.
   -->
 <configuration>
-  <property name="SERVICE_OR_LIBRARY_NAME" value="jws-cli"/>
-  <include resource="logback-test-base.xml"/>
+  <property name="SERVICE_OR_LIBRARY_NAME" value="jws-cli" />
+  <include resource="logback-test-base.xml" />
 </configuration>

@@ -16,6 +16,6 @@
   ~ Please refer to the LICENSE file in the root directory for full restrictions.
   -->
 <configuration>
-  <property name="SERVICE_NAME" value="jws-ingestor"/>
-  <include resource="logback-prod-base.xml"/>
+  <property name="SERVICE_NAME" value="jws-ingestor" />
+  <include resource="logback-prod-base.xml" />
 </configuration>
