@@ -20,8 +20,7 @@ package xyz.jwizard.jwl.codec;
 import java.io.Serial;
 
 public class UnsupportedDataTypeException extends RuntimeException {
-    @Serial
-    private static final long serialVersionUID = 1L;
+    @Serial private static final long serialVersionUID = 1L;
 
     public UnsupportedDataTypeException(String message) {
         super(message);

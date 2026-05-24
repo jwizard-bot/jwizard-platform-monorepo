@@ -20,8 +20,7 @@ package xyz.jwizard.jwl.common.bootstrap;
 import java.io.Serial;
 
 public class ForbiddenInstantiationException extends CriticalBootstrapException {
-    @Serial
-    private static final long serialVersionUID = 1L;
+    @Serial private static final long serialVersionUID = 1L;
 
     public ForbiddenInstantiationException(Class<?> clazz) {
         super("Class instantiation: [" + clazz.getName() + "] is strictly forbidden");

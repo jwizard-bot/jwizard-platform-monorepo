@@ -20,8 +20,7 @@ package xyz.jwizard.jwl.http.exception;
 import java.io.Serial;
 
 public class RequestTooLargeException extends RuntimeException {
-    @Serial
-    private static final long serialVersionUID = 1L;
+    @Serial private static final long serialVersionUID = 1L;
 
     public RequestTooLargeException(String message) {
         super(message);
