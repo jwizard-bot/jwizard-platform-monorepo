@@ -23,14 +23,14 @@ import org.gradle.api.artifacts.VersionCatalog
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.provider.Provider
 import org.gradle.plugin.use.PluginDependency
+import java.io.File
 
-fun getPluginId(accessor: Provider<PluginDependency>): String {
-    return accessor.get().pluginId
-}
+fun getPluginId(accessor: Provider<PluginDependency>): String = accessor.get().pluginId
 
-fun getEnv(name: String, defValue: String = ""): String {
-    return System.getenv("JW_$name") ?: defValue
-}
+fun getEnv(
+    name: String,
+    defValue: String = "",
+): String = System.getenv("JW_$name") ?: defValue
 
 val Project.libs: VersionCatalog
     get() = extensions.getByType(VersionCatalogsExtension::class.java).named("libs")

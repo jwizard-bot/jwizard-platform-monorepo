@@ -39,15 +39,24 @@ class JwServicePlugin : Plugin<Project> {
         }
     }
 
-    private fun applyApplicationConventions(project: Project, jwExt: JwServiceExtension) {
-        project.pluginManager.apply(project.libs.getPlugin("shadow").get().pluginId)
+    private fun applyApplicationConventions(
+        project: Project,
+        jwExt: JwServiceExtension,
+    ) {
+        project.pluginManager.apply(
+            project.libs
+                .getPlugin("shadow")
+                .get()
+                .pluginId,
+        )
         project.pluginManager.apply("application")
         project.dependencies {
             add("runtimeOnly", project.libs.getLibrary("logback.classic"))
         }
-        val mainClazzProvider = jwExt.packageSuffix.zip(jwExt.mainClass) { suffix, clazz ->
-            "${project.group}.jws.$suffix.$clazz"
-        }
+        val mainClazzProvider =
+            jwExt.packageSuffix.zip(jwExt.mainClass) { suffix, clazz ->
+                "${project.group}.jws.$suffix.$clazz"
+            }
         project.configure<JavaApplication> {
             mainClass.set(mainClazzProvider)
         }

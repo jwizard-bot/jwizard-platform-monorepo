@@ -27,9 +27,7 @@ import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.register
-
 import org.gradle.plugins.ide.idea.model.IdeaModel
-
 
 class JwPolyglotJsPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -49,47 +47,52 @@ class JwPolyglotJsPlugin : Plugin<Project> {
         }
     }
 
-    private fun registerTasks(project: Project, extension: JwPolyglotJsExtension) {
-        val npmInstall = project.tasks.register<NpmTask>("npmInstallDeps") {
-            val deps = mutableListOf("install")
-            deps.addAll(extension.npmDependencies.get())
+    private fun registerTasks(
+        project: Project,
+        extension: JwPolyglotJsExtension,
+    ) {
+        val npmInstall =
+            project.tasks.register<NpmTask>("npmInstallDeps") {
+                val deps = mutableListOf("install")
+                deps.addAll(extension.npmDependencies.get())
 
-            args.set(deps)
-            inputs.file("src/main/js/package.json")
-            outputs.dir("src/main/js/node_modules")
-        }
-        val bundleTask = project.tasks.register<NpxTask>("bundleJs") {
-            dependsOn(npmInstall)
+                args.set(deps)
+                inputs.file("src/main/js/package.json")
+                outputs.dir("src/main/js/node_modules")
+            }
+        val bundleTask =
+            project.tasks.register<NpxTask>("bundleJs") {
+                dependsOn(npmInstall)
 
-            val outputDir = project.layout.projectDirectory.dir("src/main/generated/js")
+                val outputDir = project.layout.projectDirectory.dir("src/main/generated/js")
 
-            inputs.dir("src/main/js").withPropertyName("sourceDir")
-            inputs.dir("src/main/js/node_modules").withPropertyName("nodeModules")
-            outputs.dir(outputDir).withPropertyName("outputDir")
+                inputs.dir("src/main/js").withPropertyName("sourceDir")
+                inputs.dir("src/main/js/node_modules").withPropertyName("nodeModules")
+                outputs.dir(outputDir).withPropertyName("outputDir")
 
-            doFirst {
-                val outDirFile = outputDir.asFile
-                if (!outDirFile.exists()) {
-                    outDirFile.mkdirs()
+                doFirst {
+                    val outDirFile = outputDir.asFile
+                    if (!outDirFile.exists()) {
+                        outDirFile.mkdirs()
+                    }
                 }
-            }
-            command.set("esbuild")
+                command.set("esbuild")
 
-            val esbuildArgs = mutableListOf<String>()
-            extension.entryPoints.get().forEach { (alias, srcPath) ->
-                val absoluteSrc = project.file("src/main/js/$srcPath").absolutePath
-                esbuildArgs.add("$alias=$absoluteSrc")
-            }
-            esbuildArgs.addAll(
-                listOf(
-                    "--bundle",
-                    "--format=iife",
-                    "--minify",
-                    "--outdir=${outputDir.asFile.absolutePath}"
+                val esbuildArgs = mutableListOf<String>()
+                extension.entryPoints.get().forEach { (alias, srcPath) ->
+                    val absoluteSrc = project.file("src/main/js/$srcPath").absolutePath
+                    esbuildArgs.add("$alias=$absoluteSrc")
+                }
+                esbuildArgs.addAll(
+                    listOf(
+                        "--bundle",
+                        "--format=iife",
+                        "--minify",
+                        "--outdir=${outputDir.asFile.absolutePath}",
+                    ),
                 )
-            )
-            args.set(esbuildArgs)
-        }
+                args.set(esbuildArgs)
+            }
         project.tasks.named("processResources") {
             dependsOn(bundleTask)
         }

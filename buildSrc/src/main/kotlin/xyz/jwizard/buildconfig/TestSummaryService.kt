@@ -23,12 +23,18 @@ import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import java.util.concurrent.atomic.AtomicLong
 
-abstract class TestSummaryService : BuildService<BuildServiceParameters.None>, AutoCloseable {
+abstract class TestSummaryService :
+    BuildService<BuildServiceParameters.None>,
+    AutoCloseable {
     private val totalPassed = AtomicLong(0)
     private val totalFailed = AtomicLong(0)
     private val totalSkipped = AtomicLong(0)
 
-    fun addResults(passed: Long, failed: Long, skipped: Long) {
+    fun addResults(
+        passed: Long,
+        failed: Long,
+        skipped: Long,
+    ) {
         totalPassed.addAndGet(passed)
         totalFailed.addAndGet(failed)
         totalSkipped.addAndGet(skipped)
@@ -56,7 +62,6 @@ abstract class TestSummaryService : BuildService<BuildServiceParameters.None>, A
     }
 }
 
-fun Project.registerTestSummaryService(): Provider<TestSummaryService> {
-    return gradle.sharedServices.registerIfAbsent("testSummary", TestSummaryService::class.java) {
+fun Project.registerTestSummaryService(): Provider<TestSummaryService> =
+    gradle.sharedServices.registerIfAbsent("testSummary", TestSummaryService::class.java) {
     }
-}
