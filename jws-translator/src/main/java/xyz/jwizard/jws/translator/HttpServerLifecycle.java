@@ -17,8 +17,6 @@
  */
 package xyz.jwizard.jws.translator;
 
-import java.util.Set;
-
 import xyz.jwizard.jwl.codec.serialization.SerializerRegistry;
 import xyz.jwizard.jwl.codec.serialization.json.JacksonSerializer;
 import xyz.jwizard.jwl.codec.serialization.raw.RawByteSerializer;
@@ -31,21 +29,24 @@ import xyz.jwizard.jwl.http.jetty.JettyHttpServer;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
+import java.util.Set;
+
 @Singleton
-public class HttpServerLifecycle implements LifecycleHook {
+class HttpServerLifecycle implements LifecycleHook {
     private final HttpServer httpServer;
 
     @Inject
     HttpServerLifecycle(ComponentProvider componentProvider) {
-        httpServer = JettyHttpServer.builder()
-            .componentProvider(componentProvider)
-            .serializerRegistry(SerializerRegistry.createDefault()
-                .register(JacksonSerializer.createDefaultStrictMapper())
-                .register(RawByteSerializer.createDefault())
-            )
-            .ignoredPaths(Set.of())
-            .port(9094) /*TODO: incoming from config server*/
-            .build();
+        httpServer =
+                JettyHttpServer.builder()
+                        .componentProvider(componentProvider)
+                        .serializerRegistry(
+                                SerializerRegistry.createDefault()
+                                        .register(JacksonSerializer.createDefaultStrictMapper())
+                                        .register(RawByteSerializer.createDefault()))
+                        .ignoredPaths(Set.of())
+                        .port(9094) /* TODO: incoming from config server */
+                        .build();
     }
 
     @Override

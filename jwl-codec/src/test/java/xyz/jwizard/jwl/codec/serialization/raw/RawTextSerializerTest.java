@@ -21,8 +21,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 
-import java.nio.charset.StandardCharsets;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,12 +32,13 @@ import xyz.jwizard.jwl.codec.EncodedPayloadVisitor;
 import xyz.jwizard.jwl.codec.serialization.MessageSerializerException;
 import xyz.jwizard.jwl.codec.serialization.StandardSerializerFormat;
 
+import java.nio.charset.StandardCharsets;
+
 @ExtendWith(MockitoExtension.class)
 class RawTextSerializerTest {
     private final RawTextSerializer serializer = RawTextSerializer.createDefault();
 
-    @Mock
-    private EncodedPayloadVisitor visitorMock;
+    @Mock private EncodedPayloadVisitor visitorMock;
 
     @Test
     @DisplayName("should return the same string on serialization")
@@ -68,8 +67,8 @@ class RawTextSerializerTest {
         final Integer invalidInput = 12345;
         // then
         assertThatThrownBy(() -> serializer.serializePayload(invalidInput))
-            .isInstanceOf(MessageSerializerException.class)
-            .hasMessageContaining("RawStringSerializer can only handle String");
+                .isInstanceOf(MessageSerializerException.class)
+                .hasMessageContaining("RawStringSerializer can only handle String");
     }
 
     @Test
@@ -90,8 +89,8 @@ class RawTextSerializerTest {
         final String input = "some data";
         // then
         assertThatThrownBy(() -> serializer.deserializePayload(input, Integer.class))
-            .isInstanceOf(MessageSerializerException.class)
-            .hasMessageContaining("RawStringSerializer can only deserialize to String.class");
+                .isInstanceOf(MessageSerializerException.class)
+                .hasMessageContaining("RawStringSerializer can only deserialize to String.class");
     }
 
     @Test

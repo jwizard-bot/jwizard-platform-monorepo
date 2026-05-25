@@ -17,14 +17,14 @@
  */
 package xyz.jwizard.jwl.netclient.websocket.heartbeat;
 
-import java.util.concurrent.TimeUnit;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import xyz.jwizard.jwl.common.util.concurrent.PeriodicTaskScheduler;
 import xyz.jwizard.jwl.netclient.websocket.WsClientSession;
 import xyz.jwizard.jwl.netclient.websocket.group.heartbeat.WsHeartbeatConfig;
+
+import java.util.concurrent.TimeUnit;
 
 public class WsHeartbeatManager {
     private static final Logger LOG = LoggerFactory.getLogger(WsHeartbeatManager.class);
@@ -40,15 +40,16 @@ public class WsHeartbeatManager {
             return;
         }
         final long intervalMs = config.getInterval().toMillis();
-        LOG.debug("Starting WS heartbeat for session {} (interval: {} ms)", session.getSessionId(),
-            intervalMs);
+        LOG.debug(
+                "Starting WS heartbeat for session {} (interval: {} ms)",
+                session.getSessionId(),
+                intervalMs);
         scheduler.scheduleAtFixedRate(
-            session.getSessionId(),
-            new HeartbeatTask(session, config.getAction(), this),
-            intervalMs,
-            intervalMs,
-            TimeUnit.MILLISECONDS
-        );
+                session.getSessionId(),
+                new HeartbeatTask(session, config.getAction(), this),
+                intervalMs,
+                intervalMs,
+                TimeUnit.MILLISECONDS);
     }
 
     public void stop(String sessionId) {

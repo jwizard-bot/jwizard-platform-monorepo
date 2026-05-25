@@ -17,16 +17,16 @@
  */
 package xyz.jwizard.jwl.http.route;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import xyz.jwizard.jwl.common.util.StringUtil;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import xyz.jwizard.jwl.common.util.StringUtil;
 
 public class TrieRouter implements Router {
     private static final Logger LOG = LoggerFactory.getLogger(TrieRouter.class);

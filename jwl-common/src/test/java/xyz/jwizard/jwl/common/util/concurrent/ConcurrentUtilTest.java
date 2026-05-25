@@ -22,21 +22,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
+
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 class ConcurrentUtilTest {
     @Test
     @DisplayName("should complete successfully when onSuccess is invoked")
     void shouldCompleteSuccessfullyWhenOnSuccessInvoked() {
         // expect: no exception is thrown
-        assertDoesNotThrow(() ->
-            ConcurrentUtil.await(IoCallback::onSuccess)
-        );
+        assertDoesNotThrow(() -> ConcurrentUtil.await(IoCallback::onSuccess));
     }
 
     @Test
@@ -46,9 +44,11 @@ class ConcurrentUtilTest {
         final RuntimeException expectedException = new IllegalArgumentException("Invalid state");
         // when & then
         final IllegalArgumentException actualException =
-            assertThrows(IllegalArgumentException.class, () ->
-                ConcurrentUtil.await(callback -> callback.onFailure(expectedException))
-            );
+                assertThrows(
+                        IllegalArgumentException.class,
+                        () ->
+                                ConcurrentUtil.await(
+                                        callback -> callback.onFailure(expectedException)));
         assertEquals("Invalid state", actualException.getMessage());
     }
 
@@ -59,9 +59,11 @@ class ConcurrentUtilTest {
         final Exception checkedException = new IOException("Disk failure");
         // when & then
         final ConcurrentOperationException actualException =
-            assertThrows(ConcurrentOperationException.class, () ->
-                ConcurrentUtil.await(callback -> callback.onFailure(checkedException))
-            );
+                assertThrows(
+                        ConcurrentOperationException.class,
+                        () ->
+                                ConcurrentUtil.await(
+                                        callback -> callback.onFailure(checkedException)));
         assertEquals(checkedException, actualException.getCause());
     }
 
@@ -73,21 +75,28 @@ class ConcurrentUtilTest {
         final long startTime = System.currentTimeMillis();
         final long sleepTimeMs = 100;
         // when
-        ConcurrentUtil.await(callback -> {
-            // async I/O operation in separated thread
-            Thread.ofVirtual().start(() -> {
-                try {
-                    Thread.sleep(sleepTimeMs);
-                    callback.onSuccess();
-                } catch (InterruptedException e) {
-                    callback.onFailure(e);
-                }
-            });
-        });
+        ConcurrentUtil.await(
+                callback -> {
+                    // async I/O operation in separated thread
+                    Thread.ofVirtual()
+                            .start(
+                                    () -> {
+                                        try {
+                                            Thread.sleep(sleepTimeMs);
+                                            callback.onSuccess();
+                                        } catch (InterruptedException e) {
+                                            callback.onFailure(e);
+                                        }
+                                    });
+                });
         // then
         final long executionTime = System.currentTimeMillis() - startTime;
-        assertTrue(executionTime >= sleepTimeMs,
-            "Method should block for at least " + sleepTimeMs + "ms, but took " + executionTime
-                + "ms");
+        assertTrue(
+                executionTime >= sleepTimeMs,
+                "Method should block for at least "
+                        + sleepTimeMs
+                        + "ms, but took "
+                        + executionTime
+                        + "ms");
     }
 }

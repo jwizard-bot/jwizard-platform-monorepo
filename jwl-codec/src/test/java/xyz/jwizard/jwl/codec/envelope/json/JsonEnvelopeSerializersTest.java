@@ -23,8 +23,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import java.nio.charset.StandardCharsets;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,12 +35,12 @@ import xyz.jwizard.jwl.codec.EncodedPayloadVisitor;
 import xyz.jwizard.jwl.codec.envelope.TestOpCode;
 import xyz.jwizard.jwl.codec.serialization.json.JsonSerializer;
 
+import java.nio.charset.StandardCharsets;
+
 @ExtendWith(MockitoExtension.class)
 class JsonEnvelopeSerializersTest {
-    @Mock
-    private JsonSerializer jsonSerializerMock;
-    @Mock
-    private EncodedPayloadVisitor visitorMock;
+    @Mock private JsonSerializer jsonSerializerMock;
+    @Mock private EncodedPayloadVisitor visitorMock;
     private JsonTextEnvelopeSerializer textSerializer;
     private JsonBinaryEnvelopeSerializer binarySerializer;
 
@@ -53,8 +51,9 @@ class JsonEnvelopeSerializersTest {
     }
 
     @Test
-    @DisplayName("JsonTextEnvelopeSerializer should dispatch to accept(String) " +
-        "and convert raw bytes to String")
+    @DisplayName(
+            "JsonTextEnvelopeSerializer should dispatch to accept(String) "
+                    + "and convert raw bytes to String")
     void testJsonTextSerializer() {
         // given
         final String mockJson = "{\"op\":65636,\"data\":\"hello\"}";
@@ -73,8 +72,9 @@ class JsonEnvelopeSerializersTest {
     }
 
     @Test
-    @DisplayName("JsonBinaryEnvelopeSerializer should dispatch to accept(byte[]) " +
-        "and pass raw bytes directly")
+    @DisplayName(
+            "JsonBinaryEnvelopeSerializer should dispatch to accept(byte[]) "
+                    + "and pass raw bytes directly")
     void testJsonBinarySerializer() {
         // given
         final byte[] mockBytes = {1, 2, 3};

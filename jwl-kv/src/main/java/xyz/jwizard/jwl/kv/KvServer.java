@@ -17,15 +17,6 @@
  */
 package xyz.jwizard.jwl.kv;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-
 import org.jspecify.annotations.Nullable;
 
 import xyz.jwizard.jwl.common.bootstrap.lifecycle.IdempotentService;
@@ -40,8 +31,17 @@ import xyz.jwizard.jwl.kv.pubsub.subscriber.SubscriptionMode;
 import xyz.jwizard.jwl.net.HostPort;
 import xyz.jwizard.jwl.net.NetworkUtil;
 
-public abstract class KvServer extends IdempotentService implements KeyValueStore,
-    PubSubBroadcaster {
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+
+public abstract class KvServer extends IdempotentService
+        implements KeyValueStore, PubSubBroadcaster {
     protected final Set<HostPort> nodes;
     protected final String password;
     protected final ComponentProvider componentProvider;
@@ -59,8 +59,9 @@ public abstract class KvServer extends IdempotentService implements KeyValueStor
         for (final KvSubscriber<?> sub : registeredSubscribers) {
             while (!sub.isSubscribed()) {
                 if (System.currentTimeMillis() > limit) {
-                    throw new RuntimeException("Timeout waiting for subscriber readiness: " +
-                        sub.getClass().getSimpleName());
+                    throw new RuntimeException(
+                            "Timeout waiting for subscriber readiness: "
+                                    + sub.getClass().getSimpleName());
                 }
                 Thread.onSpinWait();
             }
@@ -77,37 +78,41 @@ public abstract class KvServer extends IdempotentService implements KeyValueStor
         log.info("KV server start initializing with {} node(s)", nodes.size());
         onKvServerStart();
         final PubSubRegistrar registrar = createRegistrar();
-        final int stringCount = registerSet(String.class,
-            new TypeReference<>() {
-            },
-            registrar::subscribe,
-            registrar::pSubscribe
-        );
-        final int binaryCount = registerSet(byte[].class,
-            new TypeReference<>() {
-            },
-            registrar::subscribeBinary,
-            registrar::pSubscribeBinary
-        );
-        log.info("KV subscribers auto-discovery completed, total registered: {}",
-            stringCount + binaryCount);
+        final int stringCount =
+                registerSet(
+                        String.class,
+                        new TypeReference<>() {},
+                        registrar::subscribe,
+                        registrar::pSubscribe);
+        final int binaryCount =
+                registerSet(
+                        byte[].class,
+                        new TypeReference<>() {},
+                        registrar::subscribeBinary,
+                        registrar::pSubscribeBinary);
+        log.info(
+                "KV subscribers auto-discovery completed, total registered: {}",
+                stringCount + binaryCount);
     }
 
     protected abstract void onKvServerStart();
 
     protected abstract PubSubRegistrar createRegistrar();
 
-    private <T> int registerSet(Class<T> payloadClass, TypeReference<KvSubscriber<T>> typeRef,
-                                Consumer<KvSubscriber<T>> exactRegistrar,
-                                Consumer<KvSubscriber<T>> patternRegistrar) {
+    private <T> int registerSet(
+            Class<T> payloadClass,
+            TypeReference<KvSubscriber<T>> typeRef,
+            Consumer<KvSubscriber<T>> exactRegistrar,
+            Consumer<KvSubscriber<T>> patternRegistrar) {
         final Collection<KvSubscriber<T>> subscribers = componentProvider.getInstancesOf(typeRef);
-        final Map<SubscriptionMode, Consumer<KvSubscriber<T>>> strategies = Map.of(
-            SubscriptionMode.EXACT, exactRegistrar,
-            SubscriptionMode.PATTERN, patternRegistrar
-        );
-        final List<KvSubscriber<T>> validSubscribers = subscribers.stream()
-            .filter(sub -> sub.getPayloadType().equals(payloadClass))
-            .toList();
+        final Map<SubscriptionMode, Consumer<KvSubscriber<T>>> strategies =
+                Map.of(
+                        SubscriptionMode.EXACT, exactRegistrar,
+                        SubscriptionMode.PATTERN, patternRegistrar);
+        final List<KvSubscriber<T>> validSubscribers =
+                subscribers.stream()
+                        .filter(sub -> sub.getPayloadType().equals(payloadClass))
+                        .toList();
         for (final KvSubscriber<T> sub : validSubscribers) {
             final String channelStr = sub.getChannel().buildChannel(sub.getChannelParams());
             final SubscriptionMode mode = sub.getMode();
@@ -115,12 +120,17 @@ public abstract class KvServer extends IdempotentService implements KeyValueStor
             registeredSubscribers.add(sub);
             strategies.get(mode).accept(sub);
 
-            log.debug("Auto-registered {} subscriber: [{}] on '{}'",
-                StringUtil.toLowerCase(mode.name()), sub.getClass().getSimpleName(), channelStr);
+            log.debug(
+                    "Auto-registered {} subscriber: [{}] on '{}'",
+                    StringUtil.toLowerCase(mode.name()),
+                    sub.getClass().getSimpleName(),
+                    channelStr);
         }
         if (!validSubscribers.isEmpty()) {
-            log.info("Successfully registered {} {} subscribers", validSubscribers.size(),
-                payloadClass.getSimpleName());
+            log.info(
+                    "Successfully registered {} {} subscribers",
+                    validSubscribers.size(),
+                    payloadClass.getSimpleName());
         }
         return validSubscribers.size();
     }
@@ -130,8 +140,7 @@ public abstract class KvServer extends IdempotentService implements KeyValueStor
         private String password;
         private ComponentProvider componentProvider;
 
-        protected AbstractBuilder() {
-        }
+        protected AbstractBuilder() {}
 
         protected abstract B self();
 
@@ -142,10 +151,11 @@ public abstract class KvServer extends IdempotentService implements KeyValueStor
 
         // as host:port
         public B rawNodes(Set<String> rawNodes) {
-            return nodes(rawNodes.stream()
-                .map(NetworkUtil::parseHostPort)
-                .map(hp -> HostPort.from(hp.host(), hp.port()))
-                .collect(Collectors.toSet()));
+            return nodes(
+                    rawNodes.stream()
+                            .map(NetworkUtil::parseHostPort)
+                            .map(hp -> HostPort.from(hp.host(), hp.port()))
+                            .collect(Collectors.toSet()));
         }
 
         public B password(@Nullable String password) {

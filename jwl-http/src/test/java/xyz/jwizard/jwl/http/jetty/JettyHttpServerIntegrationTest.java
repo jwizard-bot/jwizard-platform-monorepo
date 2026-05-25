@@ -19,14 +19,6 @@ package xyz.jwizard.jwl.http.jetty;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-import java.io.ByteArrayInputStream;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.util.Map;
-import java.util.concurrent.ThreadLocalRandom;
-
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -51,6 +43,14 @@ import xyz.jwizard.jwl.http.header.TestHttpHeaderValue;
 import xyz.jwizard.jwl.net.http.HttpStatus;
 import xyz.jwizard.jwl.net.http.header.CommonHttpHeaderName;
 
+import java.io.ByteArrayInputStream;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
+
 public class JettyHttpServerIntegrationTest {
     private static HttpServer httpServer;
     private static int dynamicPort;
@@ -61,17 +61,18 @@ public class JettyHttpServerIntegrationTest {
     @BeforeAll
     static void startServer() {
         scanner = new ClassGraphScanner("xyz.jwizard.jwl.http");
-        final ApplicationContext context = ApplicationContext.createDefault(scanner, Map.of(
-            ComponentProvider.class, GuiceComponentProvider.class
-        ));
-        httpServer = JettyHttpServer.builder()
-            .componentProvider(context.getComponentProvider())
-            .serializerRegistry(SerializerRegistry.createDefault()
-                .register(TestConstants.SERIALIZER)
-                .register(RawByteSerializer.createDefault())
-            )
-            .port(0)
-            .build();
+        final ApplicationContext context =
+                ApplicationContext.createDefault(
+                        scanner, Map.of(ComponentProvider.class, GuiceComponentProvider.class));
+        httpServer =
+                JettyHttpServer.builder()
+                        .componentProvider(context.getComponentProvider())
+                        .serializerRegistry(
+                                SerializerRegistry.createDefault()
+                                        .register(TestConstants.SERIALIZER)
+                                        .register(RawByteSerializer.createDefault()))
+                        .port(0)
+                        .build();
         httpServer.start();
         dynamicPort = httpServer.getLocalPort();
     }
@@ -83,20 +84,22 @@ public class JettyHttpServerIntegrationTest {
     }
 
     private HttpResponse<String> get(String path) throws Exception {
-        final HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create("http://localhost:" + dynamicPort + path))
-            .GET()
-            .build();
+        final HttpRequest request =
+                HttpRequest.newBuilder()
+                        .uri(URI.create("http://localhost:" + dynamicPort + path))
+                        .GET()
+                        .build();
         return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     private HttpResponse<String> post(Object body) throws Exception {
         final String json = TestConstants.SERIALIZER.serialize(body);
-        final HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create("http://localhost:" + dynamicPort + "/api/test"))
-            .header("Content-Type", "application/json")
-            .POST(HttpRequest.BodyPublishers.ofString(json))
-            .build();
+        final HttpRequest request =
+                HttpRequest.newBuilder()
+                        .uri(URI.create("http://localhost:" + dynamicPort + "/api/test"))
+                        .header("Content-Type", "application/json")
+                        .POST(HttpRequest.BodyPublishers.ofString(json))
+                        .build();
         return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
@@ -203,7 +206,8 @@ public class JettyHttpServerIntegrationTest {
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK_200.getCode());
         assertThat(response.headers().firstValue(TestHttpHeaderName.X_TEST_FILTER.getCode()))
-            .isPresent().contains(TestHttpHeaderValue.EXECUTED.buildWithArgs());
+                .isPresent()
+                .contains(TestHttpHeaderValue.EXECUTED.buildWithArgs());
     }
 
     @Test
@@ -215,7 +219,8 @@ public class JettyHttpServerIntegrationTest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.FORBIDDEN_403.getCode());
         assertThat(response.body()).isEmpty();
         assertThat(response.headers().firstValue(TestHttpHeaderName.X_TEST_FILTER.getCode()))
-            .isPresent().contains(TestHttpHeaderValue.EXECUTED.buildWithArgs());
+                .isPresent()
+                .contains(TestHttpHeaderValue.EXECUTED.buildWithArgs());
     }
 
     @Test
@@ -227,7 +232,7 @@ public class JettyHttpServerIntegrationTest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK_200.getCode());
         assertThat(response.body()).isEqualTo("public data");
         assertThat(response.headers().firstValue(TestHttpHeaderName.X_SECURED_BY.getCode()))
-            .isEmpty();
+                .isEmpty();
     }
 
     @Test
@@ -244,19 +249,23 @@ public class JettyHttpServerIntegrationTest {
     @DisplayName("GET /api/private should return 200 OK when valid token is provided")
     void shouldAllowSecuredRouteWithToken() throws Exception {
         // given
-        final HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create("http://localhost:" + dynamicPort + "/api/private"))
-            .header(CommonHttpHeaderName.AUTHORIZATION.getCode(), TestConstants.TEST_PASSWORD)
-            .GET()
-            .build();
+        final HttpRequest request =
+                HttpRequest.newBuilder()
+                        .uri(URI.create("http://localhost:" + dynamicPort + "/api/private"))
+                        .header(
+                                CommonHttpHeaderName.AUTHORIZATION.getCode(),
+                                TestConstants.TEST_PASSWORD)
+                        .GET()
+                        .build();
         // when
-        final HttpResponse<String> response = httpClient
-            .send(request, HttpResponse.BodyHandlers.ofString());
+        final HttpResponse<String> response =
+                httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK_200.getCode());
         assertThat(response.body()).isEqualTo("secret data");
         assertThat(response.headers().firstValue(TestHttpHeaderName.X_SECURED_BY.getCode()))
-            .isPresent().contains(TestHttpHeaderValue.ANNOTATION_FILTER.buildWithArgs());
+                .isPresent()
+                .contains(TestHttpHeaderValue.ANNOTATION_FILTER.buildWithArgs());
     }
 
     @Test
@@ -267,8 +276,8 @@ public class JettyHttpServerIntegrationTest {
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK_200.getCode());
         assertThat(response.headers().firstValue(TestHttpHeaderName.X_FILTER_ORDER.getCode()))
-            .isPresent()
-            .contains("First -> Second");
+                .isPresent()
+                .contains("First -> Second");
     }
 
     @Test
@@ -283,64 +292,76 @@ public class JettyHttpServerIntegrationTest {
         final int countAfterSecondRequest = CacheSpyFilter.supportsCounter.get();
         // then
         assertThat(countAfterSecondRequest)
-            .withFailMessage("Filter supports() was called again, cache is not working")
-            .isEqualTo(1);
+                .withFailMessage("Filter supports() was called again, cache is not working")
+                .isEqualTo(1);
     }
 
     @Test
     @DisplayName("POST /api/raw should accept wildcard Content-Type (image/png) and resolve as RAW")
     void shouldAcceptWildcardContentType() throws Exception {
         // given
-        final byte[] payload = new byte[]{0x01, 0x02, 0x03, 0x04};
-        final HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create("http://localhost:" + dynamicPort + "/api/raw"))
-            .header("Content-Type", "image/png")
-            .POST(HttpRequest.BodyPublishers.ofByteArray(payload))
-            .build();
+        final byte[] payload = new byte[] {0x01, 0x02, 0x03, 0x04};
+        final HttpRequest request =
+                HttpRequest.newBuilder()
+                        .uri(URI.create("http://localhost:" + dynamicPort + "/api/raw"))
+                        .header("Content-Type", "image/png")
+                        .POST(HttpRequest.BodyPublishers.ofByteArray(payload))
+                        .build();
         // when
-        final HttpResponse<String> response = httpClient
-            .send(request, HttpResponse.BodyHandlers.ofString());
+        final HttpResponse<String> response =
+                httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK_200.getCode());
         assertThat(response.body()).isEqualTo("Received 4 bytes of raw data");
     }
 
     @Test
-    @DisplayName("POST /api/limited should reject payload explicitly exceeding @Body " +
-        "limit (Fast-Fail via Content-Length)")
+    @DisplayName(
+            "POST /api/limited should reject payload explicitly exceeding @Body "
+                    + "limit (Fast-Fail via Content-Length)")
     void shouldFailFastOnExceedingDeclaredContentLength() throws Exception {
         // given
         final byte[] payload = StringUtil.getBytes("123456789012345");
-        final HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create("http://localhost:" + dynamicPort + "/api/limited"))
-            .header("Content-Type", "application/octet-stream")
-            .POST(HttpRequest.BodyPublishers.ofByteArray(payload)) // Set's Content-Length: 15
-            .build();
+        final HttpRequest request =
+                HttpRequest.newBuilder()
+                        .uri(URI.create("http://localhost:" + dynamicPort + "/api/limited"))
+                        .header("Content-Type", "application/octet-stream")
+                        .POST(
+                                HttpRequest.BodyPublishers.ofByteArray(
+                                        payload)) // Set's Content-Length: 15
+                        .build();
         // when
-        final HttpResponse<String> response = httpClient
-            .send(request, HttpResponse.BodyHandlers.ofString());
+        final HttpResponse<String> response =
+                httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.PAYLOAD_TOO_LARGE_413.getCode());
     }
 
     @Test
-    @DisplayName("POST /api/limited should reject chunked payload exceeding limit " +
-        "(via LimitedInputStream)")
+    @DisplayName(
+            "POST /api/limited should reject chunked payload exceeding limit "
+                    + "(via LimitedInputStream)")
     void shouldFailViaLimitedInputStreamForChunkedTransfer() throws Exception {
         // given - endpoint has limit of 10 bytes, we send 15 bytes of random garbage
         // via chunked transfer
         final byte[] payload = new byte[15];
         ThreadLocalRandom.current().nextBytes(payload);
-        final HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create("http://localhost:" + dynamicPort + "/api/limited"))
-            .header("Content-Type", "application/octet-stream")
-            // ofInputStream forces chunked transfer encoding, meaning Content-Length is not sent
-            // this bypasses the fail-fast check and forces LimitedInputStream to throw exception
-            .POST(HttpRequest.BodyPublishers.ofInputStream(() -> new ByteArrayInputStream(payload)))
-            .build();
+        final HttpRequest request =
+                HttpRequest.newBuilder()
+                        .uri(URI.create("http://localhost:" + dynamicPort + "/api/limited"))
+                        .header("Content-Type", "application/octet-stream")
+                        // ofInputStream forces chunked transfer encoding, meaning Content-Length is
+                        // not
+                        // sent
+                        // this bypasses the fail-fast check and forces LimitedInputStream to throw
+                        // exception
+                        .POST(
+                                HttpRequest.BodyPublishers.ofInputStream(
+                                        () -> new ByteArrayInputStream(payload)))
+                        .build();
         // when
-        final HttpResponse<String> response = httpClient
-            .send(request, HttpResponse.BodyHandlers.ofString());
+        final HttpResponse<String> response =
+                httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.PAYLOAD_TOO_LARGE_413.getCode());
     }
@@ -350,14 +371,15 @@ public class JettyHttpServerIntegrationTest {
     void shouldInjectHttpRequestDirectly() throws Exception {
         // given
         final String headerValue = TestHttpHeaderValue.DIRECT_INJECT.buildWithArgs();
-        final HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create("http://localhost:" + dynamicPort + "/api/inspect"))
-            .header(TestHttpHeaderName.X_INSPECT_HEADER.getCode(), headerValue)
-            .GET()
-            .build();
+        final HttpRequest request =
+                HttpRequest.newBuilder()
+                        .uri(URI.create("http://localhost:" + dynamicPort + "/api/inspect"))
+                        .header(TestHttpHeaderName.X_INSPECT_HEADER.getCode(), headerValue)
+                        .GET()
+                        .build();
         // when
-        final HttpResponse<String> response = httpClient
-            .send(request, HttpResponse.BodyHandlers.ofString());
+        final HttpResponse<String> response =
+                httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK_200.getCode());
         assertThat(response.body()).isEqualTo("method: GET, header: %s", headerValue);

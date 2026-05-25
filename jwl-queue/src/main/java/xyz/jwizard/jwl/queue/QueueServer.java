@@ -17,12 +17,6 @@
  */
 package xyz.jwizard.jwl.queue;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import xyz.jwizard.jwl.codec.serialization.MessageSerializer;
 import xyz.jwizard.jwl.codec.serialization.SerializerRegistry;
 import xyz.jwizard.jwl.common.bootstrap.CriticalBootstrapException;
@@ -32,6 +26,12 @@ import xyz.jwizard.jwl.common.reflect.TypeReference;
 import xyz.jwizard.jwl.common.util.Assert;
 import xyz.jwizard.jwl.net.HostPort;
 import xyz.jwizard.jwl.net.NetworkUtil;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public abstract class QueueServer extends IdempotentService {
     protected final String username;
@@ -56,9 +56,8 @@ public abstract class QueueServer extends IdempotentService {
             log.warn("Not providing any nodes, skipping configuration");
             return;
         }
-        final Set<QueueListener<?>> listeners = new HashSet<>(componentProvider
-            .getInstancesOf(new TypeReference<>() {
-            }));
+        final Set<QueueListener<?>> listeners =
+                new HashSet<>(componentProvider.getInstancesOf(new TypeReference<>() {}));
         log.info("Found {} queue listener(s)", listeners.size());
         log.info("Queue server start initializing with {} node(s)", nodes.size());
         onQueueServerStart();
@@ -76,12 +75,12 @@ public abstract class QueueServer extends IdempotentService {
     protected <T> void processDelivery(QueueListener<T> listener, byte[] body) {
         if (log.isTraceEnabled()) {
             final String rawPayload = new String(body, StandardCharsets.UTF_8);
-            log.trace("Raw bytes received from queue '{}': {}", listener.getQueueName(),
-                rawPayload);
+            log.trace(
+                    "Raw bytes received from queue '{}': {}", listener.getQueueName(), rawPayload);
         }
         final Class<T> targetType = listener.getMessageType();
-        final T payload = serializerRegistry.get(listener.getFormat())
-            .deserializeFromBytes(body, targetType);
+        final T payload =
+                serializerRegistry.get(listener.getFormat()).deserializeFromBytes(body, targetType);
         log.debug("Processing message from queue '{}': {}", listener.getQueueName(), payload);
         listener.onMessage(payload);
     }
@@ -89,7 +88,7 @@ public abstract class QueueServer extends IdempotentService {
     protected abstract void onQueueServerStart() throws Exception;
 
     protected abstract void onPublish(String exchange, String routingKey, byte[] body)
-        throws Exception;
+            throws Exception;
 
     protected abstract void onRegisterListener(QueueListener<?> listener) throws IOException;
 
@@ -99,26 +98,27 @@ public abstract class QueueServer extends IdempotentService {
             final String queueName = listener.getQueueName();
             try {
                 onRegisterListener(listener);
-                log.info("Registered listener for queue: {} (format: {})", queueName,
-                    listener.getFormat());
+                log.info(
+                        "Registered listener for queue: {} (format: {})",
+                        queueName,
+                        listener.getFormat());
                 registeredListeners++;
             } catch (Exception ex) {
-                throw new CriticalBootstrapException("Failed to register listener for queue: " +
-                    listener.getQueueName(), ex);
+                throw new CriticalBootstrapException(
+                        "Failed to register listener for queue: " + listener.getQueueName(), ex);
             }
         }
         log.info("Registered {} queue listener(s)", registeredListeners);
     }
 
-    protected static abstract class AbstractBuilder<B extends AbstractBuilder<B>> {
+    protected abstract static class AbstractBuilder<B extends AbstractBuilder<B>> {
         private String username;
         private String password;
         private Set<HostPort> nodes = new HashSet<>();
         private SerializerRegistry<MessageSerializer> serializerRegistry;
         private ComponentProvider componentProvider;
 
-        protected AbstractBuilder() {
-        }
+        protected AbstractBuilder() {}
 
         protected abstract B self();
 
@@ -129,10 +129,11 @@ public abstract class QueueServer extends IdempotentService {
 
         // as host:port
         public B rawNodes(Set<String> rawNodes) {
-            return nodes(rawNodes.stream()
-                .map(NetworkUtil::parseHostPort)
-                .map(hp -> HostPort.from(hp.host(), hp.port()))
-                .collect(Collectors.toSet()));
+            return nodes(
+                    rawNodes.stream()
+                            .map(NetworkUtil::parseHostPort)
+                            .map(hp -> HostPort.from(hp.host(), hp.port()))
+                            .collect(Collectors.toSet()));
         }
 
         public B username(String username) {

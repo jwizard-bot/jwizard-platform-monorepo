@@ -21,10 +21,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,6 +30,10 @@ import xyz.jwizard.jwl.common.reflect.TypeReference;
 
 import jakarta.inject.Singleton;
 
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
+
 class DependencyInjectionTest {
     private ComponentProvider componentProvider;
 
@@ -42,15 +42,15 @@ class DependencyInjectionTest {
         // given
         final ClassScanner scanner = mock(ClassScanner.class);
         when(scanner.getTypesAnnotatedWith(Singleton.class))
-            .thenReturn(Set.of(
-                MarkedComponent.class,
-                SimpleComponent.class,
-                TestInterfaceComponent.class,
-                SecondTestInterfaceComponent.class
-            ));
-        final ApplicationContext context = ApplicationContext.createDefault(scanner, Map.of(
-            ComponentProvider.class, GuiceComponentProvider.class
-        ));
+                .thenReturn(
+                        Set.of(
+                                MarkedComponent.class,
+                                SimpleComponent.class,
+                                TestInterfaceComponent.class,
+                                SecondTestInterfaceComponent.class));
+        final ApplicationContext context =
+                ApplicationContext.createDefault(
+                        scanner, Map.of(ComponentProvider.class, GuiceComponentProvider.class));
         componentProvider = context.getComponentProvider();
     }
 
@@ -81,7 +81,8 @@ class DependencyInjectionTest {
     @DisplayName("should return empty collection when no components have the annotation")
     void shouldReturnEmptyForMissingAnnotation() {
         // when
-        final Collection<Object> found = componentProvider.getInstancesAnnotatedWith(Override.class);
+        final Collection<Object> found =
+                componentProvider.getInstancesAnnotatedWith(Override.class);
         // then
         assertThat(found).isEmpty();
     }
@@ -90,33 +91,26 @@ class DependencyInjectionTest {
     @DisplayName("should find all instances by TypeReference")
     void shouldFindInstancesByTypeReference() {
         // given
-        final TypeReference<TestInterface> pluginType = new TypeReference<>() {
-        };
+        final TypeReference<TestInterface> pluginType = new TypeReference<>() {};
         // when
         final Collection<TestInterface> plugins = componentProvider.getInstancesOf(pluginType);
         // then
         assertThat(plugins)
-            .hasSize(2)
-            .hasOnlyElementsOfTypes(
-                TestInterfaceComponent.class,
-                SecondTestInterfaceComponent.class
-            );
+                .hasSize(2)
+                .hasOnlyElementsOfTypes(
+                        TestInterfaceComponent.class, SecondTestInterfaceComponent.class);
     }
 }
 
 @Singleton
 @TestMarker
-class MarkedComponent {
-}
+class MarkedComponent {}
 
 @Singleton
-class SimpleComponent {
-}
+class SimpleComponent {}
 
 @Singleton
-class TestInterfaceComponent implements TestInterface {
-}
+class TestInterfaceComponent implements TestInterface {}
 
 @Singleton
-class SecondTestInterfaceComponent implements TestInterface {
-}
+class SecondTestInterfaceComponent implements TestInterface {}

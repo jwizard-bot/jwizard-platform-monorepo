@@ -22,8 +22,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.Collection;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,15 +29,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collection;
+
 @ExtendWith(MockitoExtension.class)
 class SerializerRegistryTest {
     private SerializerRegistry<Serializer> registry;
 
-    @Mock
-    private Serializer jsonSerializer;
-
-    @Mock
-    private Serializer protobufSerializer;
+    @Mock private Serializer jsonSerializer;
+    @Mock private Serializer protobufSerializer;
 
     @BeforeEach
     void setUp() {
@@ -65,8 +62,8 @@ class SerializerRegistryTest {
     void shouldThrowExceptionWhenNotFound() {
         // then
         assertThatThrownBy(() -> registry.get(StandardSerializerFormat.RAW))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("No registered element found for key:");
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("No registered element found for key:");
     }
 
     @Test
@@ -79,8 +76,8 @@ class SerializerRegistryTest {
         when(newJsonSerializer.getFormat()).thenReturn(StandardSerializerFormat.JSON);
         // when & then
         assertThatThrownBy(() -> registry.register(newJsonSerializer))
-            .isInstanceOf(IllegalStateException.class)
-            .hasMessageContaining("is already registered");
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("is already registered");
     }
 
     @Test

@@ -17,15 +17,15 @@
  */
 package xyz.jwizard.jwl.common.util.io;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.net.URL;
-import java.util.function.Predicate;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import xyz.jwizard.jwl.common.bootstrap.ForbiddenInstantiationException;
+
+import java.io.Closeable;
+import java.io.IOException;
+import java.net.URL;
+import java.util.function.Predicate;
 
 public class IoUtil {
     private static final Logger LOG = LoggerFactory.getLogger(IoUtil.class);
@@ -68,13 +68,15 @@ public class IoUtil {
         closeQuietly(runnable, Runnable::run);
     }
 
-    public static <T> void closeQuietly(T resource, Predicate<T> predicate,
-                                        CloseAction<T> closeAction) {
-        closeQuietly(resource, r -> {
-            if (predicate.test(r)) {
-                closeAction.perform(r);
-            }
-        });
+    public static <T> void closeQuietly(
+            T resource, Predicate<T> predicate, CloseAction<T> closeAction) {
+        closeQuietly(
+                resource,
+                r -> {
+                    if (predicate.test(r)) {
+                        closeAction.perform(r);
+                    }
+                });
     }
 
     public static String removeTrailingSlash(String path) {

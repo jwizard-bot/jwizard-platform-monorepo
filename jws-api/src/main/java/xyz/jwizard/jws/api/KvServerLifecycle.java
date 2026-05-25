@@ -17,8 +17,6 @@
  */
 package xyz.jwizard.jws.api;
 
-import java.util.Set;
-
 import xyz.jwizard.jwl.common.bootstrap.lifecycle.LifecycleHook;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.reflect.ClassScanner;
@@ -32,21 +30,24 @@ import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
+import java.util.Set;
+
 @Singleton
 class KvServerLifecycle implements LifecycleHook {
     private final KvServer kvServer;
 
     @Inject
     KvServerLifecycle(ComponentProvider componentProvider) {
-        kvServer = JedisServer.builder()
-            .rawNodes(Set.of("127.0.0.1:9113" /*TODO: getting from config server*/))
-            .password(null /*TODO: getting from config server*/)
-            .poolMaxTotal(128 /*TODO: getting from config server*/)
-            .poolMinIdle(16 /*TODO: getting from config server*/)
-            .poolMaxIdle(64 /*TODO: getting from config server*/)
-            .componentProvider(componentProvider)
-            .withFactory(FactoryType.SINGLE_NODE)
-            .build();
+        kvServer =
+                JedisServer.builder()
+                        .rawNodes(Set.of("127.0.0.1:9113" /* TODO: getting from config server */))
+                        .password(null /* TODO: getting from config server */)
+                        .poolMaxTotal(128 /* TODO: getting from config server */)
+                        .poolMinIdle(16 /* TODO: getting from config server */)
+                        .poolMaxIdle(64 /* TODO: getting from config server */)
+                        .componentProvider(componentProvider)
+                        .withFactory(FactoryType.SINGLE_NODE)
+                        .build();
     }
 
     @Override

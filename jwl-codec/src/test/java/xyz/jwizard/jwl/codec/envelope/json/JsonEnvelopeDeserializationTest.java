@@ -23,9 +23,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-import java.util.Map;
-import java.util.function.Function;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,10 +35,12 @@ import xyz.jwizard.jwl.codec.envelope.TestOpCode;
 import xyz.jwizard.jwl.codec.serialization.json.JsonSerializer;
 import xyz.jwizard.jwl.codec.serialization.json.JsonSerializerException;
 
+import java.util.Map;
+import java.util.function.Function;
+
 @ExtendWith(MockitoExtension.class)
 class JsonEnvelopeDeserializationTest {
-    @Mock
-    private JsonSerializer jsonSerializerMock;
+    @Mock private JsonSerializer jsonSerializerMock;
     private JsonTextEnvelopeSerializer serializer;
     private Function<Integer, Class<?>> typeResolver;
 
@@ -55,10 +54,8 @@ class JsonEnvelopeDeserializationTest {
     @DisplayName("should properly parse map into MessageEnvelope")
     void shouldParseValidEnvelope() {
         // given
-        final Map<String, Object> mockTree = Map.of(
-            "op", TestOpCode.USER_DATA.getCode(),
-            "data", "test_payload"
-        );
+        final Map<String, Object> mockTree =
+                Map.of("op", TestOpCode.USER_DATA.getCode(), "data", "test_payload");
         when(jsonSerializerMock.deserialize(any(String.class), eq(Map.class))).thenReturn(mockTree);
         when(jsonSerializerMock.convert("test_payload", String.class)).thenReturn("test_payload");
         // when
@@ -76,8 +73,8 @@ class JsonEnvelopeDeserializationTest {
         when(jsonSerializerMock.deserialize(any(String.class), eq(Map.class))).thenReturn(mockTree);
         // then
         assertThatThrownBy(() -> serializer.unwrap("{}", typeResolver))
-            .isInstanceOf(JsonSerializerException.class)
-            .hasMessageContaining("Missing or invalid 'op' field");
+                .isInstanceOf(JsonSerializerException.class)
+                .hasMessageContaining("Missing or invalid 'op' field");
     }
 
     @Test

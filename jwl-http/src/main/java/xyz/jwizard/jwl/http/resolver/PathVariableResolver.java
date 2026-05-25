@@ -17,10 +17,6 @@
  */
 package xyz.jwizard.jwl.http.resolver;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.util.Set;
-
 import xyz.jwizard.jwl.common.util.PathUtil;
 import xyz.jwizard.jwl.http.HttpRequest;
 import xyz.jwizard.jwl.http.annotation.HttpController;
@@ -29,6 +25,10 @@ import xyz.jwizard.jwl.http.annotation.RequestMapping;
 import xyz.jwizard.jwl.http.exception.RouteValidationException;
 import xyz.jwizard.jwl.http.route.MatchResult;
 import xyz.jwizard.jwl.http.route.Router;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.Set;
 
 public class PathVariableResolver implements ArgumentResolver {
     private final Router router;
@@ -60,8 +60,8 @@ public class PathVariableResolver implements ArgumentResolver {
     @Override
     public void validate(Method method) throws RouteValidationException {
         final RequestMapping mapping = method.getAnnotation(RequestMapping.class);
-        final HttpController controller = method.getDeclaringClass()
-            .getAnnotation(HttpController.class);
+        final HttpController controller =
+                method.getDeclaringClass().getAnnotation(HttpController.class);
 
         final String httpMethod = mapping.method().name();
         final String basePath = controller != null ? controller.value() : "";
@@ -75,9 +75,11 @@ public class PathVariableResolver implements ArgumentResolver {
                 }
                 final String nameInAnnotation = parameter.getAnnotation(PathVariable.class).value();
                 if (!registeredVars.contains(nameInAnnotation)) {
-                    throw new RouteValidationException(method,
-                        String.format("PathVariable '%s' not found in registered route pattern: %s",
-                            nameInAnnotation, fullPath));
+                    throw new RouteValidationException(
+                            method,
+                            String.format(
+                                    "PathVariable '%s' not found in registered route pattern: %s",
+                                    nameInAnnotation, fullPath));
                 }
             }
         }

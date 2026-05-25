@@ -17,8 +17,6 @@
  */
 package xyz.jwizard.jwl.codec.serialization.raw;
 
-import java.nio.charset.StandardCharsets;
-
 import xyz.jwizard.jwl.codec.DataType;
 import xyz.jwizard.jwl.codec.EncodedPayloadVisitor;
 import xyz.jwizard.jwl.codec.serialization.MessageSerializer;
@@ -28,9 +26,10 @@ import xyz.jwizard.jwl.codec.serialization.StandardSerializerFormat;
 import xyz.jwizard.jwl.codec.serialization.TypedMessageSerializer;
 import xyz.jwizard.jwl.common.util.CastUtil;
 
+import java.nio.charset.StandardCharsets;
+
 public class RawTextSerializer implements MessageSerializer, TypedMessageSerializer<String> {
-    private RawTextSerializer() {
-    }
+    private RawTextSerializer() {}
 
     public static RawTextSerializer createDefault() {
         return new RawTextSerializer();
@@ -61,9 +60,8 @@ public class RawTextSerializer implements MessageSerializer, TypedMessageSeriali
             return str;
         }
         throw new MessageSerializerException(
-            "RawStringSerializer can only handle String, but received: " +
-                payload.getClass().getName()
-        );
+                "RawStringSerializer can only handle String, but received: "
+                        + payload.getClass().getName());
     }
 
     @Override
@@ -72,9 +70,8 @@ public class RawTextSerializer implements MessageSerializer, TypedMessageSeriali
             return CastUtil.unsafeCast(payload);
         }
         throw new MessageSerializerException(
-            "RawStringSerializer can only deserialize to String.class, but requested: " +
-                type.getName()
-        );
+                "RawStringSerializer can only deserialize to String.class, but requested: "
+                        + type.getName());
     }
 
     @Override

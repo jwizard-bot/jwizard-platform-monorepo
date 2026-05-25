@@ -17,10 +17,10 @@
  */
 package xyz.jwizard.jwl.websocket.registry;
 
-import java.util.Collection;
-
 import xyz.jwizard.jwl.common.registry.RegistryTracker;
 import xyz.jwizard.jwl.websocket.WsSession;
+
+import java.util.Collection;
 
 public interface WsSessionRegistry extends RegistryTracker<WsSession>, WsSubscriptionRegistry {
     Collection<WsSession> getUnsafeSubscribers(String topic);

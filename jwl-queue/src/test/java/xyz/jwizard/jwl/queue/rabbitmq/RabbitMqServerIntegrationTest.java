@@ -21,11 +21,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -61,18 +56,21 @@ import xyz.jwizard.jwl.queue.QueueListener;
 import xyz.jwizard.jwl.queue.QueueServer;
 import xyz.jwizard.jwl.queue.rabbitmq.connector.ConnectorType;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
 @Testcontainers
 @ExtendWith(MockitoExtension.class)
 public class RabbitMqServerIntegrationTest {
     @Container
-    static final RabbitMQContainer rabbitMQ = new RabbitMQContainer(
-        DockerImageName.parse("rabbitmq:3-management")
-    );
+    static final RabbitMQContainer rabbitMQ =
+            new RabbitMQContainer(DockerImageName.parse("rabbitmq:3-management"));
 
     private QueueServer server;
     private MessagePublisher messagePublisher;
-    @Mock
-    private ComponentProvider componentProvider;
+    @Mock private ComponentProvider componentProvider;
     private SerializerRegistry<MessageSerializer> serializerRegistry;
 
     @BeforeEach
@@ -101,8 +99,8 @@ public class RabbitMqServerIntegrationTest {
         // then
         final boolean received = listener.getLatch().await(5, TimeUnit.SECONDS);
         assertThat(received).as("Message should be received").isTrue();
-        final String receivedStr = new String(listener.getReceivedMessage(),
-            StandardCharsets.UTF_8);
+        final String receivedStr =
+                new String(listener.getReceivedMessage(), StandardCharsets.UTF_8);
         assertThat(receivedStr).isEqualTo("Hello RabbitMQ");
     }
 
@@ -115,11 +113,12 @@ public class RabbitMqServerIntegrationTest {
         startServer();
         // when
         final byte[] poisonPill = "Poison Pill".getBytes(StandardCharsets.UTF_8);
-        messagePublisher.publishToQueue("test.fail.queue", poisonPill, StandardSerializerFormat.RAW);
+        messagePublisher.publishToQueue(
+                "test.fail.queue", poisonPill, StandardSerializerFormat.RAW);
         // then
         Thread.sleep(500);
         try (final Connection conn = createDirectConnection();
-             Channel channel = conn.createChannel()) {
+                Channel channel = conn.createChannel()) {
 
             final GetResponse response = channel.basicGet("test.fail.queue.dlq", true);
             assertThat(response).as("Message should be routed to DLQ").isNotNull();
@@ -136,8 +135,8 @@ public class RabbitMqServerIntegrationTest {
         final JsonCommandListener listener = new JsonCommandListener();
         mockListenerRegistration(listener);
         startServer();
-        final PlayTrackCommand command = new PlayTrackCommand("123456789",
-            "https://youtube.com/watch?v=123");
+        final PlayTrackCommand command =
+                new PlayTrackCommand("123456789", "https://youtube.com/watch?v=123");
         // when
         messagePublisher.publishToQueue("test.json.queue", command);
         // then
@@ -146,19 +145,20 @@ public class RabbitMqServerIntegrationTest {
         assertThat(listener.getReceivedCommand()).isNotNull();
         assertThat(listener.getReceivedCommand().guildId()).isEqualTo("123456789");
         assertThat(listener.getReceivedCommand().trackUrl())
-            .isEqualTo("https://youtube.com/watch?v=123");
+                .isEqualTo("https://youtube.com/watch?v=123");
     }
 
     private void startServer() {
-        server = RabbitMqServer.builder()
-            .withConnector(ConnectorType.SINGLE_NODE)
-            .nodes(Set.of(HostPort.from(rabbitMQ.getHost(), rabbitMQ.getAmqpPort())))
-            .username(rabbitMQ.getAdminUsername())
-            .password(rabbitMQ.getAdminPassword())
-            .virtualHost("/")
-            .componentProvider(componentProvider)
-            .serializerRegistry(serializerRegistry)
-            .build();
+        server =
+                RabbitMqServer.builder()
+                        .withConnector(ConnectorType.SINGLE_NODE)
+                        .nodes(Set.of(HostPort.from(rabbitMQ.getHost(), rabbitMQ.getAmqpPort())))
+                        .username(rabbitMQ.getAdminUsername())
+                        .password(rabbitMQ.getAdminPassword())
+                        .virtualHost("/")
+                        .componentProvider(componentProvider)
+                        .serializerRegistry(serializerRegistry)
+                        .build();
         messagePublisher = server.getQueuePublisher();
         server.start();
     }
@@ -173,9 +173,9 @@ public class RabbitMqServerIntegrationTest {
     }
 
     private void mockListenerRegistration(QueueListener<?> listener) {
-        when(componentProvider.getInstancesOf(CastUtil
-                .<TypeReference<QueueListener<?>>>unsafeCast(any(TypeReference.class))
-            )
-        ).thenReturn(Collections.singletonList(listener));
+        when(componentProvider.getInstancesOf(
+                        CastUtil.<TypeReference<QueueListener<?>>>unsafeCast(
+                                any(TypeReference.class))))
+                .thenReturn(Collections.singletonList(listener));
     }
 }

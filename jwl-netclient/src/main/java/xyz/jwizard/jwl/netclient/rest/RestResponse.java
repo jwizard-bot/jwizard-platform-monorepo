@@ -17,10 +17,10 @@
  */
 package xyz.jwizard.jwl.netclient.rest;
 
+import xyz.jwizard.jwl.net.http.HttpStatus;
+
 import java.util.List;
 import java.util.Map;
-
-import xyz.jwizard.jwl.net.http.HttpStatus;
 
 public class RestResponse<T> {
     private final HttpStatus status;

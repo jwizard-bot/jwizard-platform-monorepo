@@ -20,11 +20,11 @@ package xyz.jwizard.jwl.http.route;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-import java.util.Set;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.util.Set;
 
 class TrieRouterTest {
     private TrieRouter router;
@@ -59,9 +59,7 @@ class TrieRouterTest {
         // then
         assertThat(result).isNotNull();
         assertThat(result.route()).isEqualTo(mockRoute);
-        assertThat(result.variables())
-            .containsEntry("id", "123")
-            .hasSize(1);
+        assertThat(result.variables()).containsEntry("id", "123").hasSize(1);
     }
 
     @Test
@@ -74,8 +72,8 @@ class TrieRouterTest {
         // then
         assertThat(result).isNotNull();
         assertThat(result.variables())
-            .containsEntry("userId", "jwizard")
-            .containsEntry("orderId", "99");
+                .containsEntry("userId", "jwizard")
+                .containsEntry("orderId", "99");
     }
 
     @Test
@@ -137,9 +135,7 @@ class TrieRouterTest {
         // when
         final Set<String> variableNames = router.getVariableNamesFor(method, path);
         // then
-        assertThat(variableNames)
-            .hasSize(2)
-            .containsExactlyInAnyOrder("userId", "postId");
+        assertThat(variableNames).hasSize(2).containsExactlyInAnyOrder("userId", "postId");
     }
 
     @Test
@@ -168,8 +164,8 @@ class TrieRouterTest {
         // given
         router.addRoute("GET", "/api/v1/resource/{resourceId}/details", mock(Route.class));
         // when
-        final Set<String> variableNames = router
-            .getVariableNamesFor("GET", "/api/v1/resource/{resourceId}/details");
+        final Set<String> variableNames =
+                router.getVariableNamesFor("GET", "/api/v1/resource/{resourceId}/details");
         // then
         assertThat(variableNames).containsExactly("resourceId");
     }

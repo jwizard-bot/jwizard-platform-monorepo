@@ -17,13 +17,13 @@
  */
 package xyz.jwizard.jwl.netclient.websocket.auth;
 
-import java.util.List;
-import java.util.Set;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import xyz.jwizard.jwl.netclient.websocket.WsClientUpgradeRequest;
+
+import java.util.List;
+import java.util.Set;
 
 public class CompositeWsClientAuthenticator implements WsClientAuthenticator {
     private static final Logger LOG = LoggerFactory.getLogger(CompositeWsClientAuthenticator.class);
@@ -35,17 +35,16 @@ public class CompositeWsClientAuthenticator implements WsClientAuthenticator {
     }
 
     public static WsClientAuthenticator load(Set<WsClientAuthenticator> authenticators) {
-        return new CompositeWsClientAuthenticator(authenticators.stream()
-            .sorted(WsClientAuthenticator.COMPARATOR)
-            .toList()
-        );
+        return new CompositeWsClientAuthenticator(
+                authenticators.stream().sorted(WsClientAuthenticator.COMPARATOR).toList());
     }
 
     @Override
     public void applyAuthentication(WsClientUpgradeRequest req) {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Starting composite WS client authentication, evaluating {} authenticators",
-                authenticators.size());
+            LOG.trace(
+                    "Starting composite WS client authentication, evaluating {} authenticators",
+                    authenticators.size());
         }
         for (final WsClientAuthenticator authenticator : authenticators) {
             authenticator.applyAuthentication(req);

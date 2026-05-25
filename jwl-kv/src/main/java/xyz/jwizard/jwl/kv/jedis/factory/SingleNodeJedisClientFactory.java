@@ -17,23 +17,23 @@
  */
 package xyz.jwizard.jwl.kv.jedis.factory;
 
-import java.util.Set;
-
 import redis.clients.jedis.ConnectionPoolConfig;
 import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.JedisClientConfig;
 import redis.clients.jedis.RedisClient;
 import redis.clients.jedis.UnifiedJedis;
 
+import java.util.Set;
+
 public class SingleNodeJedisClientFactory implements JedisClientFactory {
     @Override
-    public UnifiedJedis create(Set<HostAndPort> nodes, JedisClientConfig config,
-                               ConnectionPoolConfig poolConfig) {
+    public UnifiedJedis create(
+            Set<HostAndPort> nodes, JedisClientConfig config, ConnectionPoolConfig poolConfig) {
         final HostAndPort singleNode = nodes.iterator().next();
         return RedisClient.builder()
-            .hostAndPort(singleNode.getHost(), singleNode.getPort())
-            .poolConfig(poolConfig)
-            .build();
+                .hostAndPort(singleNode.getHost(), singleNode.getPort())
+                .poolConfig(poolConfig)
+                .build();
     }
 
     @Override

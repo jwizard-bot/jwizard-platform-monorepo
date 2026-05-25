@@ -17,10 +17,6 @@
  */
 package xyz.jwizard.jwl.http.resolver.body;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,27 +27,19 @@ import xyz.jwizard.jwl.common.util.StringUtil;
 import xyz.jwizard.jwl.common.util.math.MemSize;
 import xyz.jwizard.jwl.common.util.math.MemUnit;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 enum BodyMediaSerializer {
-    JSON(
-        StandardSerializerFormat.JSON,
-        true,
-        MemSize.of(2, MemUnit.MB),
-        null
-    ),
+    JSON(StandardSerializerFormat.JSON, true, MemSize.of(2, MemUnit.MB), null),
     PROTOBUF(
-        StandardSerializerFormat.PROTOBUF,
-        false,
-        MemSize.of(1, MemUnit.MB),
-        null,
-        "application/x-protobuf"
-    ),
-    RAW(
-        StandardSerializerFormat.RAW,
-        false,
-        MemSize.of(5, MemUnit.MB),
-        byte[].class,
-        "image/*"
-    ),
+            StandardSerializerFormat.PROTOBUF,
+            false,
+            MemSize.of(1, MemUnit.MB),
+            null,
+            "application/x-protobuf"),
+    RAW(StandardSerializerFormat.RAW, false, MemSize.of(5, MemUnit.MB), byte[].class, "image/*"),
     ;
 
     private static final Logger LOG = LoggerFactory.getLogger(BodyMediaSerializer.class);
@@ -67,8 +55,11 @@ enum BodyMediaSerializer {
             registerClassMapping(mapping);
             registerContentTypeMappings(mapping);
         }
-        LOG.info("BodyMediaSerializer cache initialized ({} class, {} exact, {} wildcard mappings)",
-            BY_CLASS.size(), BY_EXACT_TYPE.size(), BY_PREFIX_TYPE.size());
+        LOG.info(
+                "BodyMediaSerializer cache initialized ({} class, {} exact, {} wildcard mappings)",
+                BY_CLASS.size(),
+                BY_EXACT_TYPE.size(),
+                BY_PREFIX_TYPE.size());
     }
 
     private final SerializerFormat format;
@@ -77,8 +68,12 @@ enum BodyMediaSerializer {
     private final Class<?> targetClass;
     private final List<String> contentTypes;
 
-    BodyMediaSerializer(SerializerFormat format, boolean validate, long maxSizeBytes,
-                        Class<?> targetClass, String... contentTypes) {
+    BodyMediaSerializer(
+            SerializerFormat format,
+            boolean validate,
+            long maxSizeBytes,
+            Class<?> targetClass,
+            String... contentTypes) {
         this.format = format;
         this.validate = validate;
         this.maxSizeBytes = maxSizeBytes;
@@ -112,8 +107,10 @@ enum BodyMediaSerializer {
     private static void registerClassMapping(BodyMediaSerializer mapping) {
         if (mapping.targetClass != null) {
             BY_CLASS.put(mapping.targetClass, mapping);
-            LOG.trace("Registered class mapping: {} -> {}",
-                mapping.targetClass.getSimpleName(), mapping.name());
+            LOG.trace(
+                    "Registered class mapping: {} -> {}",
+                    mapping.targetClass.getSimpleName(),
+                    mapping.name());
         }
     }
 

@@ -19,12 +19,12 @@ package xyz.jwizard.jwl.common.util;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 
 class CollectionUtilTest {
     @Test
@@ -36,10 +36,14 @@ class CollectionUtilTest {
         final List<Integer> result = new ArrayList<>();
         final Comparator<Integer> comparator = Integer::compareTo;
         // when
-        CollectionUtil.consumeMergedSorted(list1, list2, comparator, item -> {
-            result.add(item);
-            return true;
-        });
+        CollectionUtil.consumeMergedSorted(
+                list1,
+                list2,
+                comparator,
+                item -> {
+                    result.add(item);
+                    return true;
+                });
         // then
         assertThat(result).containsExactly(1, 2, 3, 4, 5, 6);
     }
@@ -52,10 +56,14 @@ class CollectionUtilTest {
         final List<Integer> list2 = List.of(2, 3, 4, 5);
         final List<Integer> result = new ArrayList<>();
         // when
-        CollectionUtil.consumeMergedSorted(list1, list2, Integer::compareTo, item -> {
-            result.add(item);
-            return true;
-        });
+        CollectionUtil.consumeMergedSorted(
+                list1,
+                list2,
+                Integer::compareTo,
+                item -> {
+                    result.add(item);
+                    return true;
+                });
         // then
         assertThat(result).containsExactly(1, 2, 3, 4, 5, 10);
     }
@@ -68,13 +76,17 @@ class CollectionUtilTest {
         final List<Integer> list2 = List.of(5, 15, 25);
         final List<Integer> result = new ArrayList<>();
         // when
-        CollectionUtil.consumeMergedSorted(list1, list2, Integer::compareTo, item -> {
-            if (item >= 15) {
-                return false;
-            }
-            result.add(item);
-            return true;
-        });
+        CollectionUtil.consumeMergedSorted(
+                list1,
+                list2,
+                Integer::compareTo,
+                item -> {
+                    if (item >= 15) {
+                        return false;
+                    }
+                    result.add(item);
+                    return true;
+                });
         // then
         assertThat(result).containsExactly(1, 5, 10);
         assertThat(result).doesNotContain(15, 20, 25);
@@ -88,10 +100,14 @@ class CollectionUtilTest {
         final List<Integer> list2 = List.of();
         final List<Integer> result = new ArrayList<>();
         // when
-        CollectionUtil.consumeMergedSorted(list1, list2, Integer::compareTo, item -> {
-            result.add(item);
-            return true;
-        });
+        CollectionUtil.consumeMergedSorted(
+                list1,
+                list2,
+                Integer::compareTo,
+                item -> {
+                    result.add(item);
+                    return true;
+                });
         // then
         assertThat(result).containsExactly(1, 2, 3);
     }
@@ -104,10 +120,14 @@ class CollectionUtilTest {
         final List<Integer> list2 = List.of();
         final List<Integer> result = new ArrayList<>();
         // when
-        CollectionUtil.consumeMergedSorted(list1, list2, Integer::compareTo, item -> {
-            result.add(item);
-            return true;
-        });
+        CollectionUtil.consumeMergedSorted(
+                list1,
+                list2,
+                Integer::compareTo,
+                item -> {
+                    result.add(item);
+                    return true;
+                });
         // then
         assertThat(result).isEmpty();
     }

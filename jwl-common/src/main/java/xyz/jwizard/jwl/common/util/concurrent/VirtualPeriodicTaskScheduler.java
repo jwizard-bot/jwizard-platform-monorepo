@@ -17,15 +17,15 @@
  */
 package xyz.jwizard.jwl.common.util.concurrent;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class VirtualPeriodicTaskScheduler implements PeriodicTaskScheduler {
     private static final Logger LOG = LoggerFactory.getLogger(VirtualPeriodicTaskScheduler.class);
@@ -34,35 +34,46 @@ public class VirtualPeriodicTaskScheduler implements PeriodicTaskScheduler {
     private final ExecutorService virtualWorkers;
     private final Map<String, ScheduledFuture<?>> activeTasks = new ConcurrentHashMap<>();
 
-    private VirtualPeriodicTaskScheduler(ScheduledExecutorService ticker,
-                                         ExecutorService virtualWorkers) {
+    private VirtualPeriodicTaskScheduler(
+            ScheduledExecutorService ticker, ExecutorService virtualWorkers) {
         this.ticker = ticker;
         this.virtualWorkers = virtualWorkers;
     }
 
-    public static PeriodicTaskScheduler create(ScheduledExecutorService ticker,
-                                               ExecutorService virtualWorkers) {
+    public static PeriodicTaskScheduler create(
+            ScheduledExecutorService ticker, ExecutorService virtualWorkers) {
         return new VirtualPeriodicTaskScheduler(ticker, virtualWorkers);
     }
 
     @Override
-    public void scheduleAtFixedRate(String taskId, Runnable task, long initialDelay, long period,
-                                    TimeUnit unit) {
+    public void scheduleAtFixedRate(
+            String taskId, Runnable task, long initialDelay, long period, TimeUnit unit) {
         if (taskId == null || task == null) {
             return;
         }
-        LOG.debug("Scheduling periodic task '{}' with initial delay {}ms, period {}ms", taskId,
-            unit.toMillis(initialDelay), unit.toMillis(period));
-        final ScheduledFuture<?> future = ticker.scheduleAtFixedRate(() -> {
-            try {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Ticker triggered task: '{}'", taskId);
-                }
-                virtualWorkers.execute(task);
-            } catch (Exception ex) {
-                LOG.error("Failed to submit periodic task '{}' to virtual worker pool", taskId, ex);
-            }
-        }, initialDelay, period, unit);
+        LOG.debug(
+                "Scheduling periodic task '{}' with initial delay {}ms, period {}ms",
+                taskId,
+                unit.toMillis(initialDelay),
+                unit.toMillis(period));
+        final ScheduledFuture<?> future =
+                ticker.scheduleAtFixedRate(
+                        () -> {
+                            try {
+                                if (LOG.isTraceEnabled()) {
+                                    LOG.trace("Ticker triggered task: '{}'", taskId);
+                                }
+                                virtualWorkers.execute(task);
+                            } catch (Exception ex) {
+                                LOG.error(
+                                        "Failed to submit periodic task '{}' to virtual worker pool",
+                                        taskId,
+                                        ex);
+                            }
+                        },
+                        initialDelay,
+                        period,
+                        unit);
         final ScheduledFuture<?> previous = activeTasks.put(taskId, future);
         if (previous != null) {
             LOG.debug("Task '{}' was already scheduled, replacing existing future", taskId);

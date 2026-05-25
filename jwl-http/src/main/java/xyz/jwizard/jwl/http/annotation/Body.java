@@ -17,12 +17,12 @@
  */
 package xyz.jwizard.jwl.http.annotation;
 
+import xyz.jwizard.jwl.common.util.math.MemUnit;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import xyz.jwizard.jwl.common.util.math.MemUnit;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)

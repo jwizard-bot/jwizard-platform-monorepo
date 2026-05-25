@@ -17,17 +17,16 @@
  */
 package xyz.jwizard.jwl.queue.rabbitmq.connector;
 
-import java.util.Set;
-
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
 import xyz.jwizard.jwl.net.HostPort;
 
+import java.util.Set;
+
 public class RabbitMqSingleNodeConnector implements RabbitMqConnector {
     @Override
-    public Connection connect(Set<HostPort> nodes, ConnectionFactory baseFactory)
-        throws Exception {
+    public Connection connect(Set<HostPort> nodes, ConnectionFactory baseFactory) throws Exception {
         final HostPort singleNode = nodes.iterator().next();
         baseFactory.setHost(singleNode.host());
         baseFactory.setPort(singleNode.port());

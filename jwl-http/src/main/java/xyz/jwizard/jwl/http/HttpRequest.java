@@ -17,9 +17,9 @@
  */
 package xyz.jwizard.jwl.http;
 
-import java.io.InputStream;
-
 import xyz.jwizard.jwl.net.http.header.HttpHeaderName;
+
+import java.io.InputStream;
 
 public interface HttpRequest {
     String getMethod();

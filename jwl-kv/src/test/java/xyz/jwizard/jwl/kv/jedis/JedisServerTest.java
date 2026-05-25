@@ -21,8 +21,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
-import java.util.Set;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,14 +37,13 @@ import xyz.jwizard.jwl.net.HostPort;
 import redis.clients.jedis.RedisClusterClient;
 import redis.clients.jedis.params.SetParams;
 
+import java.util.Set;
+
 @ExtendWith(MockitoExtension.class)
 class JedisServerTest {
-    @Mock
-    private JedisClientFactory factory;
-    @Mock
-    private RedisClusterClient redisClient;
-    @Mock
-    private ComponentProvider componentProvider;
+    @Mock private JedisClientFactory factory;
+    @Mock private RedisClusterClient redisClient;
+    @Mock private ComponentProvider componentProvider;
 
     private JedisServer jedisServer;
 
@@ -54,11 +51,12 @@ class JedisServerTest {
     void setup() {
         // given
         Mockito.when(factory.create(any(), any(), any())).thenReturn(redisClient);
-        jedisServer = JedisServer.builder()
-            .nodes(Set.of(HostPort.from("localhost", 6379)))
-            .withFactory(factory)
-            .componentProvider(componentProvider)
-            .build();
+        jedisServer =
+                JedisServer.builder()
+                        .nodes(Set.of(HostPort.from("localhost", 6379)))
+                        .withFactory(factory)
+                        .componentProvider(componentProvider)
+                        .build();
         jedisServer.start();
     }
 
@@ -84,10 +82,7 @@ class JedisServerTest {
         // when
         jedisServer.setWithTtl(key, value);
         // then
-        verify(redisClient).set(
-            eq(TestKvKey.TEMP_SESSION.build()),
-            eq(value),
-            any(SetParams.class)
-        );
+        verify(redisClient)
+                .set(eq(TestKvKey.TEMP_SESSION.build()), eq(value), any(SetParams.class));
     }
 }

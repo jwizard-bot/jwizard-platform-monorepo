@@ -17,8 +17,6 @@
  */
 package xyz.jwizard.jwl.netclient.websocket.jetty.adapter;
 
-import java.nio.ByteBuffer;
-
 import org.eclipse.jetty.websocket.api.Callback;
 import org.eclipse.jetty.websocket.api.Session;
 
@@ -30,18 +28,21 @@ import xyz.jwizard.jwl.netclient.websocket.group.WsClientGroupConfig;
 import xyz.jwizard.jwl.netclient.websocket.group.codec.WsSessionCodec;
 import xyz.jwizard.jwl.netclient.websocket.registry.WsClientSessionRegistry;
 
+import java.nio.ByteBuffer;
+
 public class JettyWsClientListenerAdapter extends GenericWsListenerHandler<WsClientSession>
-    implements Session.Listener.AutoDemanding {
+        implements Session.Listener.AutoDemanding {
     private final ClientGroup clientGroup;
     private final WsClientGroupConfig groupConfig;
     private final WsClientSessionRegistry sessionRegistry;
     private final WsSessionCodec sessionCodec;
 
-    public JettyWsClientListenerAdapter(ClientGroup clientGroup, WsClientGroupConfig groupConfig,
-                                        WsClientSessionRegistry sessionRegistry,
-                                        WsSessionCodec sessionCodec,
-                                        NetworkSessionLifecycleListener<WsClientSession>
-                                            lifecycleListener) {
+    public JettyWsClientListenerAdapter(
+            ClientGroup clientGroup,
+            WsClientGroupConfig groupConfig,
+            WsClientSessionRegistry sessionRegistry,
+            WsSessionCodec sessionCodec,
+            NetworkSessionLifecycleListener<WsClientSession> lifecycleListener) {
         super(sessionRegistry, lifecycleListener, groupConfig.getBusConfig().getBusListener());
         this.clientGroup = clientGroup;
         this.groupConfig = groupConfig;
@@ -51,9 +52,9 @@ public class JettyWsClientListenerAdapter extends GenericWsListenerHandler<WsCli
 
     @Override
     public void onWebSocketOpen(Session session) {
-        sessionAdapter = new JettyWsClientSessionAdapter(
-            clientGroup, session, groupConfig.getPrincipalId(), sessionCodec
-        );
+        sessionAdapter =
+                new JettyWsClientSessionAdapter(
+                        clientGroup, session, groupConfig.getPrincipalId(), sessionCodec);
         sessionRegistry.register(sessionAdapter);
         super.handleConnect();
     }
@@ -79,10 +80,10 @@ public class JettyWsClientListenerAdapter extends GenericWsListenerHandler<WsCli
 
     @Override
     public void onWebSocketBinary(ByteBuffer payload, Callback callback) {
-        super.onBinary(payload,
-            () -> completeCallback(callback, null),
-            ex -> completeCallback(callback, ex)
-        );
+        super.onBinary(
+                payload,
+                () -> completeCallback(callback, null),
+                ex -> completeCallback(callback, ex));
     }
 
     private void completeCallback(Callback callback, Throwable error) {

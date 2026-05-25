@@ -19,16 +19,14 @@ package xyz.jwizard.jwl.common.reflect;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.Set;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-interface BaseTestInterface {
-}
+import java.util.Set;
 
-interface SubInterface extends BaseTestInterface {
-}
+interface BaseTestInterface {}
+
+interface SubInterface extends BaseTestInterface {}
 
 class ClassGraphScannerTest {
     @Test
@@ -41,9 +39,9 @@ class ClassGraphScannerTest {
             final Set<Class<?>> foundClasses = scanner.getTypesAnnotatedWith(TestComponent.class);
             // then
             assertThat(foundClasses)
-                .hasSizeGreaterThanOrEqualTo(2)
-                .contains(ValidComponentOne.class, ValidComponentTwo.class)
-                .doesNotContain(IgnoredComponent.class);
+                    .hasSizeGreaterThanOrEqualTo(2)
+                    .contains(ValidComponentOne.class, ValidComponentTwo.class)
+                    .doesNotContain(IgnoredComponent.class);
         }
     }
 
@@ -68,14 +66,10 @@ class ClassGraphScannerTest {
         // when
         try (final ClassGraphScanner scanner = new ClassGraphScanner(currentPackage)) {
             final Set<Class<? extends BaseTestInterface>> foundClasses =
-                scanner.getSubtypesOf(BaseTestInterface.class);
+                    scanner.getSubtypesOf(BaseTestInterface.class);
             // then
             assertThat(foundClasses)
-                .contains(
-                    AbstractTestImpl.class,
-                    ConcreteTestImpl.class,
-                    SubInterface.class
-                );
+                    .contains(AbstractTestImpl.class, ConcreteTestImpl.class, SubInterface.class);
         }
     }
 
@@ -87,30 +81,25 @@ class ClassGraphScannerTest {
         // when
         try (final ClassGraphScanner scanner = new ClassGraphScanner(currentPackage)) {
             final Set<Class<? extends BaseTestInterface>> foundClasses =
-                scanner.getInstantiableSubtypesOf(BaseTestInterface.class);
+                    scanner.getInstantiableSubtypesOf(BaseTestInterface.class);
             // then
             assertThat(foundClasses)
-                .containsExactly(ConcreteTestImpl.class)
-                .doesNotContain(AbstractTestImpl.class, SubInterface.class,
-                    BaseTestInterface.class);
+                    .containsExactly(ConcreteTestImpl.class)
+                    .doesNotContain(
+                            AbstractTestImpl.class, SubInterface.class, BaseTestInterface.class);
         }
     }
 }
 
 @TestComponent
-class ValidComponentOne {
-}
+class ValidComponentOne {}
 
 @TestComponent
-class ValidComponentTwo {
-}
+class ValidComponentTwo {}
 
 // class without the annotation - should not be found
-class IgnoredComponent {
-}
+class IgnoredComponent {}
 
-abstract class AbstractTestImpl implements BaseTestInterface {
-}
+abstract class AbstractTestImpl implements BaseTestInterface {}
 
-class ConcreteTestImpl extends AbstractTestImpl {
-}
+class ConcreteTestImpl extends AbstractTestImpl {}

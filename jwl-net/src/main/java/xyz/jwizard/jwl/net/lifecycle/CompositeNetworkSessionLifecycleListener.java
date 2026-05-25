@@ -17,9 +17,6 @@
  */
 package xyz.jwizard.jwl.net.lifecycle;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,31 +25,37 @@ import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.reflect.TypeReference;
 import xyz.jwizard.jwl.net.NetworkSession;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class CompositeNetworkSessionLifecycleListener<S extends NetworkSession>
-    implements NetworkSessionLifecycleListener<S> {
-    private static final Logger LOG = LoggerFactory
-        .getLogger(CompositeNetworkSessionLifecycleListener.class);
+        implements NetworkSessionLifecycleListener<S> {
+    private static final Logger LOG =
+            LoggerFactory.getLogger(CompositeNetworkSessionLifecycleListener.class);
 
     private final List<NetworkSessionLifecycleListener<S>> lifecycleListeners;
 
-    private CompositeNetworkSessionLifecycleListener(List<NetworkSessionLifecycleListener<S>>
-                                                         lifecycleListeners) {
+    private CompositeNetworkSessionLifecycleListener(
+            List<NetworkSessionLifecycleListener<S>> lifecycleListeners) {
         this.lifecycleListeners = lifecycleListeners;
     }
 
     public static <S extends NetworkSession> NetworkSessionLifecycleListener<S> load(
-        ComponentProvider componentProvider) {
-        final List<NetworkSessionLifecycleListener<S>> lifecycleListeners = componentProvider
-            .getInstancesOf(new TypeReference<NetworkSessionLifecycleListener<S>>() {
-            }).stream()
-            .sorted(Ordered.COMPARATOR)
-            .toList();
+            ComponentProvider componentProvider) {
+        final List<NetworkSessionLifecycleListener<S>> lifecycleListeners =
+                componentProvider
+                        .getInstancesOf(new TypeReference<NetworkSessionLifecycleListener<S>>() {})
+                        .stream()
+                        .sorted(Ordered.COMPARATOR)
+                        .toList();
         if (LOG.isDebugEnabled()) {
-            final String pipeline = lifecycleListeners.stream()
-                .map(listener -> listener.getClass().getSimpleName())
-                .collect(Collectors.joining(" -> "));
-            LOG.debug("CompositeLifecycleListener initialized with pipeline: {}",
-                pipeline.isEmpty() ? "none" : pipeline);
+            final String pipeline =
+                    lifecycleListeners.stream()
+                            .map(listener -> listener.getClass().getSimpleName())
+                            .collect(Collectors.joining(" -> "));
+            LOG.debug(
+                    "CompositeLifecycleListener initialized with pipeline: {}",
+                    pipeline.isEmpty() ? "none" : pipeline);
         }
         LOG.info("Loaded {} lifecycle listener(s)", lifecycleListeners.size());
         return new CompositeNetworkSessionLifecycleListener<>(lifecycleListeners);
@@ -60,8 +63,10 @@ public class CompositeNetworkSessionLifecycleListener<S extends NetworkSession>
 
     @Override
     public void onConnect(S session) {
-        LOG.debug("Session {} connecting to pipeline ({} listeners)", session.getSessionId(),
-            lifecycleListeners.size());
+        LOG.debug(
+                "Session {} connecting to pipeline ({} listeners)",
+                session.getSessionId(),
+                lifecycleListeners.size());
         for (final NetworkSessionLifecycleListener<S> listener : lifecycleListeners) {
             listener.onConnect(session);
         }
@@ -69,8 +74,11 @@ public class CompositeNetworkSessionLifecycleListener<S extends NetworkSession>
 
     @Override
     public void onClose(S session, int statusCode, String reason) {
-        LOG.debug("Session {} closing (code: {}, reason: {}), notifying pipeline",
-            session.getSessionId(), statusCode, reason);
+        LOG.debug(
+                "Session {} closing (code: {}, reason: {}), notifying pipeline",
+                session.getSessionId(),
+                statusCode,
+                reason);
         for (final NetworkSessionLifecycleListener<S> listener : lifecycleListeners) {
             listener.onClose(session, statusCode, reason);
         }
@@ -78,8 +86,10 @@ public class CompositeNetworkSessionLifecycleListener<S extends NetworkSession>
 
     @Override
     public void onError(S session, Throwable cause) {
-        LOG.debug("Error in session {}: {}, notifying pipeline", session.getSessionId(),
-            cause.getMessage());
+        LOG.debug(
+                "Error in session {}: {}, notifying pipeline",
+                session.getSessionId(),
+                cause.getMessage());
         for (final NetworkSessionLifecycleListener<S> listener : lifecycleListeners) {
             listener.onError(session, cause);
         }

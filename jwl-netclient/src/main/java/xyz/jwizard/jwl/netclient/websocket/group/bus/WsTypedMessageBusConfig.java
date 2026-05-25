@@ -17,8 +17,6 @@
  */
 package xyz.jwizard.jwl.netclient.websocket.group.bus;
 
-import java.util.function.Consumer;
-
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import xyz.jwizard.jwl.codec.serialization.TypedMessageSerializer;
@@ -29,6 +27,8 @@ import xyz.jwizard.jwl.netclient.websocket.WsClientUpgradeRequest;
 import xyz.jwizard.jwl.netclient.websocket.group.WsClientGroupConfig;
 import xyz.jwizard.jwl.netclient.websocket.group.codec.WsSessionCodec;
 import xyz.jwizard.jwl.netclient.websocket.group.codec.WsTypedMessageSessionCodec;
+
+import java.util.function.Consumer;
 
 public class WsTypedMessageBusConfig extends GenericWsBusConfig {
     private final TypedMessageSerializer<?> typedMessageSerializer;
@@ -45,11 +45,12 @@ public class WsTypedMessageBusConfig extends GenericWsBusConfig {
     @Override
     public WsSessionCodec configureProtocol(WsClientUpgradeRequest req) {
         if (encodingParamName != null) {
-            req.addQueryParameter(encodingParamName, typedMessageSerializer.getFormat().getFormatName());
+            req.addQueryParameter(
+                    encodingParamName, typedMessageSerializer.getFormat().getFormatName());
         }
         if (dataTypeParamName != null) {
-            req.addQueryParameter(dataTypeParamName, typedMessageSerializer.getCodecDataType()
-                .getCode());
+            req.addQueryParameter(
+                    dataTypeParamName, typedMessageSerializer.getCodecDataType().getCode());
         }
         return new WsTypedMessageSessionCodec(typedMessageSerializer);
     }

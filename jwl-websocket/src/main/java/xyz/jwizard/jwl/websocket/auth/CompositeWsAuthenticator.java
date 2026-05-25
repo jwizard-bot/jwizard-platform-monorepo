@@ -17,12 +17,12 @@
  */
 package xyz.jwizard.jwl.websocket.auth;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import xyz.jwizard.jwl.websocket.WsHandshakeRequest;
+
+import java.util.List;
 
 public class CompositeWsAuthenticator implements WsAuthenticator {
     private static final Logger LOG = LoggerFactory.getLogger(CompositeWsAuthenticator.class);
@@ -36,8 +36,9 @@ public class CompositeWsAuthenticator implements WsAuthenticator {
     @Override
     public String authenticate(WsHandshakeRequest req) {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Starting composite authentication, evaluating {} authenticators",
-                authenticators.size());
+            LOG.trace(
+                    "Starting composite authentication, evaluating {} authenticators",
+                    authenticators.size());
         }
         for (final WsAuthenticator authenticator : authenticators) {
             if (LOG.isTraceEnabled()) {
@@ -45,13 +46,16 @@ public class CompositeWsAuthenticator implements WsAuthenticator {
             }
             final String principalId = authenticator.authenticate(req);
             if (principalId != null) {
-                LOG.debug("Authentication successful via {}, principalId: {}",
-                    authenticator.getClass().getSimpleName(), principalId);
+                LOG.debug(
+                        "Authentication successful via {}, principalId: {}",
+                        authenticator.getClass().getSimpleName(),
+                        principalId);
                 return principalId;
             }
         }
-        LOG.debug("Composite authentication failed, " +
-            "no authenticator was able to identify the principal");
+        LOG.debug(
+                "Composite authentication failed, "
+                        + "no authenticator was able to identify the principal");
         return null;
     }
 }

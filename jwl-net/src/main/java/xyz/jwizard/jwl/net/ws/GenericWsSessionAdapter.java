@@ -17,9 +17,6 @@
  */
 package xyz.jwizard.jwl.net.ws;
 
-import java.util.UUID;
-import java.util.function.Function;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,8 +31,11 @@ import xyz.jwizard.jwl.net.CloseCode;
 import xyz.jwizard.jwl.net.NetworkSender;
 import xyz.jwizard.jwl.net.envelope.EnvelopeSession;
 
-public abstract class GenericWsSessionAdapter implements NetworkSender, EncodedPayloadVisitor,
-    EnvelopeSession {
+import java.util.UUID;
+import java.util.function.Function;
+
+public abstract class GenericWsSessionAdapter
+        implements NetworkSender, EncodedPayloadVisitor, EnvelopeSession {
     private static final String UNKNOWN_ENVELOPE = "UNKNOWN";
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -52,19 +52,23 @@ public abstract class GenericWsSessionAdapter implements NetworkSender, EncodedP
     @Override
     public final void send(byte[] message) {
         sendSafely(
-            () -> log.trace("Sending binary message, sessionId: {}, size: {} bytes", sessionId,
-                message.length),
-            () -> onSend(message)
-        );
+                () ->
+                        log.trace(
+                                "Sending binary message, sessionId: {}, size: {} bytes",
+                                sessionId,
+                                message.length),
+                () -> onSend(message));
     }
 
     @Override
     public final void send(String message) {
         sendSafely(
-            () -> log.trace("Sending text message, sessionId: {}, size: {} chars", sessionId,
-                message.length()),
-            () -> onSend(message)
-        );
+                () ->
+                        log.trace(
+                                "Sending text message, sessionId: {}, size: {} chars",
+                                sessionId,
+                                message.length()),
+                () -> onSend(message));
     }
 
     @Override
@@ -74,17 +78,25 @@ public abstract class GenericWsSessionAdapter implements NetworkSender, EncodedP
             log.debug("Skipping send: session is closed, sessionId: {}, OP: {}", sessionId, opName);
             return;
         }
-        log.debug("Preparing {} envelope, sessionId: {}, OP: {} (ID: {})",
-            messageCodec.getFormat().getFormatName(), sessionId, opName,
-            opCode != null ? opCode.getCode() : "null");
+        log.debug(
+                "Preparing {} envelope, sessionId: {}, OP: {} (ID: {})",
+                messageCodec.getFormat().getFormatName(),
+                sessionId,
+                opName,
+                opCode != null ? opCode.getCode() : "null");
         try {
             messageCodec.serializeAndAcceptEnvelope(opCode, data, this);
         } catch (UnsupportedDataTypeException | MessageSerializerException ex) {
-            log.error("Message error for {}: {}", messageCodec.getFormat().getFormatName(),
-                ex.getMessage());
+            log.error(
+                    "Message error for {}: {}",
+                    messageCodec.getFormat().getFormatName(),
+                    ex.getMessage());
         } catch (Exception ex) {
-            log.error("Unexpected error during processing, sessionId: {}, OP: {}", sessionId,
-                opName, ex);
+            log.error(
+                    "Unexpected error during processing, sessionId: {}, OP: {}",
+                    sessionId,
+                    opName,
+                    ex);
         }
     }
 
@@ -99,14 +111,14 @@ public abstract class GenericWsSessionAdapter implements NetworkSender, EncodedP
     }
 
     @Override
-    public final MessageEnvelope<?> unwrap(byte[] payload,
-                                           Function<Integer, Class<?>> typeResolver) {
+    public final MessageEnvelope<?> unwrap(
+            byte[] payload, Function<Integer, Class<?>> typeResolver) {
         return messageCodec.unwrap(payload, typeResolver);
     }
 
     @Override
-    public final MessageEnvelope<?> unwrap(String payload,
-                                           Function<Integer, Class<?>> typeResolver) {
+    public final MessageEnvelope<?> unwrap(
+            String payload, Function<Integer, Class<?>> typeResolver) {
         return messageCodec.unwrap(payload, typeResolver);
     }
 
@@ -125,8 +137,11 @@ public abstract class GenericWsSessionAdapter implements NetworkSender, EncodedP
         if (isClosed()) {
             return;
         }
-        log.debug("Initiating session closure, sessionId: {}, status: {}, reason: '{}'", sessionId,
-            closeCode.getCode(), closeCode.getDefaultReason());
+        log.debug(
+                "Initiating session closure, sessionId: {}, status: {}, reason: '{}'",
+                sessionId,
+                closeCode.getCode(),
+                closeCode.getDefaultReason());
         onClose(closeCode.getCode(), closeCode.getDefaultReason());
     }
 
@@ -147,8 +162,10 @@ public abstract class GenericWsSessionAdapter implements NetworkSender, EncodedP
         try {
             transportAction.run();
         } catch (Exception ex) {
-            log.error("Transport layer failed to deliver message for session {}: {}", sessionId,
-                ex.getMessage());
+            log.error(
+                    "Transport layer failed to deliver message for session {}: {}",
+                    sessionId,
+                    ex.getMessage());
         }
     }
 }

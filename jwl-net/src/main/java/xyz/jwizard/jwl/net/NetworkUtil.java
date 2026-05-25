@@ -17,6 +17,10 @@
  */
 package xyz.jwizard.jwl.net;
 
+import xyz.jwizard.jwl.common.bootstrap.ForbiddenInstantiationException;
+import xyz.jwizard.jwl.common.util.StringUtil;
+import xyz.jwizard.jwl.common.util.io.IoUtil;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
@@ -25,10 +29,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import xyz.jwizard.jwl.common.bootstrap.ForbiddenInstantiationException;
-import xyz.jwizard.jwl.common.util.StringUtil;
-import xyz.jwizard.jwl.common.util.io.IoUtil;
 
 public class NetworkUtil {
     private static final String HTTP_SCHEME = "http://";
@@ -44,16 +44,19 @@ public class NetworkUtil {
         }
         final List<String> parts = StringUtil.split(address, ':');
         if (parts.size() != 2) {
-            throw new IllegalArgumentException("Invalid address format. Expected 'host:port', " +
-                "but got: '" + address + "'");
+            throw new IllegalArgumentException(
+                    "Invalid address format. Expected 'host:port', "
+                            + "but got: '"
+                            + address
+                            + "'");
         }
         try {
             final String host = parts.getFirst().trim();
             final int port = Integer.parseInt(parts.getLast().trim());
             return HostPort.from(host, port);
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Invalid port number in address definition: '" +
-                address + "'", e);
+            throw new IllegalArgumentException(
+                    "Invalid port number in address definition: '" + address + "'", e);
         }
     }
 
@@ -68,9 +71,14 @@ public class NetworkUtil {
             return new URI(scheme, null, host, port, null, null, null);
         } catch (URISyntaxException ex) {
             throw new IllegalArgumentException(
-                "Cannot build valid URI for scheme '" + scheme + "' and address '" + host + ":" +
-                    port + "'", ex
-            );
+                    "Cannot build valid URI for scheme '"
+                            + scheme
+                            + "' and address '"
+                            + host
+                            + ":"
+                            + port
+                            + "'",
+                    ex);
         }
     }
 
@@ -112,9 +120,8 @@ public class NetworkUtil {
         }
         try {
             final int hashIdx = originalUri.indexOf('#');
-            final String uriToParse = (hashIdx != -1)
-                ? originalUri.substring(0, hashIdx)
-                : originalUri;
+            final String uriToParse =
+                    (hashIdx != -1) ? originalUri.substring(0, hashIdx) : originalUri;
             final URI uri = new URI(uriToParse);
             final String query = uri.getQuery();
             if (query == null || query.isEmpty()) {
@@ -125,9 +132,10 @@ public class NetworkUtil {
             for (final String pair : pairs) {
                 final String[] keyValue = pair.split("=", 2);
                 final String key = URLDecoder.decode(keyValue[0], StandardCharsets.UTF_8);
-                final String value = (keyValue.length > 1)
-                    ? URLDecoder.decode(keyValue[1], StandardCharsets.UTF_8)
-                    : "";
+                final String value =
+                        (keyValue.length > 1)
+                                ? URLDecoder.decode(keyValue[1], StandardCharsets.UTF_8)
+                                : "";
                 queryParams.put(key, value);
             }
             return queryParams;

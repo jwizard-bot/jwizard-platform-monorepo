@@ -17,14 +17,14 @@
  */
 package xyz.jwizard.jwl.common.retry;
 
-import java.util.concurrent.Callable;
-import java.util.function.BiPredicate;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import xyz.jwizard.jwl.common.bootstrap.ForbiddenInstantiationException;
 import xyz.jwizard.jwl.common.util.math.MathUtil;
+
+import java.util.concurrent.Callable;
+import java.util.function.BiPredicate;
 
 public class RetryExecutor {
     private static final Logger LOG = LoggerFactory.getLogger(RetryExecutor.class);
@@ -33,10 +33,13 @@ public class RetryExecutor {
         throw new ForbiddenInstantiationException(RetryExecutor.class);
     }
 
-    public static <T, C> T executeSync(Callable<T> action, C context, RetryPolicyContext<C> policy,
-                                       BiPredicate<Integer, T> retryableRes,
-                                       BiPredicate<Integer, Exception> retryableErr)
-        throws Exception {
+    public static <T, C> T executeSync(
+            Callable<T> action,
+            C context,
+            RetryPolicyContext<C> policy,
+            BiPredicate<Integer, T> retryableRes,
+            BiPredicate<Integer, Exception> retryableErr)
+            throws Exception {
         int attempt = 0;
         while (true) {
             attempt++;
@@ -57,9 +60,12 @@ public class RetryExecutor {
         }
     }
 
-    private static <T, C> boolean shouldRetryResult(T result, int attempt, C context,
-                                                    RetryPolicyContext<C> policy,
-                                                    BiPredicate<Integer, T> retryableRes) {
+    private static <T, C> boolean shouldRetryResult(
+            T result,
+            int attempt,
+            C context,
+            RetryPolicyContext<C> policy,
+            BiPredicate<Integer, T> retryableRes) {
         if (!retryableRes.test(attempt, result)) {
             return false;
         }
@@ -67,30 +73,39 @@ public class RetryExecutor {
             LOG.debug("Result-based retry triggered, attempt: {}, context: {}", attempt, context);
             return true;
         }
-        LOG.debug("Result-based retry conditions met, but policy denied further attempts ({})",
-            attempt);
+        LOG.debug(
+                "Result-based retry conditions met, but policy denied further attempts ({})",
+                attempt);
         return false;
     }
 
-    private static <C> boolean shouldRetryException(Exception ex, int attempt, C context,
-                                                    RetryPolicyContext<C> policy,
-                                                    BiPredicate<Integer, Exception> retryableErr) {
+    private static <C> boolean shouldRetryException(
+            Exception ex,
+            int attempt,
+            C context,
+            RetryPolicyContext<C> policy,
+            BiPredicate<Integer, Exception> retryableErr) {
         if (!retryableErr.test(attempt, ex)) {
             return false;
         }
         if (policy.shouldRetry(attempt, context)) {
-            LOG.info("Exception-based retry triggered, attempt: {}, error: '{}', context: {}",
-                attempt, ex.getMessage(), context);
+            LOG.info(
+                    "Exception-based retry triggered, attempt: {}, error: '{}', context: {}",
+                    attempt,
+                    ex.getMessage(),
+                    context);
             return true;
         }
-        LOG.warn("Retry policy exhausted or denied for exception: '{}' after {} attempts",
-            ex.getMessage(), attempt);
+        LOG.warn(
+                "Retry policy exhausted or denied for exception: '{}' after {} attempts",
+                ex.getMessage(),
+                attempt);
         return false;
     }
 
     private static void performBackoff(int attempt, RetryPolicyContext<?> policy) {
-        final long delay = MathUtil.calcExpBackoff(attempt, policy.getBackoffMs(),
-            policy.getMaxBackoffMs());
+        final long delay =
+                MathUtil.calcExpBackoff(attempt, policy.getBackoffMs(), policy.getMaxBackoffMs());
         if (delay > 0) {
             LOG.trace("Performing backoff for attempt {}: {}ms", attempt, delay);
             try {

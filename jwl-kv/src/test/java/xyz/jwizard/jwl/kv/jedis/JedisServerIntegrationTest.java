@@ -23,13 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
-
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -57,14 +50,21 @@ import xyz.jwizard.jwl.kv.pubsub.KvChannel;
 import xyz.jwizard.jwl.kv.pubsub.TestKvChannel;
 import xyz.jwizard.jwl.net.HostPort;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+
 @Testcontainers
 class JedisServerIntegrationTest {
     private static final int REDIS_PORT = 6379;
 
     @Container
-    static RedisContainer redisContainer = new RedisContainer(
-        DockerImageName.parse("redis:7.2-alpine")
-    ).withExposedPorts(REDIS_PORT);
+    static RedisContainer redisContainer =
+            new RedisContainer(DockerImageName.parse("redis:7.2-alpine"))
+                    .withExposedPorts(REDIS_PORT);
 
     private static JedisServer jedisServer;
     private static ComponentProvider componentProvider;
@@ -73,20 +73,21 @@ class JedisServerIntegrationTest {
     @BeforeAll
     static void setupAll() {
         scanner = new ClassGraphScanner("xyz.jwizard.jwl.kv");
-        final ApplicationContext context = ApplicationContext.createDefault(scanner, Map.of(
-            ComponentProvider.class, GuiceComponentProvider.class
-        ));
+        final ApplicationContext context =
+                ApplicationContext.createDefault(
+                        scanner, Map.of(ComponentProvider.class, GuiceComponentProvider.class));
         final String host = redisContainer.getHost();
         final int port = redisContainer.getMappedPort(REDIS_PORT);
         componentProvider = context.getComponentProvider();
-        jedisServer = JedisServer.builder()
-            .nodes(Set.of(HostPort.from(host, port)))
-            .poolMaxTotal(128)
-            .poolMinIdle(16)
-            .poolMaxIdle(64)
-            .withFactory(FactoryType.SINGLE_NODE)
-            .componentProvider(componentProvider)
-            .build();
+        jedisServer =
+                JedisServer.builder()
+                        .nodes(Set.of(HostPort.from(host, port)))
+                        .poolMaxTotal(128)
+                        .poolMinIdle(16)
+                        .poolMaxIdle(64)
+                        .withFactory(FactoryType.SINGLE_NODE)
+                        .componentProvider(componentProvider)
+                        .build();
         jedisServer.start();
         jedisServer.awaitSubscribers(3000);
     }
@@ -108,8 +109,10 @@ class JedisServerIntegrationTest {
         jedisServer.set(key, expectedValue, userId);
         final String actualValue = jedisServer.get(key, userId);
         // then
-        assertEquals(expectedValue, actualValue,
-            "Value retrieved from Redis should match the one we set");
+        assertEquals(
+                expectedValue,
+                actualValue,
+                "Value retrieved from Redis should match the one we set");
     }
 
     @Test
@@ -136,8 +139,8 @@ class JedisServerIntegrationTest {
         jedisServer.set(key, expectedValue, userId);
         final String valueBeforeDeletion = jedisServer.get(key, userId);
         assertNotNull(valueBeforeDeletion, "Key should exist before deletion");
-        assertEquals(expectedValue, valueBeforeDeletion,
-            "Retrieved value should match what was set");
+        assertEquals(
+                expectedValue, valueBeforeDeletion, "Retrieved value should match what was set");
         // when
         jedisServer.del(key, userId);
         // then
@@ -153,15 +156,17 @@ class JedisServerIntegrationTest {
         final String expectedMessage = "Hello_PubSub";
         final CountDownLatch latch = new CountDownLatch(1);
         final AtomicReference<String> receivedRef = new AtomicReference<>();
-        final SimpleStringTestSubscriber subscriber = componentProvider
-            .getInstance(SimpleStringTestSubscriber.class);
+        final SimpleStringTestSubscriber subscriber =
+                componentProvider.getInstance(SimpleStringTestSubscriber.class);
         subscriber.prepareForTest(latch, receivedRef);
         // when
         jedisServer.publish(channel, expectedMessage);
         final boolean messageArrived = latch.await(3, TimeUnit.SECONDS);
         assertTrue(messageArrived, "Did not receive pub/sub message within timeout");
-        assertEquals(expectedMessage, receivedRef.get(),
-            "Received message does not match published message");
+        assertEquals(
+                expectedMessage,
+                receivedRef.get(),
+                "Received message does not match published message");
     }
 
     @Test
@@ -173,28 +178,30 @@ class JedisServerIntegrationTest {
         final String expectedMessage = "You have a new alert";
         final CountDownLatch latch = new CountDownLatch(1);
         final AtomicReference<String> receivedRef = new AtomicReference<>();
-        final ParameterizedStringTestSubscriber subscriber = componentProvider
-            .getInstance(ParameterizedStringTestSubscriber.class);
+        final ParameterizedStringTestSubscriber subscriber =
+                componentProvider.getInstance(ParameterizedStringTestSubscriber.class);
         subscriber.prepareForTest(latch, receivedRef);
         // when
         jedisServer.publish(channel, expectedMessage, userId);
         // then
         final boolean messageArrived = latch.await(3, TimeUnit.SECONDS);
         assertTrue(messageArrived, "Did not receive parameterized pub/sub message within timeout");
-        assertEquals(expectedMessage, receivedRef.get(),
-            "Received message does not match published message");
+        assertEquals(
+                expectedMessage,
+                receivedRef.get(),
+                "Received message does not match published message");
     }
 
     @Test
     @DisplayName("should auto-discover, register and receive binary message via DI pub/sub channel")
     void shouldPublishAndReceiveBinaryMessage() throws InterruptedException {
         // given
-        final byte[] expectedPayload = "DI_Auto_Discovery_Binary_Payload"
-            .getBytes(StandardCharsets.UTF_8);
+        final byte[] expectedPayload =
+                "DI_Auto_Discovery_Binary_Payload".getBytes(StandardCharsets.UTF_8);
         final CountDownLatch latch = new CountDownLatch(1);
         final AtomicReference<byte[]> receivedRef = new AtomicReference<>();
-        final SimpleBinaryTestSubscriber subscriber = componentProvider
-            .getInstance(SimpleBinaryTestSubscriber.class);
+        final SimpleBinaryTestSubscriber subscriber =
+                componentProvider.getInstance(SimpleBinaryTestSubscriber.class);
         subscriber.prepareForTest(latch, receivedRef);
         // when
         jedisServer.publishBinary(TestKvChannel.TEST_EVENTS, expectedPayload);
@@ -206,7 +213,8 @@ class JedisServerIntegrationTest {
     }
 
     @Test
-    @DisplayName("should auto-discover pattern subscriber and extract dynamic parameters from channel")
+    @DisplayName(
+            "should auto-discover pattern subscriber and extract dynamic parameters from channel")
     void shouldExtractWildcardParamsEndToEnd() throws InterruptedException {
         // given
         final String targetUserId = "player_777";
@@ -215,8 +223,8 @@ class JedisServerIntegrationTest {
         final CountDownLatch latch = new CountDownLatch(1);
         final AtomicReference<String> receivedRef = new AtomicReference<>();
         final AtomicReference<String[]> paramsRef = new AtomicReference<>();
-        final PatternStringTestSubscriber subscriber = componentProvider
-            .getInstance(PatternStringTestSubscriber.class);
+        final PatternStringTestSubscriber subscriber =
+                componentProvider.getInstance(PatternStringTestSubscriber.class);
         subscriber.prepareForTest(latch, receivedRef, paramsRef);
         // when
         jedisServer.publish(exactChannel, expectedMessage);

@@ -17,10 +17,6 @@
  */
 package xyz.jwizard.jwl.kv.jedis;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import xyz.jwizard.jwl.common.util.Assert;
 import xyz.jwizard.jwl.common.util.io.IoUtil;
 import xyz.jwizard.jwl.kv.KvKey;
@@ -38,6 +34,10 @@ import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.JedisClientConfig;
 import redis.clients.jedis.UnifiedJedis;
 import redis.clients.jedis.params.SetParams;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class JedisServer extends KvServer {
     private final JedisClientFactory clientFactory;
@@ -61,21 +61,26 @@ public class JedisServer extends KvServer {
 
     @Override
     protected final void onKvServerStart() {
-        final JedisClientConfig config = DefaultJedisClientConfig.builder()
-            .password(password != null && !password.isBlank() ? password : null)
-            .build();
+        final JedisClientConfig config =
+                DefaultJedisClientConfig.builder()
+                        .password(password != null && !password.isBlank() ? password : null)
+                        .build();
 
-        final Set<HostAndPort> clusterNodes = nodes.stream()
-            .map(c -> new HostAndPort(c.host(), c.port()))
-            .collect(Collectors.toSet());
+        final Set<HostAndPort> clusterNodes =
+                nodes.stream()
+                        .map(c -> new HostAndPort(c.host(), c.port()))
+                        .collect(Collectors.toSet());
 
         final ConnectionPoolConfig poolConfig = new ConnectionPoolConfig();
         poolConfig.setMaxTotal(poolMaxTotal);
         poolConfig.setMinIdle(Math.min(poolMinIdle, poolMaxIdle));
         poolConfig.setMaxIdle(Math.min(poolMaxIdle, poolMaxTotal));
 
-        log.info("KV server pool info: max total: {}, min/max idle: {}/{}",
-            poolConfig.getMaxTotal(), poolConfig.getMinIdle(), poolConfig.getMaxIdle());
+        log.info(
+                "KV server pool info: max total: {}, min/max idle: {}/{}",
+                poolConfig.getMaxTotal(),
+                poolConfig.getMinIdle(),
+                poolConfig.getMaxIdle());
         redisClient = clientFactory.create(clusterNodes, config, poolConfig);
 
         final String pingResponse = redisClient.ping();
@@ -148,8 +153,7 @@ public class JedisServer extends KvServer {
         private int poolMinIdle = 16;
         private JedisClientFactory factory = new ClusterJedisClientFactory();
 
-        private Builder() {
-        }
+        private Builder() {}
 
         @Override
         protected Builder self() {
@@ -188,10 +192,10 @@ public class JedisServer extends KvServer {
             Assert.state(poolMaxTotal > 0, "PoolMaxTotal must be greater than zero");
             Assert.state(poolMinIdle >= 0, "PoolMinIdle cannot be negative");
             Assert.state(poolMaxIdle >= 0, "PoolMaxIdle cannot be negative");
-            Assert.state(poolMinIdle <= poolMaxIdle,
-                "PoolMinIdle cannot be greater than PoolMaxIdle");
-            Assert.state(poolMaxIdle <= poolMaxTotal,
-                "PoolMaxIdle cannot be greater than PoolMaxTotal");
+            Assert.state(
+                    poolMinIdle <= poolMaxIdle, "PoolMinIdle cannot be greater than PoolMaxIdle");
+            Assert.state(
+                    poolMaxIdle <= poolMaxTotal, "PoolMaxIdle cannot be greater than PoolMaxTotal");
             return new JedisServer(this);
         }
     }

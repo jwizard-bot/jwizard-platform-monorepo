@@ -17,8 +17,6 @@
  */
 package xyz.jwizard.jwl.netclient.rest.jetty;
 
-import java.util.concurrent.Executors;
-
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
@@ -31,6 +29,8 @@ import xyz.jwizard.jwl.net.http.HttpMethod;
 import xyz.jwizard.jwl.netclient.rest.GenericRestClient;
 import xyz.jwizard.jwl.netclient.rest.jetty.spec.JettyRequestSpec;
 import xyz.jwizard.jwl.netclient.rest.spec.RequestSpec;
+
+import java.util.concurrent.Executors;
 
 public class JettyRestClient extends GenericRestClient {
     private final int maxQueuedRequests;
@@ -52,9 +52,12 @@ public class JettyRestClient extends GenericRestClient {
 
     @Override
     protected void onStart() throws Exception {
-        log.info("Starting JettyRestClient (maxConnectionsPerHost: {}, maxQueuedRequests: {}, " +
-                "maxHeadersSize: {} bytes)", maxConnectionsPerHost, maxQueuedRequests,
-            maxHeadersSize);
+        log.info(
+                "Starting JettyRestClient (maxConnectionsPerHost: {}, maxQueuedRequests: {}, "
+                        + "maxHeadersSize: {} bytes)",
+                maxConnectionsPerHost,
+                maxQueuedRequests,
+                maxHeadersSize);
         jettyClient = new HttpClient();
 
         jettyClient.setConnectTimeout(connectTimeout.toMillis());
@@ -108,13 +111,7 @@ public class JettyRestClient extends GenericRestClient {
     public RequestSpec request(HttpMethod method, String url) {
         log.trace("Creating new JettyRequestSpec: {} {}", method, url);
         return new JettyRequestSpec(
-            jettyClient,
-            clientsRegistry,
-            url,
-            method,
-            serializerRegistry,
-            scanner
-        );
+                jettyClient, clientsRegistry, url, method, serializerRegistry, scanner);
     }
 
     public static class Builder extends GenericRestClient.AbstractBuilder<Builder> {
@@ -122,8 +119,7 @@ public class JettyRestClient extends GenericRestClient {
         private int maxConnectionsPerHost = 128;
         private int maxHeadersSize = 8192;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         @Override
         protected Builder self() {
@@ -154,10 +150,10 @@ public class JettyRestClient extends GenericRestClient {
         public GenericRestClient build() {
             super.validate();
             Assert.state(maxQueuedRequests > 0, "MaxQueuedRequests must be greater than zero");
-            Assert.state(maxConnectionsPerHost > 0,
-                "MaxConnectionsPerHost must be greater than zero");
-            Assert.state(maxHeadersSize >= 1024,
-                "MaxHeadersSize must be at least 1024 bytes (1KB)");
+            Assert.state(
+                    maxConnectionsPerHost > 0, "MaxConnectionsPerHost must be greater than zero");
+            Assert.state(
+                    maxHeadersSize >= 1024, "MaxHeadersSize must be at least 1024 bytes (1KB)");
             return new JettyRestClient(this);
         }
     }

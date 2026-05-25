@@ -17,13 +17,13 @@
  */
 package xyz.jwizard.jwl.codec;
 
-import java.util.function.Function;
-
 import xyz.jwizard.jwl.codec.envelope.MessageEnvelope;
 import xyz.jwizard.jwl.codec.envelope.OpCode;
 import xyz.jwizard.jwl.codec.serialization.SerializerFormat;
 import xyz.jwizard.jwl.codec.serialization.TypedSerializer;
 import xyz.jwizard.jwl.codec.serialization.TypedSerializerFormat;
+
+import java.util.function.Function;
 
 public interface UnifiedMessageCodec extends TypedSerializer {
     SerializerFormat getBaseFormat();

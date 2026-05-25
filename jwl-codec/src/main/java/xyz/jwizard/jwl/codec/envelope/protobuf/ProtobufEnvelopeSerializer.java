@@ -17,8 +17,6 @@
  */
 package xyz.jwizard.jwl.codec.envelope.protobuf;
 
-import java.util.function.Function;
-
 import com.google.protobuf.ByteString;
 import com.google.protobuf.MessageLite;
 
@@ -31,6 +29,8 @@ import xyz.jwizard.jwl.codec.serialization.SerializerFormat;
 import xyz.jwizard.jwl.codec.serialization.StandardSerializerFormat;
 import xyz.jwizard.jwl.codec.serialization.protobuf.ProtobufSerializer;
 import xyz.jwizard.jwl.codec.serialization.protobuf.ProtobufSerializerException;
+
+import java.util.function.Function;
 
 public class ProtobufEnvelopeSerializer implements EnvelopeSerializer<byte[]> {
     private final ProtobufSerializer protobufSerializer;
@@ -68,16 +68,14 @@ public class ProtobufEnvelopeSerializer implements EnvelopeSerializer<byte[]> {
         } else {
             throw new ProtobufSerializerException("Payload must be a Protobuf MessageLite");
         }
-        final RawWsEnvelope envelope = RawWsEnvelope.newBuilder()
-            .setOp(opCode.getCode())
-            .setData(dataBytes)
-            .build();
+        final RawWsEnvelope envelope =
+                RawWsEnvelope.newBuilder().setOp(opCode.getCode()).setData(dataBytes).build();
         return envelope.toByteArray();
     }
 
     @Override
-    public void serializeAndAcceptEnvelope(OpCode opCode, Object payload,
-                                           EncodedPayloadVisitor visitor) {
+    public void serializeAndAcceptEnvelope(
+            OpCode opCode, Object payload, EncodedPayloadVisitor visitor) {
         visitor.accept(serializeForSession(opCode, payload));
     }
 
@@ -88,8 +86,8 @@ public class ProtobufEnvelopeSerializer implements EnvelopeSerializer<byte[]> {
 
     @Override
     public MessageEnvelope<?> unwrap(byte[] payload, Function<Integer, Class<?>> typeResolver) {
-        final RawWsEnvelope protoEnvelope = protobufSerializer
-            .deserializeFromBytes(payload, RawWsEnvelope.class);
+        final RawWsEnvelope protoEnvelope =
+                protobufSerializer.deserializeFromBytes(payload, RawWsEnvelope.class);
         final int op = protoEnvelope.getOp();
         final Class<?> dataType = typeResolver.apply(op);
         if (dataType == null) {
@@ -97,7 +95,7 @@ public class ProtobufEnvelopeSerializer implements EnvelopeSerializer<byte[]> {
         }
         Object data = null;
         if (!protoEnvelope.getData().isEmpty() && dataType != Void.class) {
-            byte[] innerData = protoEnvelope.getData().toByteArray();
+            final byte[] innerData = protoEnvelope.getData().toByteArray();
             data = protobufSerializer.deserializeFromBytes(innerData, dataType);
         }
         return new MessageEnvelope<>(op, data);

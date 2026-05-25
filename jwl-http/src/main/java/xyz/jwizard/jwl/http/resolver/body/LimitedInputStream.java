@@ -17,12 +17,12 @@
  */
 package xyz.jwizard.jwl.http.resolver.body;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.jspecify.annotations.NonNull;
 
 import xyz.jwizard.jwl.http.exception.RequestTooLargeException;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 class LimitedInputStream extends InputStream {
     private final InputStream delegate;
@@ -55,9 +55,10 @@ class LimitedInputStream extends InputStream {
     private void checkLimit(int count) {
         bytesRead += count;
         if (bytesRead > limit) {
-            throw new RequestTooLargeException(String
-                .format("Actual bytes read so far: %d, max allowed: %d bytes", bytesRead, limit)
-            );
+            throw new RequestTooLargeException(
+                    String.format(
+                            "Actual bytes read so far: %d, max allowed: %d bytes",
+                            bytesRead, limit));
         }
     }
 

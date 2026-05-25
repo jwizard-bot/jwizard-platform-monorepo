@@ -17,14 +17,14 @@
  */
 package xyz.jwizard.jwl.netclient.rest.intercept;
 
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import xyz.jwizard.jwl.common.limit.RateLimiter;
 import xyz.jwizard.jwl.net.http.HttpStatus;
 import xyz.jwizard.jwl.netclient.rest.RestResponse;
+
+import java.util.Map;
 
 public class RateLimitInterceptor implements RequestInterceptor {
     private static final Logger LOG = LoggerFactory.getLogger(RateLimitInterceptor.class);
@@ -46,17 +46,20 @@ public class RateLimitInterceptor implements RequestInterceptor {
         final RequestView view = context.getView();
         final String groupName = view.getGroup().getClientGroupName();
 
-        LOG.trace("Intercepting request for group: {} (method: {}, path: {})", groupName,
-            view.getMethod(), view.getUrl());
+        LOG.trace(
+                "Intercepting request for group: {} (method: {}, path: {})",
+                groupName,
+                view.getMethod(),
+                view.getUrl());
 
         if (!rateLimiter.tryAcquire(groupName)) {
-            LOG.info("Rate limit exceeded for group: {}, aborting request: {} {}", groupName,
-                view.getMethod(), view.getUrl());
-            final RestResponse<Void> tooManyRequestsResponse = new RestResponse<>(
-                HttpStatus.TOO_MANY_REQUESTS_429.getCode(),
-                Map.of(),
-                null
-            );
+            LOG.info(
+                    "Rate limit exceeded for group: {}, aborting request: {} {}",
+                    groupName,
+                    view.getMethod(),
+                    view.getUrl());
+            final RestResponse<Void> tooManyRequestsResponse =
+                    new RestResponse<>(HttpStatus.TOO_MANY_REQUESTS_429.getCode(), Map.of(), null);
             context.abortWith(tooManyRequestsResponse);
         }
         LOG.debug("Rate limit permit acquired for group: {}", groupName);

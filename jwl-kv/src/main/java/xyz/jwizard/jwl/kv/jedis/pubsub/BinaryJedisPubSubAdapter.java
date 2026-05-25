@@ -17,8 +17,6 @@
  */
 package xyz.jwizard.jwl.kv.jedis.pubsub;
 
-import java.nio.charset.StandardCharsets;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,14 +25,16 @@ import xyz.jwizard.jwl.kv.pubsub.subscriber.KvSubscriber;
 
 import redis.clients.jedis.BinaryJedisPubSub;
 
+import java.nio.charset.StandardCharsets;
+
 public class BinaryJedisPubSubAdapter extends BinaryJedisPubSub {
     private static final Logger LOG = LoggerFactory.getLogger(BinaryJedisPubSubAdapter.class);
 
     private final KvSubscriber<byte[]> kvSubscriber;
     private final ChannelParamExtractor paramExtractor;
 
-    public BinaryJedisPubSubAdapter(KvSubscriber<byte[]> kvSubscriber,
-                                    ChannelParamExtractor paramExtractor) {
+    public BinaryJedisPubSubAdapter(
+            KvSubscriber<byte[]> kvSubscriber, ChannelParamExtractor paramExtractor) {
         this.kvSubscriber = kvSubscriber;
         this.paramExtractor = paramExtractor;
     }
@@ -55,8 +55,10 @@ public class BinaryJedisPubSubAdapter extends BinaryJedisPubSub {
         final String channelStr = new String(channel, StandardCharsets.UTF_8);
         if (LOG.isDebugEnabled()) {
             final String patternStr = new String(pattern, StandardCharsets.UTF_8);
-            LOG.debug("KV RECEIVED (pattern, byte[]) -> pattern: '{}', channel: '{}'", patternStr,
-                channelStr);
+            LOG.debug(
+                    "KV RECEIVED (pattern, byte[]) -> pattern: '{}', channel: '{}'",
+                    patternStr,
+                    channelStr);
         }
         if (kvSubscriber != null) {
             final String[] extractedParams = paramExtractor.extract(channelStr);
@@ -69,8 +71,10 @@ public class BinaryJedisPubSubAdapter extends BinaryJedisPubSub {
         if (kvSubscriber != null) {
             kvSubscriber.setSubscribed(true);
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Successfully subscribed to channel/pattern: '{}' (total active: {})",
-                    new String(channel, StandardCharsets.UTF_8), subscribedChannels);
+                LOG.debug(
+                        "Successfully subscribed to channel/pattern: '{}' (total active: {})",
+                        new String(channel, StandardCharsets.UTF_8),
+                        subscribedChannels);
             }
         }
     }

@@ -17,10 +17,10 @@
  */
 package xyz.jwizard.jwl.websocket.registry;
 
-import java.util.Collection;
-
 import xyz.jwizard.jwl.websocket.WsSession;
 import xyz.jwizard.jwl.websocket.broadcast.WsTopic;
+
+import java.util.Collection;
 
 public interface WsSubscriptionRegistry {
     void subscribe(WsSession session, WsTopic topic);

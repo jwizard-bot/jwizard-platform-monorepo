@@ -17,9 +17,6 @@
  */
 package xyz.jwizard.jws.ingestor;
 
-import java.time.Duration;
-import java.util.List;
-
 import xyz.jwizard.jwl.codec.envelope.EnvelopeSerializerRegistry;
 import xyz.jwizard.jwl.codec.serialization.json.JacksonSerializer;
 import xyz.jwizard.jwl.codec.serialization.protobuf.ProtobufSerializer;
@@ -42,41 +39,51 @@ import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
+import java.time.Duration;
+import java.util.List;
+
 @Singleton
 class WsServerLifecycle implements LifecycleHook {
     private final WsServer wsServer;
 
     @Inject
     WsServerLifecycle(ComponentProvider componentProvider, ClassScanner scanner) {
-        wsServer = JettyWsServer.builder()
-            .port(9092) /* TODO: incoming from config server */
-            .path("/v1") /* TODO: incoming from config server */
-            .idleTimeout(Duration.ofMinutes(10))
-            .sessionRegistry(InMemoryWsSessionRegistry.createDefault())
-            .addAuthenticator(WsTokenAuthenticator.builder()
-                .expectedToken("TEST_TOKEN") /* TODO: incoming from config server */
-                .principalId("jws-ingestor")
-                .withQueryParameterCheck("token")
-                .build()
-            )
-            .componentProvider(componentProvider)
-            .rateLimiter(TokenBucketRateLimiter.createDefault())
-            .serializerRegistry(EnvelopeSerializerRegistry.createEnvelopeRegistry()
-                .registerJsonDefaults(JacksonSerializer.createLenientForMessaging())
-                .registerProtobufDefaults(ProtobufSerializer.createDefault(scanner))
-            )
-            .serializerResolverFactory(registry -> QueryParamSerializerResolver.builder()
-                .registry(registry)
-                .encodingParamName("encoding")
-                .frameParamName("frame")
-                .build())
-            .addBusListener(ActionRouterWsMessageListener.builder()
-                .actionGroup(ActionGroup.GLOBAL)
-                .componentProvider(componentProvider)
-                .build()
-            )
-            .localSessionDispatcherFactory(ConcurrentLocalSessionDispatcher::createVirtual)
-            .build();
+        wsServer =
+                JettyWsServer.builder()
+                        .port(9092) /* TODO: incoming from config server */
+                        .path("/v1") /* TODO: incoming from config server */
+                        .idleTimeout(Duration.ofMinutes(10))
+                        .sessionRegistry(InMemoryWsSessionRegistry.createDefault())
+                        .addAuthenticator(
+                                WsTokenAuthenticator.builder()
+                                        .expectedToken(
+                                                "TEST_TOKEN") /* TODO: incoming from config server */
+                                        .principalId("jws-ingestor")
+                                        .withQueryParameterCheck("token")
+                                        .build())
+                        .componentProvider(componentProvider)
+                        .rateLimiter(TokenBucketRateLimiter.createDefault())
+                        .serializerRegistry(
+                                EnvelopeSerializerRegistry.createEnvelopeRegistry()
+                                        .registerJsonDefaults(
+                                                JacksonSerializer.createLenientForMessaging())
+                                        .registerProtobufDefaults(
+                                                ProtobufSerializer.createDefault(scanner)))
+                        .serializerResolverFactory(
+                                registry ->
+                                        QueryParamSerializerResolver.builder()
+                                                .registry(registry)
+                                                .encodingParamName("encoding")
+                                                .frameParamName("frame")
+                                                .build())
+                        .addBusListener(
+                                ActionRouterWsMessageListener.builder()
+                                        .actionGroup(ActionGroup.GLOBAL)
+                                        .componentProvider(componentProvider)
+                                        .build())
+                        .localSessionDispatcherFactory(
+                                ConcurrentLocalSessionDispatcher::createVirtual)
+                        .build();
     }
 
     @Override

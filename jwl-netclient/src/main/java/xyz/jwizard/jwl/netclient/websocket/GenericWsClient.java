@@ -17,14 +17,6 @@
  */
 package xyz.jwizard.jwl.netclient.websocket;
 
-import java.net.URI;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.function.Consumer;
-
 import xyz.jwizard.jwl.codec.envelope.OpCode;
 import xyz.jwizard.jwl.common.util.Assert;
 import xyz.jwizard.jwl.common.util.concurrent.ConcurrentUtil;
@@ -43,8 +35,16 @@ import xyz.jwizard.jwl.netclient.websocket.heartbeat.WsHeartbeatManager;
 import xyz.jwizard.jwl.netclient.websocket.registry.InMemoryWsClientSessionRegistry;
 import xyz.jwizard.jwl.netclient.websocket.registry.WsClientSessionRegistry;
 
+import java.net.URI;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.function.Consumer;
+
 public abstract class GenericWsClient extends NetworkClient<WsClientGroupConfig>
-    implements WsClient {
+        implements WsClient {
     protected final WsClientSessionRegistry sessionRegistry;
 
     private final ScheduledExecutorService ticker;
@@ -57,16 +57,16 @@ public abstract class GenericWsClient extends NetworkClient<WsClientGroupConfig>
         sessionRegistry = builder.sessionRegistry;
         ticker = ConcurrentUtil.singleThread("ws-ticker");
         workerPool = TaskExecutor.createDefault("ws-worker-pool");
-        heartbeatManager = new WsHeartbeatManager(VirtualPeriodicTaskScheduler
-            .create(ticker, workerPool.getDelegate())
-        );
+        heartbeatManager =
+                new WsHeartbeatManager(
+                        VirtualPeriodicTaskScheduler.create(ticker, workerPool.getDelegate()));
         reconnectManager = new WsReconnectManager(ticker);
     }
 
     @Override
     protected void onStart() throws Exception {
-        final Set<Map.Entry<ClientGroup, WsClientGroupConfig>> groups = clientsRegistry
-            .getEntries().entrySet();
+        final Set<Map.Entry<ClientGroup, WsClientGroupConfig>> groups =
+                clientsRegistry.getEntries().entrySet();
         log.info("Starting WS client, registering {} connection groups", groups.size());
         for (final Map.Entry<ClientGroup, WsClientGroupConfig> clientGroup : groups) {
             connectWithRetry(clientGroup.getKey(), clientGroup.getValue(), 1);
@@ -106,15 +106,20 @@ public abstract class GenericWsClient extends NetworkClient<WsClientGroupConfig>
         return sessions.stream().anyMatch(session -> !session.isClosed());
     }
 
-    private void executeOnSession(ClientGroup clientGroup, String type,
-                                  Consumer<WsClientSession> action) {
+    private void executeOnSession(
+            ClientGroup clientGroup, String type, Consumer<WsClientSession> action) {
         if (log.isTraceEnabled()) {
             log.trace("Dispatching {} message to group {}", type, clientGroup.getClientGroupName());
         }
-        sessionRegistry.getAnySession(clientGroup).ifPresentOrElse(action,
-            () -> log.error("Not found any session for WS group: {} (type: {})",
-                clientGroup.getClientGroupName(), type)
-        );
+        sessionRegistry
+                .getAnySession(clientGroup)
+                .ifPresentOrElse(
+                        action,
+                        () ->
+                                log.error(
+                                        "Not found any session for WS group: {} (type: {})",
+                                        clientGroup.getClientGroupName(),
+                                        type));
     }
 
     private void connectWithRetry(ClientGroup group, WsClientGroupConfig config, int attempt) {
@@ -124,28 +129,34 @@ public abstract class GenericWsClient extends NetworkClient<WsClientGroupConfig>
             final var req = new WsClientUpgradeRequest(URI.create(config.getUrl()));
             applyAuthenticator(req, config);
             applyHeaders(req, config);
-            final var lifecycleWrapper = new ManagedSessionLifecycleListener(
-                group,
-                config,
-                heartbeatManager,
-                reconnectManager,
-                () -> connectWithRetry(group, config, attempt + 1)
-            );
-            onClientGroupStart(group, config, req, config.getBusConfig().configureProtocol(req),
-                lifecycleWrapper);
+            final var lifecycleWrapper =
+                    new ManagedSessionLifecycleListener(
+                            group,
+                            config,
+                            heartbeatManager,
+                            reconnectManager,
+                            () -> connectWithRetry(group, config, attempt + 1));
+            onClientGroupStart(
+                    group,
+                    config,
+                    req,
+                    config.getBusConfig().configureProtocol(req),
+                    lifecycleWrapper);
         } catch (Exception ex) {
-            log.error("Failed to connect WS session for group '{}': {}", groupName,
-                ex.getMessage());
-            reconnectManager.handleFailure(group, config, attempt,
-                () -> connectWithRetry(group, config, attempt + 1));
+            log.error(
+                    "Failed to connect WS session for group '{}': {}", groupName, ex.getMessage());
+            reconnectManager.handleFailure(
+                    group, config, attempt, () -> connectWithRetry(group, config, attempt + 1));
         }
     }
 
     private void applyAuthenticator(WsClientUpgradeRequest req, WsClientGroupConfig config) {
         final WsClientAuthenticator authenticator = config.getAuthenticator();
         if (authenticator != null) {
-            log.debug("Applying authenticator: {} for group: {}",
-                authenticator.getClass().getSimpleName(), config.getPrincipalId());
+            log.debug(
+                    "Applying authenticator: {} for group: {}",
+                    authenticator.getClass().getSimpleName(),
+                    config.getPrincipalId());
             authenticator.applyAuthentication(req);
             return;
         }
@@ -164,16 +175,18 @@ public abstract class GenericWsClient extends NetworkClient<WsClientGroupConfig>
         req.setHeader(CommonHttpHeaderName.USER_AGENT, config.getPrincipalId());
     }
 
-    protected abstract void onClientGroupStart(ClientGroup clientGroup, WsClientGroupConfig config,
-                                               WsClientUpgradeRequest req,
-                                               WsSessionCodec sessionCodec,
-                                               NetworkSessionLifecycleListener<WsClientSession>
-                                                   lifecycleListener) throws Exception;
+    protected abstract void onClientGroupStart(
+            ClientGroup clientGroup,
+            WsClientGroupConfig config,
+            WsClientUpgradeRequest req,
+            WsSessionCodec sessionCodec,
+            NetworkSessionLifecycleListener<WsClientSession> lifecycleListener)
+            throws Exception;
 
     protected abstract static class AbstractBuilder<B extends AbstractBuilder<B>>
-        extends AbstractBaseBuilder<WsClientGroupConfig, B> {
-        private WsClientSessionRegistry sessionRegistry = InMemoryWsClientSessionRegistry
-            .createDefault();
+            extends AbstractBaseBuilder<WsClientGroupConfig, B> {
+        private WsClientSessionRegistry sessionRegistry =
+                InMemoryWsClientSessionRegistry.createDefault();
 
         protected AbstractBuilder() {
             super();

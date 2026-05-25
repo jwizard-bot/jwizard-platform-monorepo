@@ -17,11 +17,6 @@
  */
 package xyz.jwizard.jwl.queue.rabbitmq;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
 import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -37,6 +32,11 @@ import xyz.jwizard.jwl.queue.QueueTopology;
 import xyz.jwizard.jwl.queue.rabbitmq.connector.ConnectorType;
 import xyz.jwizard.jwl.queue.rabbitmq.connector.RabbitMqClusterConnector;
 import xyz.jwizard.jwl.queue.rabbitmq.connector.RabbitMqConnector;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class RabbitMqServer extends QueueServer {
     // don't send more than 10 messages until finish processing previous
@@ -95,8 +95,8 @@ public class RabbitMqServer extends QueueServer {
     @Override
     protected void onPublish(String exchange, String routingKey, byte[] body) throws Exception {
         if (channel == null || !channel.isOpen()) {
-            throw new IllegalStateException("Cannot publish message, " +
-                "channel is closed or not initialized");
+            throw new IllegalStateException(
+                    "Cannot publish message, " + "channel is closed or not initialized");
         }
         channel.basicPublish(exchange, routingKey, MessageProperties.PERSISTENT_BASIC, body);
     }
@@ -118,16 +118,11 @@ public class RabbitMqServer extends QueueServer {
             args.put("x-dead-letter-exchange", dlx);
             args.put("x-dead-letter-routing-key", rk);
 
-            log.info("Auto-configured DLX for '{}' -> messages will end up in '{}'", queueName,
-                dlq);
+            log.info(
+                    "Auto-configured DLX for '{}' -> messages will end up in '{}'", queueName, dlq);
         }
         channel.queueDeclare(
-            queueName,
-            topology.durable(),
-            topology.exclusive(),
-            topology.autoDelete(),
-            args
-        );
+                queueName, topology.durable(), topology.exclusive(), topology.autoDelete(), args);
 
         channel.basicQos(BASIC_QOS);
         if (topology.hasExchange()) {
@@ -135,33 +130,41 @@ public class RabbitMqServer extends QueueServer {
             final String routingKey = topology.routingKey();
             channel.exchangeDeclare(exchangeName, topology.exchangeType().getType(), true);
             channel.queueBind(queueName, exchangeName, routingKey);
-            log.info("Bound queue '{}' to exchange '{}' with routing key '{}'",
-                queueName, exchangeName, routingKey);
+            log.info(
+                    "Bound queue '{}' to exchange '{}' with routing key '{}'",
+                    queueName,
+                    exchangeName,
+                    routingKey);
         }
-        channel.basicConsume(queueName, false, (consumerTag, message) -> {
-            final long deliveryTag = message.getEnvelope().getDeliveryTag();
-            try {
-                processDelivery(listener, message.getBody());
-                channel.basicAck(deliveryTag, false);
-            } catch (Throwable t) {
-                log.error("Processing failed for message on {}, sending to DLX", queueName, t);
-                try {
-                    // requeue set to false, without DLX delete message
-                    channel.basicNack(deliveryTag, false, false);
-                } catch (IOException e) {
-                    log.error("Critical: could not send NACK", e);
-                }
-            }
-        }, cancelTag -> {
-        });
+        channel.basicConsume(
+                queueName,
+                false,
+                (consumerTag, message) -> {
+                    final long deliveryTag = message.getEnvelope().getDeliveryTag();
+                    try {
+                        processDelivery(listener, message.getBody());
+                        channel.basicAck(deliveryTag, false);
+                    } catch (Throwable t) {
+                        log.error(
+                                "Processing failed for message on {}, sending to DLX",
+                                queueName,
+                                t);
+                        try {
+                            // requeue set to false, without DLX delete message
+                            channel.basicNack(deliveryTag, false, false);
+                        } catch (IOException e) {
+                            log.error("Critical: could not send NACK", e);
+                        }
+                    }
+                },
+                cancelTag -> {});
     }
 
     public static class Builder extends QueueServer.AbstractBuilder<Builder> {
         private RabbitMqConnector connector = new RabbitMqClusterConnector();
         private String virtualHost;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         @Override
         protected Builder self() {

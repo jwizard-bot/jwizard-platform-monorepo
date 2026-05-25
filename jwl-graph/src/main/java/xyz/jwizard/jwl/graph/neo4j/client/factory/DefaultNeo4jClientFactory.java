@@ -17,8 +17,6 @@
  */
 package xyz.jwizard.jwl.graph.neo4j.client.factory;
 
-import java.net.URI;
-
 import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Config;
 import org.neo4j.driver.Driver;
@@ -31,11 +29,12 @@ import xyz.jwizard.jwl.graph.client.factory.GraphClientFactory;
 import xyz.jwizard.jwl.graph.neo4j.client.Neo4jClient;
 import xyz.jwizard.jwl.net.NetworkUtil;
 
+import java.net.URI;
+
 public class DefaultNeo4jClientFactory implements GraphClientFactory<Neo4jConfig> {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultNeo4jClientFactory.class);
 
-    private DefaultNeo4jClientFactory() {
-    }
+    private DefaultNeo4jClientFactory() {}
 
     public static DefaultNeo4jClientFactory create() {
         return new DefaultNeo4jClientFactory();
@@ -48,8 +47,9 @@ public class DefaultNeo4jClientFactory implements GraphClientFactory<Neo4jConfig
 
         final Config.ConfigBuilder configBuilder = Config.builder();
         if (config.getProtocol().isEncrypted()) {
-            LOG.trace("Neo4j encryption enabled (strict: {})",
-                config.getProtocol().requestStrictTlsValidation());
+            LOG.trace(
+                    "Neo4j encryption enabled (strict: {})",
+                    config.getProtocol().requestStrictTlsValidation());
             configBuilder.withEncryption();
             if (config.getProtocol().requestStrictTlsValidation()) {
                 configBuilder.withTrustStrategy(Config.TrustStrategy.trustSystemCertificates());
@@ -60,11 +60,11 @@ public class DefaultNeo4jClientFactory implements GraphClientFactory<Neo4jConfig
             LOG.trace("Neo4j encryption disabled");
             configBuilder.withoutEncryption();
         }
-        final Driver driver = GraphDatabase.driver(
-            NetworkUtil.parseToUri(config.getProtocol(), config.getAddress()),
-            AuthTokens.basic(config.getUsername(), config.getPassword()),
-            configBuilder.build()
-        );
+        final Driver driver =
+                GraphDatabase.driver(
+                        NetworkUtil.parseToUri(config.getProtocol(), config.getAddress()),
+                        AuthTokens.basic(config.getUsername(), config.getPassword()),
+                        configBuilder.build());
         LOG.debug("Verifying connectivity to Neo4j");
         try {
             driver.verifyConnectivity();

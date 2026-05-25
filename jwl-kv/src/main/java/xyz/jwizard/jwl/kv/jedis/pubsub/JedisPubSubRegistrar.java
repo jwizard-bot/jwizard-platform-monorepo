@@ -17,9 +17,6 @@
  */
 package xyz.jwizard.jwl.kv.jedis.pubsub;
 
-import java.nio.charset.StandardCharsets;
-import java.util.function.BiConsumer;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +31,9 @@ import redis.clients.jedis.BinaryJedisPubSub;
 import redis.clients.jedis.JedisPubSub;
 import redis.clients.jedis.UnifiedJedis;
 import redis.clients.jedis.exceptions.JedisConnectionException;
+
+import java.nio.charset.StandardCharsets;
+import java.util.function.BiConsumer;
 
 public class JedisPubSubRegistrar implements PubSubRegistrar {
     private static final Logger LOG = LoggerFactory.getLogger(JedisPubSubRegistrar.class);
@@ -61,53 +61,68 @@ public class JedisPubSubRegistrar implements PubSubRegistrar {
 
     @Override
     public void pSubscribeBinary(KvSubscriber<byte[]> subscriber) {
-        registerBinary("binary pattern pub/sub", "kv-psub-bin-", subscriber,
-            redisClient::psubscribe);
+        registerBinary(
+                "binary pattern pub/sub", "kv-psub-bin-", subscriber, redisClient::psubscribe);
     }
 
-    private void registerString(String logType, String threadPrefix,
-                                KvSubscriber<String> subscriber,
-                                BiConsumer<JedisPubSub, String[]> jedisAction) {
+    private void registerString(
+            String logType,
+            String threadPrefix,
+            KvSubscriber<String> subscriber,
+            BiConsumer<JedisPubSub, String[]> jedisAction) {
         final String channelOrPattern = buildChannelName(subscriber);
         final ChannelParamExtractor extractor = new RegexChannelParamExtractor(channelOrPattern);
-        registerAsync(logType, threadPrefix, channelOrPattern, () ->
-            jedisAction.accept(
-                new JedisPubSubAdapter(subscriber, extractor),
-                new String[]{channelOrPattern}
-            )
-        );
+        registerAsync(
+                logType,
+                threadPrefix,
+                channelOrPattern,
+                () ->
+                        jedisAction.accept(
+                                new JedisPubSubAdapter(subscriber, extractor),
+                                new String[] {channelOrPattern}));
     }
 
-    private void registerBinary(String logType, String threadPrefix,
-                                KvSubscriber<byte[]> subscriber,
-                                BiConsumer<BinaryJedisPubSub, byte[][]> jedisAction) {
+    private void registerBinary(
+            String logType,
+            String threadPrefix,
+            KvSubscriber<byte[]> subscriber,
+            BiConsumer<BinaryJedisPubSub, byte[][]> jedisAction) {
         final String channelOrPattern = buildChannelName(subscriber);
         final byte[] channelBytes = channelOrPattern.getBytes(StandardCharsets.UTF_8);
         final ChannelParamExtractor extractor = new RegexChannelParamExtractor(channelOrPattern);
-        registerAsync(logType, threadPrefix, channelOrPattern, () ->
-            jedisAction.accept(
-                new BinaryJedisPubSubAdapter(subscriber, extractor),
-                new byte[][]{channelBytes}
-            )
-        );
+        registerAsync(
+                logType,
+                threadPrefix,
+                channelOrPattern,
+                () ->
+                        jedisAction.accept(
+                                new BinaryJedisPubSubAdapter(subscriber, extractor),
+                                new byte[][] {channelBytes}));
     }
 
     private String buildChannelName(KvSubscriber<?> subscriber) {
         return subscriber.getChannel().buildChannel(subscriber.getChannelParams());
     }
 
-    private void registerAsync(String logType, String threadPrefix, String channelOrPattern,
-                               RunnableWithException redisAction) {
+    private void registerAsync(
+            String logType,
+            String threadPrefix,
+            String channelOrPattern,
+            RunnableWithException redisAction) {
         LOG.debug("Registering {} listener on: '{}'", logType, channelOrPattern);
-        ThreadUtil.runAsync(threadPrefix + channelOrPattern, () -> {
-            try {
-                redisAction.run();
-                // catch only connection shutdown - let everything else bubble up
-                // to ThreadUtil logger
-            } catch (JedisConnectionException ex) {
-                LOG.debug("Connection closed for pub/sub listener {}: '{}'", logType,
-                    channelOrPattern);
-            }
-        });
+        ThreadUtil.runAsync(
+                threadPrefix + channelOrPattern,
+                () -> {
+                    try {
+                        redisAction.run();
+                        // catch only connection shutdown - let everything else bubble up
+                        // to ThreadUtil logger
+                    } catch (JedisConnectionException ex) {
+                        LOG.debug(
+                                "Connection closed for pub/sub listener {}: '{}'",
+                                logType,
+                                channelOrPattern);
+                    }
+                });
     }
 }

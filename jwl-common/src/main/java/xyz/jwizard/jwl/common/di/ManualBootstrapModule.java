@@ -17,8 +17,6 @@
  */
 package xyz.jwizard.jwl.common.di;
 
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,14 +24,16 @@ import com.google.inject.AbstractModule;
 
 import xyz.jwizard.jwl.common.util.CastUtil;
 
+import java.util.Map;
+
 class ManualBootstrapModule extends AbstractModule {
     private static final Logger LOG = LoggerFactory.getLogger(ManualBootstrapModule.class);
 
     private final Map<Class<?>, Class<?>> components;
     private final Map<Class<?>, Object> instanceComponents;
 
-    ManualBootstrapModule(Map<Class<?>, Class<?>> components,
-                          Map<Class<?>, Object> instanceComponents) {
+    ManualBootstrapModule(
+            Map<Class<?>, Class<?>> components, Map<Class<?>, Object> instanceComponents) {
         this.components = components;
         this.instanceComponents = instanceComponents;
     }
@@ -44,15 +44,19 @@ class ManualBootstrapModule extends AbstractModule {
         for (Map.Entry<Class<?>, Class<?>> entry : components.entrySet()) {
             final Class<Object> interfaceClass = CastUtil.unsafeCast(entry.getKey());
             final Class<Object> implementationClass = CastUtil.unsafeCast(entry.getValue());
-            LOG.debug("Binding infrastructure class: {} -> {}",
-                interfaceClass.getSimpleName(), implementationClass.getSimpleName());
+            LOG.debug(
+                    "Binding infrastructure class: {} -> {}",
+                    interfaceClass.getSimpleName(),
+                    implementationClass.getSimpleName());
             bind(interfaceClass).to(implementationClass).asEagerSingleton();
         }
         for (Map.Entry<Class<?>, Object> entry : instanceComponents.entrySet()) {
             final Class<Object> type = CastUtil.unsafeCast(entry.getKey());
             final Object instance = entry.getValue();
-            LOG.debug("Binding existing instance: {} -> instance of {}",
-                type.getSimpleName(), instance.getClass().getSimpleName());
+            LOG.debug(
+                    "Binding existing instance: {} -> instance of {}",
+                    type.getSimpleName(),
+                    instance.getClass().getSimpleName());
             bind(type).toInstance(instance);
         }
     }

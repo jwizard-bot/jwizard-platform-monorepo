@@ -17,10 +17,6 @@
  */
 package xyz.jwizard.jwl.netclient.rest.group;
 
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
-
 import xyz.jwizard.jwl.codec.serialization.SerializerFormat;
 import xyz.jwizard.jwl.codec.serialization.StandardSerializerFormat;
 import xyz.jwizard.jwl.common.Ordered;
@@ -33,6 +29,10 @@ import xyz.jwizard.jwl.netclient.rest.intercept.RateLimitInterceptor;
 import xyz.jwizard.jwl.netclient.rest.intercept.RequestInterceptor;
 import xyz.jwizard.jwl.netclient.rest.intercept.UserAgentInterceptor;
 import xyz.jwizard.jwl.netclient.rest.retry.RetryPolicy;
+
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RestClientGroupConfig extends GenericClientGroupConfig {
     private final SerializerFormat defaultFormat;
@@ -67,8 +67,7 @@ public class RestClientGroupConfig extends GenericClientGroupConfig {
         private SerializerFormat defaultFormat = StandardSerializerFormat.JSON;
         private RetryPolicy retryPolicy = RetryPolicy.none();
 
-        private Builder() {
-        }
+        private Builder() {}
 
         @Override
         protected Builder self() {
@@ -90,8 +89,8 @@ public class RestClientGroupConfig extends GenericClientGroupConfig {
             return this;
         }
 
-        public Builder retry(int maxRetries, Duration backoff, Duration maxBackoff,
-                             HttpMethod... methods) {
+        public Builder retry(
+                int maxRetries, Duration backoff, Duration maxBackoff, HttpMethod... methods) {
             retryPolicy = RetryPolicy.with(maxRetries + 1, backoff, maxBackoff, methods);
             return this;
         }

@@ -20,15 +20,15 @@ package xyz.jwizard.jwl.codec.serialization.json;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.util.Map;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import xyz.jwizard.jwl.codec.serialization.SerializerFormat;
 import xyz.jwizard.jwl.codec.serialization.StandardSerializerFormat;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.Map;
 
 class JacksonSerializerTest {
     private final JacksonSerializer strict = JacksonSerializer.createDefaultStrictMapper();
@@ -92,7 +92,7 @@ class JacksonSerializerTest {
         final String json = "{\"name\":\"J\", \"unknown_field\": true}";
         // when & then
         assertThatThrownBy(() -> strict.deserialize(json, Simple.class))
-            .isInstanceOf(JsonSerializerException.class);
+                .isInstanceOf(JsonSerializerException.class);
     }
 
     @Test
@@ -113,7 +113,7 @@ class JacksonSerializerTest {
         final String json = "{}";
         // when & then
         assertThatThrownBy(() -> lenient.deserialize(json, Simple.class))
-            .isInstanceOf(JsonSerializerException.class);
+                .isInstanceOf(JsonSerializerException.class);
     }
 
     @Test
@@ -123,7 +123,7 @@ class JacksonSerializerTest {
         final String json = "{\"id\": null}";
         // when & then
         assertThatThrownBy(() -> strict.deserialize(json, PrimitiveTest.class))
-            .isInstanceOf(JsonSerializerException.class);
+                .isInstanceOf(JsonSerializerException.class);
     }
 
     @Test
@@ -142,13 +142,11 @@ class JacksonSerializerTest {
         final String badJson = "{ \"name\": missing_quotes }";
         // when & then
         assertThatThrownBy(() -> strict.deserialize(badJson, Simple.class))
-            .isInstanceOf(JsonSerializerException.class)
-            .hasMessageNotContaining("at [Source");
+                .isInstanceOf(JsonSerializerException.class)
+                .hasMessageNotContaining("at [Source");
     }
 }
 
-record Simple(String name) {
-}
+record Simple(String name) {}
 
-record PrimitiveTest(int id) {
-}
+record PrimitiveTest(int id) {}

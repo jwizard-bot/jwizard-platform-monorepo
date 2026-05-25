@@ -21,8 +21,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 
-import java.util.Collection;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,6 +29,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import xyz.jwizard.jwl.websocket.WsSession;
 import xyz.jwizard.jwl.websocket.broadcast.WsTopic;
+
+import java.util.Collection;
 
 @ExtendWith(MockitoExtension.class)
 class InMemoryWsSessionRegistryTest {
@@ -53,9 +53,9 @@ class InMemoryWsSessionRegistryTest {
         // then
         final Collection<WsSession> allSessions = registry.getAllSessions();
         assertThat(allSessions)
-            .as("Registry should contain exactly 2 registered sessions")
-            .hasSize(2)
-            .containsExactlyInAnyOrder(sessionA, sessionB);
+                .as("Registry should contain exactly 2 registered sessions")
+                .hasSize(2)
+                .containsExactlyInAnyOrder(sessionA, sessionB);
     }
 
     @Test
@@ -80,18 +80,19 @@ class InMemoryWsSessionRegistryTest {
         registry.subscribe(session, topicNews);
         // then
         assertThat(registry.getSubscribers(topicNews))
-            .as("Session should be present in the topic subscribers list")
-            .containsExactly(session);
+                .as("Session should be present in the topic subscribers list")
+                .containsExactly(session);
         // when: unsubscribe
         registry.unsubscribe(session, topicNews);
         // then
         assertThat(registry.getSubscribers(topicNews))
-            .as("Topic should have no subscribers after unsubscribe")
-            .isEmpty();
+                .as("Topic should have no subscribers after unsubscribe")
+                .isEmpty();
     }
 
     @Test
-    @DisplayName("unregistering a session should automatically remove it from all subscribed topics")
+    @DisplayName(
+            "unregistering a session should automatically remove it from all subscribed topics")
     void shouldCascadeUnregisterToSubscriptions() {
         // given
         final WsSession session1 = createMockSession("session-1");
@@ -109,14 +110,14 @@ class InMemoryWsSessionRegistryTest {
         registry.unregister(session1);
         // then
         assertThat(registry.getAllSessions())
-            .as("Only session2 should remain active")
-            .containsExactly(session2);
+                .as("Only session2 should remain active")
+                .containsExactly(session2);
         assertThat(registry.getSubscribers(topicGlobal))
-            .as("Global topic should only contain session2")
-            .containsExactly(session2);
+                .as("Global topic should only contain session2")
+                .containsExactly(session2);
         assertThat(registry.getSubscribers(topicPrivate))
-            .as("Private topic should be empty and cleaned up")
-            .isEmpty();
+                .as("Private topic should be empty and cleaned up")
+                .isEmpty();
     }
 
     @Test
@@ -126,8 +127,8 @@ class InMemoryWsSessionRegistryTest {
         final WsTopic ghostTopic = createTopic("nobody-cares");
         // when
         final Collection<WsSession> subscribers = registry.getSubscribers(ghostTopic);
-        final Collection<WsSession> unsafeSubscribers = registry
-            .getUnsafeSubscribers("another-ghost");
+        final Collection<WsSession> unsafeSubscribers =
+                registry.getUnsafeSubscribers("another-ghost");
         // then
         assertThat(subscribers).isNotNull().isEmpty();
         assertThat(unsafeSubscribers).isNotNull().isEmpty();
@@ -161,9 +162,9 @@ class InMemoryWsSessionRegistryTest {
         registry.subscribe(session, topic);
         // then
         assertThat(registry.getSubscribers(topic))
-            .as("Set semantics should prevent duplicates")
-            .hasSize(1)
-            .containsExactly(session);
+                .as("Set semantics should prevent duplicates")
+                .hasSize(1)
+                .containsExactly(session);
     }
 
     private WsSession createMockSession(String id) {

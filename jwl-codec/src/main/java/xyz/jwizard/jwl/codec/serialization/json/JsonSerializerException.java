@@ -17,9 +17,9 @@
  */
 package xyz.jwizard.jwl.codec.serialization.json;
 
-import java.io.Serial;
-
 import xyz.jwizard.jwl.codec.serialization.MessageSerializerException;
+
+import java.io.Serial;
 
 public class JsonSerializerException extends MessageSerializerException {
     @Serial private static final long serialVersionUID = 1L;

@@ -17,14 +17,14 @@
  */
 package xyz.jwizard.jwl.kv.jedis.pubsub;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicReference;
-
 import xyz.jwizard.jwl.kv.pubsub.KvChannel;
 import xyz.jwizard.jwl.kv.pubsub.TestKvChannel;
 import xyz.jwizard.jwl.kv.pubsub.subscriber.AbstractKvSubscriber;
 
 import jakarta.inject.Singleton;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Singleton
 public class ParameterizedStringTestSubscriber extends AbstractKvSubscriber<String> {
@@ -50,7 +50,7 @@ public class ParameterizedStringTestSubscriber extends AbstractKvSubscriber<Stri
 
     @Override
     public Object[] getChannelParams() {
-        return new Object[]{TEST_USER_ID};
+        return new Object[] {TEST_USER_ID};
     }
 
     @Override

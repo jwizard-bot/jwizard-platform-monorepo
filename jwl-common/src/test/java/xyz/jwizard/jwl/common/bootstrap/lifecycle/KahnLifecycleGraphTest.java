@@ -22,8 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,6 +29,8 @@ import org.junit.jupiter.api.Test;
 import xyz.jwizard.jwl.common.bootstrap.CriticalBootstrapException;
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.reflect.ClassScanner;
+
+import java.util.List;
 
 class KahnLifecycleGraphTest {
     private KahnLifecycleGraph graph;
@@ -94,10 +94,8 @@ class KahnLifecycleGraphTest {
         // given
         graph.addNode(new HookB());
         // when & then
-        final CriticalBootstrapException exception = assertThrows(
-            CriticalBootstrapException.class,
-            () -> graph.resolve()
-        );
+        final CriticalBootstrapException exception =
+                assertThrows(CriticalBootstrapException.class, () -> graph.resolve());
         assertTrue(exception.getMessage().contains("Missing dependency"));
         assertTrue(exception.getMessage().contains("requires [HookA]"));
     }
@@ -110,10 +108,8 @@ class KahnLifecycleGraphTest {
         graph.addNode(new CycleB());
         graph.addNode(new CycleC());
         // when & then
-        final CriticalBootstrapException exception = assertThrows(
-            CriticalBootstrapException.class,
-            () -> graph.resolve()
-        );
+        final CriticalBootstrapException exception =
+                assertThrows(CriticalBootstrapException.class, () -> graph.resolve());
         assertTrue(exception.getMessage().contains("indicates a circular dependency"));
     }
 
@@ -124,18 +120,15 @@ class KahnLifecycleGraphTest {
         final HookA hook = new HookA();
         graph.addNode(hook);
         // when & then
-        final IllegalArgumentException exception = assertThrows(
-            IllegalArgumentException.class,
-            () -> graph.addNode(new HookA())
-        );
+        final IllegalArgumentException exception =
+                assertThrows(IllegalArgumentException.class, () -> graph.addNode(new HookA()));
         assertTrue(exception.getMessage().contains("is already registered"));
     }
 }
 
 class HookA implements LifecycleHook {
     @Override
-    public void onStart(ComponentProvider provider, ClassScanner scanner) {
-    }
+    public void onStart(ComponentProvider provider, ClassScanner scanner) {}
 }
 
 class HookB implements LifecycleHook {
@@ -145,8 +138,7 @@ class HookB implements LifecycleHook {
     }
 
     @Override
-    public void onStart(ComponentProvider provider, ClassScanner scanner) {
-    }
+    public void onStart(ComponentProvider provider, ClassScanner scanner) {}
 }
 
 class HookC implements LifecycleHook {
@@ -156,15 +148,13 @@ class HookC implements LifecycleHook {
     }
 
     @Override
-    public void onStart(ComponentProvider provider, ClassScanner scanner) {
-    }
+    public void onStart(ComponentProvider provider, ClassScanner scanner) {}
 }
 
 // DAG
 class Root implements LifecycleHook {
     @Override
-    public void onStart(ComponentProvider provider, ClassScanner scanner) {
-    }
+    public void onStart(ComponentProvider provider, ClassScanner scanner) {}
 }
 
 class Branch1 implements LifecycleHook {
@@ -174,8 +164,7 @@ class Branch1 implements LifecycleHook {
     }
 
     @Override
-    public void onStart(ComponentProvider provider, ClassScanner scanner) {
-    }
+    public void onStart(ComponentProvider provider, ClassScanner scanner) {}
 }
 
 class Branch2 implements LifecycleHook {
@@ -185,8 +174,7 @@ class Branch2 implements LifecycleHook {
     }
 
     @Override
-    public void onStart(ComponentProvider provider, ClassScanner scanner) {
-    }
+    public void onStart(ComponentProvider provider, ClassScanner scanner) {}
 }
 
 class Leaf implements LifecycleHook {
@@ -196,8 +184,7 @@ class Leaf implements LifecycleHook {
     }
 
     @Override
-    public void onStart(ComponentProvider provider, ClassScanner scanner) {
-    }
+    public void onStart(ComponentProvider provider, ClassScanner scanner) {}
 }
 
 // cycles (errors)
@@ -208,8 +195,7 @@ class CycleA implements LifecycleHook {
     }
 
     @Override
-    public void onStart(ComponentProvider provider, ClassScanner scanner) {
-    }
+    public void onStart(ComponentProvider provider, ClassScanner scanner) {}
 }
 
 class CycleB implements LifecycleHook {
@@ -219,8 +205,7 @@ class CycleB implements LifecycleHook {
     }
 
     @Override
-    public void onStart(ComponentProvider provider, ClassScanner scanner) {
-    }
+    public void onStart(ComponentProvider provider, ClassScanner scanner) {}
 }
 
 class CycleC implements LifecycleHook {
@@ -230,25 +215,21 @@ class CycleC implements LifecycleHook {
     }
 
     @Override
-    public void onStart(ComponentProvider provider, ClassScanner scanner) {
-    }
+    public void onStart(ComponentProvider provider, ClassScanner scanner) {}
 }
 
 // independent (no dependency)
 class IndependentHook1 implements LifecycleHook {
     @Override
-    public void onStart(ComponentProvider provider, ClassScanner scanner) {
-    }
+    public void onStart(ComponentProvider provider, ClassScanner scanner) {}
 }
 
 class IndependentHook2 implements LifecycleHook {
     @Override
-    public void onStart(ComponentProvider provider, ClassScanner scanner) {
-    }
+    public void onStart(ComponentProvider provider, ClassScanner scanner) {}
 }
 
 class IndependentHook3 implements LifecycleHook {
     @Override
-    public void onStart(ComponentProvider provider, ClassScanner scanner) {
-    }
+    public void onStart(ComponentProvider provider, ClassScanner scanner) {}
 }

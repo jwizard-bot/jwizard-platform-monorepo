@@ -17,12 +17,6 @@
  */
 package xyz.jwizard.jwl.http;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.util.List;
-import java.util.Set;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +31,12 @@ import xyz.jwizard.jwl.http.route.Router;
 import xyz.jwizard.jwl.http.writer.ResponseWriter;
 import xyz.jwizard.jwl.net.http.HttpStatus;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.List;
+import java.util.Set;
+
 public class HttpRequestHandler {
     private static final Logger LOG = LoggerFactory.getLogger(HttpRequestHandler.class);
 
@@ -47,15 +47,16 @@ public class HttpRequestHandler {
     private final ProviderCache<Parameter, Parameter, ArgumentResolver> resolverCache;
     private final ProviderCache<Class<?>, Object, ResponseWriter> writerCache;
     private final ProviderCache<Class<? extends Throwable>, Throwable, ExceptionHandler>
-        exceptionCache;
+            exceptionCache;
     private final MultiProviderCache<Route, Route, HttpFilter> filterCache;
 
-    public HttpRequestHandler(Router router,
-                              Set<String> ignoredPaths,
-                              List<HttpFilter> sortedFilters,
-                              Set<ArgumentResolver> resolvers,
-                              Set<ResponseWriter> writers,
-                              Set<ExceptionHandler> exceptionHandlers) {
+    public HttpRequestHandler(
+            Router router,
+            Set<String> ignoredPaths,
+            List<HttpFilter> sortedFilters,
+            Set<ArgumentResolver> resolvers,
+            Set<ResponseWriter> writers,
+            Set<ExceptionHandler> exceptionHandlers) {
         this.router = router;
         this.ignoredPaths = ignoredPaths;
 
@@ -83,12 +84,17 @@ public class HttpRequestHandler {
             return;
         }
         final Route route = match.route();
-        LOG.debug("Route matched: {} -> {}.{}()", path,
-            route.instance().getClass().getSimpleName(), route.method().getName());
+        LOG.debug(
+                "Route matched: {} -> {}.{}()",
+                path,
+                route.instance().getClass().getSimpleName(),
+                route.method().getName());
 
         final List<HttpFilter> activeFilters = filterCache.get(route, route);
-        LOG.debug("Active filters for {}: {}", route.path(),
-            activeFilters.stream().map(f -> f.getClass().getSimpleName()).toList());
+        LOG.debug(
+                "Active filters for {}: {}",
+                route.path(),
+                activeFilters.stream().map(f -> f.getClass().getSimpleName()).toList());
 
         for (final HttpFilter filter : activeFilters) {
             if (!filter.preHandle(req, res)) {
@@ -119,19 +125,26 @@ public class HttpRequestHandler {
         final Parameter[] parameters = actionMethod.getParameters();
         final Object[] args = new Object[parameters.length];
         if (parameters.length > 0) {
-            LOG.debug("Resolving {} parameters for method {}", parameters.length,
-                actionMethod.getName());
+            LOG.debug(
+                    "Resolving {} parameters for method {}",
+                    parameters.length,
+                    actionMethod.getName());
         }
         for (int i = 0; i < parameters.length; i++) {
             final Parameter param = parameters[i];
             final ArgumentResolver resolver = resolverCache.get(param, param);
             if (resolver != null) {
-                LOG.debug("Parameter '{}' [{}] resolved by {}", param.getName(),
-                    param.getType().getSimpleName(), resolver.getClass().getSimpleName());
+                LOG.debug(
+                        "Parameter '{}' [{}] resolved by {}",
+                        param.getName(),
+                        param.getType().getSimpleName(),
+                        resolver.getClass().getSimpleName());
                 args[i] = resolver.resolve(param, req, match);
             } else {
-                LOG.warn("No resolver found for parameter '{}' [{}]", param.getName(),
-                    param.getType().getSimpleName());
+                LOG.warn(
+                        "No resolver found for parameter '{}' [{}]",
+                        param.getName(),
+                        param.getType().getSimpleName());
             }
         }
         return actionMethod.invoke(match.route().instance(), args);

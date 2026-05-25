@@ -17,8 +17,6 @@
  */
 package xyz.jwizard.jwl.websocket.jetty.adapter;
 
-import java.nio.ByteBuffer;
-
 import org.eclipse.jetty.websocket.api.Callback;
 import org.eclipse.jetty.websocket.api.Session;
 
@@ -31,17 +29,22 @@ import xyz.jwizard.jwl.net.ws.GenericWsListenerHandler;
 import xyz.jwizard.jwl.websocket.WsSession;
 import xyz.jwizard.jwl.websocket.registry.WsSessionRegistry;
 
+import java.nio.ByteBuffer;
+
 public class JettyWsListenerAdapter extends GenericWsListenerHandler<WsSession>
-    implements Session.Listener.AutoDemanding {
+        implements Session.Listener.AutoDemanding {
     private final WsSessionRegistry registry;
     private final RateLimiter rateLimiter;
     private final EnvelopeSerializer<?> envelopeSerializer;
     private final String principalId;
 
-    public JettyWsListenerAdapter(NetworkSessionLifecycleListener<WsSession> lifecycleListener,
-                                  RawBusListener<WsSession> busListener,
-                                  WsSessionRegistry registry, RateLimiter rateLimiter,
-                                  EnvelopeSerializer<?> envelopeSerializer, String principalId) {
+    public JettyWsListenerAdapter(
+            NetworkSessionLifecycleListener<WsSession> lifecycleListener,
+            RawBusListener<WsSession> busListener,
+            WsSessionRegistry registry,
+            RateLimiter rateLimiter,
+            EnvelopeSerializer<?> envelopeSerializer,
+            String principalId) {
         super(registry, lifecycleListener, busListener);
         this.registry = registry;
         this.rateLimiter = rateLimiter;
@@ -78,10 +81,10 @@ public class JettyWsListenerAdapter extends GenericWsListenerHandler<WsSession>
 
     @Override
     public void onWebSocketBinary(ByteBuffer payload, Callback callback) {
-        super.onBinary(payload,
-            () -> completeCallback(callback, null),
-            ex -> completeCallback(callback, ex)
-        );
+        super.onBinary(
+                payload,
+                () -> completeCallback(callback, null),
+                ex -> completeCallback(callback, ex));
     }
 
     private void completeCallback(Callback callback, Throwable error) {

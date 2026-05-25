@@ -17,13 +17,13 @@
  */
 package xyz.jwizard.jwl.netclient.websocket;
 
+import xyz.jwizard.jwl.net.NetworkUtil;
+import xyz.jwizard.jwl.net.http.header.HttpHeaderName;
+
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import xyz.jwizard.jwl.net.NetworkUtil;
-import xyz.jwizard.jwl.net.http.header.HttpHeaderName;
 
 public class WsClientUpgradeRequest {
     private final Map<String, List<String>> headers = new HashMap<>();

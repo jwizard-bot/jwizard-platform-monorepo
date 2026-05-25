@@ -17,8 +17,6 @@
  */
 package xyz.jwizard.jwl.websocket.jetty;
 
-import java.util.concurrent.Executors;
-
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
@@ -28,6 +26,8 @@ import org.eclipse.jetty.websocket.server.WebSocketUpgradeHandler;
 import xyz.jwizard.jwl.common.util.Assert;
 import xyz.jwizard.jwl.common.util.io.IoUtil;
 import xyz.jwizard.jwl.websocket.WsServer;
+
+import java.util.concurrent.Executors;
 
 public class JettyWsServer extends WsServer {
     private static final long SHUTDOWN_TIMEOUT_MS = 10000;
@@ -57,25 +57,30 @@ public class JettyWsServer extends WsServer {
         connector.setPort(port);
         server.addConnector(connector);
 
-        final WebSocketUpgradeHandler wsHandler = WebSocketUpgradeHandler
-            .from(server, container -> {
-                container.setIdleTimeout(idleTimeout);
-                container.setMaxTextMessageSize(maxMessageSize);
-                container.addMapping(path, new JettyWsCreator(
-                    lifecycleListener,
-                    busListener,
-                    sessionRegistry,
-                    authenticator,
-                    authFailureHandler,
-                    rateLimiter,
-                    serializerResolver
-                ));
-            });
+        final WebSocketUpgradeHandler wsHandler =
+                WebSocketUpgradeHandler.from(
+                        server,
+                        container -> {
+                            container.setIdleTimeout(idleTimeout);
+                            container.setMaxTextMessageSize(maxMessageSize);
+                            container.addMapping(
+                                    path,
+                                    new JettyWsCreator(
+                                            lifecycleListener,
+                                            busListener,
+                                            sessionRegistry,
+                                            authenticator,
+                                            authFailureHandler,
+                                            rateLimiter,
+                                            serializerResolver));
+                        });
         server.setHandler(wsHandler);
 
         server.start();
-        log.info("WebSocket server started successfully at '{}' with {}ms shutdown timeout", path,
-            SHUTDOWN_TIMEOUT_MS);
+        log.info(
+                "WebSocket server started successfully at '{}' with {}ms shutdown timeout",
+                path,
+                SHUTDOWN_TIMEOUT_MS);
     }
 
     @Override
@@ -90,8 +95,7 @@ public class JettyWsServer extends WsServer {
     }
 
     public static class Builder extends AbstractBuilder<Builder> {
-        private Builder() {
-        }
+        private Builder() {}
 
         @Override
         protected Builder self() {

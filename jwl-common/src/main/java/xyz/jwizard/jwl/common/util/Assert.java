@@ -17,12 +17,12 @@
  */
 package xyz.jwizard.jwl.common.util;
 
+import xyz.jwizard.jwl.common.bootstrap.CriticalBootstrapException;
+import xyz.jwizard.jwl.common.bootstrap.ForbiddenInstantiationException;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
-
-import xyz.jwizard.jwl.common.bootstrap.CriticalBootstrapException;
-import xyz.jwizard.jwl.common.bootstrap.ForbiddenInstantiationException;
 
 public class Assert {
     private Assert() {

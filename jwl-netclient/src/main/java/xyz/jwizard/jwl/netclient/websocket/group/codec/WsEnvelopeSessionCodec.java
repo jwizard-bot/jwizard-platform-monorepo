@@ -17,14 +17,14 @@
  */
 package xyz.jwizard.jwl.netclient.websocket.group.codec;
 
-import java.util.function.Function;
-
 import xyz.jwizard.jwl.codec.DataType;
 import xyz.jwizard.jwl.codec.EncodedPayloadVisitor;
 import xyz.jwizard.jwl.codec.envelope.EnvelopeSerializer;
 import xyz.jwizard.jwl.codec.envelope.MessageEnvelope;
 import xyz.jwizard.jwl.codec.envelope.OpCode;
 import xyz.jwizard.jwl.codec.serialization.SerializerFormat;
+
+import java.util.function.Function;
 
 public class WsEnvelopeSessionCodec implements WsSessionCodec {
     private final EnvelopeSerializer<?> serializer;
@@ -39,8 +39,8 @@ public class WsEnvelopeSessionCodec implements WsSessionCodec {
     }
 
     @Override
-    public void serializeAndAcceptEnvelope(OpCode opCode, Object data,
-                                           EncodedPayloadVisitor visitor) {
+    public void serializeAndAcceptEnvelope(
+            OpCode opCode, Object data, EncodedPayloadVisitor visitor) {
         serializer.serializeAndAcceptEnvelope(opCode, data, visitor);
     }
 

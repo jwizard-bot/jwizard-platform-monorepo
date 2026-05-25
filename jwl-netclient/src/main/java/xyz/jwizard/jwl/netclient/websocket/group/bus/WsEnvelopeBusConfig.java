@@ -17,8 +17,6 @@
  */
 package xyz.jwizard.jwl.netclient.websocket.group.bus;
 
-import java.util.function.Consumer;
-
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import xyz.jwizard.jwl.codec.envelope.EnvelopeSerializer;
@@ -29,6 +27,8 @@ import xyz.jwizard.jwl.netclient.websocket.WsClientUpgradeRequest;
 import xyz.jwizard.jwl.netclient.websocket.group.WsClientGroupConfig;
 import xyz.jwizard.jwl.netclient.websocket.group.codec.WsEnvelopeSessionCodec;
 import xyz.jwizard.jwl.netclient.websocket.group.codec.WsSessionCodec;
+
+import java.util.function.Consumer;
 
 public class WsEnvelopeBusConfig extends GenericWsBusConfig {
     private final EnvelopeSerializer<?> envelopeSerializer;
@@ -44,7 +44,8 @@ public class WsEnvelopeBusConfig extends GenericWsBusConfig {
 
     @Override
     public WsSessionCodec configureProtocol(WsClientUpgradeRequest req) {
-        req.addQueryParameter(encodingParamName, envelopeSerializer.getBaseFormat().getFormatName());
+        req.addQueryParameter(
+                encodingParamName, envelopeSerializer.getBaseFormat().getFormatName());
         req.addQueryParameter(dataTypeParamName, envelopeSerializer.getCodecDataType().getCode());
         return new WsEnvelopeSessionCodec(envelopeSerializer);
     }

@@ -20,8 +20,6 @@ package xyz.jwizard.jwl.codec.envelope;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.function.Function;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -31,6 +29,8 @@ import xyz.jwizard.jwl.codec.UnsupportedDataTypeException;
 import xyz.jwizard.jwl.codec.serialization.SerializerFormat;
 import xyz.jwizard.jwl.codec.serialization.StandardSerializerFormat;
 import xyz.jwizard.jwl.codec.serialization.TypedSerializerFormat;
+
+import java.util.function.Function;
 
 class TypedSerializerFormatTest {
     @Test
@@ -52,50 +52,50 @@ class TypedSerializerFormatTest {
     @DisplayName("should throw exception on unsupported default text methods")
     void shouldThrowOnDefaultInterfaceMethods() {
         // given
-        EnvelopeSerializer<byte[]> defaultSerializer = new EnvelopeSerializer<>() {
-            @Override
-            public SerializerFormat getBaseFormat() {
-                return StandardSerializerFormat.PROTOBUF;
-            }
+        EnvelopeSerializer<byte[]> defaultSerializer =
+                new EnvelopeSerializer<>() {
+                    @Override
+                    public SerializerFormat getBaseFormat() {
+                        return StandardSerializerFormat.PROTOBUF;
+                    }
 
-            @Override
-            public DataType getCodecDataType() {
-                return DataType.BINARY;
-            }
+                    @Override
+                    public DataType getCodecDataType() {
+                        return DataType.BINARY;
+                    }
 
-            @Override
-            public byte[] serializeForSession(OpCode opCode, Object payload) {
-                return new byte[0];
-            }
+                    @Override
+                    public byte[] serializeForSession(OpCode opCode, Object payload) {
+                        return new byte[0];
+                    }
 
-            @Override
-            public byte[] serializeEnvelopeAsBytes(OpCode opCode, Object payload) {
-                return new byte[0];
-            }
+                    @Override
+                    public byte[] serializeEnvelopeAsBytes(OpCode opCode, Object payload) {
+                        return new byte[0];
+                    }
 
-            @Override
-            public void serializeAndAcceptEnvelope(OpCode opCode, Object payload,
-                                                   EncodedPayloadVisitor visitor) {
-            }
+                    @Override
+                    public void serializeAndAcceptEnvelope(
+                            OpCode opCode, Object payload, EncodedPayloadVisitor visitor) {}
 
-            @Override
-            public void acceptRaw(byte[] rawPayload, EncodedPayloadVisitor visitor) {
-            }
+                    @Override
+                    public void acceptRaw(byte[] rawPayload, EncodedPayloadVisitor visitor) {}
 
-            @Override
-            public MessageEnvelope<?> unwrap(byte[] payload,
-                                             Function<Integer, Class<?>> typeResolver) {
-                return null;
-            }
-        };
+                    @Override
+                    public MessageEnvelope<?> unwrap(
+                            byte[] payload, Function<Integer, Class<?>> typeResolver) {
+                        return null;
+                    }
+                };
         // then
-        assertThatThrownBy(() -> defaultSerializer
-            .serializeEnvelopeAsString(TestOpCode.USER_DATA, "test")
-        )
-            .isInstanceOf(UnsupportedDataTypeException.class)
-            .hasMessageContaining("Text frames are not supported by protobuf+binary");
+        assertThatThrownBy(
+                        () ->
+                                defaultSerializer.serializeEnvelopeAsString(
+                                        TestOpCode.USER_DATA, "test"))
+                .isInstanceOf(UnsupportedDataTypeException.class)
+                .hasMessageContaining("Text frames are not supported by protobuf+binary");
         assertThatThrownBy(() -> defaultSerializer.unwrap("{}", id -> String.class))
-            .isInstanceOf(UnsupportedDataTypeException.class)
-            .hasMessageContaining("Text frames are not supported by protobuf+binary");
+                .isInstanceOf(UnsupportedDataTypeException.class)
+                .hasMessageContaining("Text frames are not supported by protobuf+binary");
     }
 }

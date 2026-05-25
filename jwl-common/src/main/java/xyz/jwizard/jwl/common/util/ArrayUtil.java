@@ -17,10 +17,10 @@
  */
 package xyz.jwizard.jwl.common.util;
 
+import xyz.jwizard.jwl.common.bootstrap.ForbiddenInstantiationException;
+
 import java.lang.reflect.Array;
 import java.util.Collection;
-
-import xyz.jwizard.jwl.common.bootstrap.ForbiddenInstantiationException;
 
 public class ArrayUtil {
     private ArrayUtil() {

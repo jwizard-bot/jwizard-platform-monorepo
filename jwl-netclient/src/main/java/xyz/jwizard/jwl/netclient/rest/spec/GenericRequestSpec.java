@@ -17,12 +17,6 @@
  */
 package xyz.jwizard.jwl.netclient.rest.spec;
 
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +42,12 @@ import xyz.jwizard.jwl.netclient.rest.intercept.RequestInterceptor;
 import xyz.jwizard.jwl.netclient.rest.intercept.RequestView;
 import xyz.jwizard.jwl.netclient.rest.retry.RetryPolicy;
 
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 public abstract class GenericRequestSpec implements RequestSpec, RequestView {
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -67,39 +67,42 @@ public abstract class GenericRequestSpec implements RequestSpec, RequestView {
     protected Duration requestTimeout;
     protected RestResponse<?> abortedResponse;
 
-    protected final InterceptorContext reusableContext = new InterceptorContext() {
-        @Override
-        public RequestView getView() {
-            return GenericRequestSpec.this;
-        }
+    protected final InterceptorContext reusableContext =
+            new InterceptorContext() {
+                @Override
+                public RequestView getView() {
+                    return GenericRequestSpec.this;
+                }
 
-        @Override
-        public void addUnsafeHeader(HttpHeaderName name, String value) {
-            GenericRequestSpec.this.unsafeHeader(name, value);
-        }
+                @Override
+                public void addUnsafeHeader(HttpHeaderName name, String value) {
+                    GenericRequestSpec.this.unsafeHeader(name, value);
+                }
 
-        @Override
-        public void addQueryParam(String name, String value) {
-            GenericRequestSpec.this.queryParam(name, value);
-        }
+                @Override
+                public void addQueryParam(String name, String value) {
+                    GenericRequestSpec.this.queryParam(name, value);
+                }
 
-        @Override
-        public void setAuth(AuthScheme scheme, String... credentials) {
-            GenericRequestSpec.this.auth(scheme, credentials);
-        }
+                @Override
+                public void setAuth(AuthScheme scheme, String... credentials) {
+                    GenericRequestSpec.this.auth(scheme, credentials);
+                }
 
-        @Override
-        public void abortWith(RestResponse<?> response) {
-            GenericRequestSpec.this.abortedResponse = response;
-        }
-    };
+                @Override
+                public void abortWith(RestResponse<?> response) {
+                    GenericRequestSpec.this.abortedResponse = response;
+                }
+            };
     protected RetryPolicy requestRetryPolicy;
     private boolean localInterceptorsSorted = true;
     private boolean serializerOverridden = false;
 
-    protected GenericRequestSpec(ClientRegistry<RestClientGroupConfig> clientRegistry,
-                                 String url, HttpMethod method,
-                                 SerializerRegistry<MessageSerializer> serializerRegistry) {
+    protected GenericRequestSpec(
+            ClientRegistry<RestClientGroupConfig> clientRegistry,
+            String url,
+            HttpMethod method,
+            SerializerRegistry<MessageSerializer> serializerRegistry) {
         this.clientRegistry = clientRegistry;
         this.url = url;
         this.method = method;
@@ -229,53 +232,65 @@ public abstract class GenericRequestSpec implements RequestSpec, RequestView {
             interceptors.sort(Ordered.COMPARATOR);
             localInterceptorsSorted = true;
         }
-        log.trace("Executing interceptors for {} {} (group: {})", method, url,
-            clientGroup != null ? clientGroup.getClientGroupName() : "none");
+        log.trace(
+                "Executing interceptors for {} {} (group: {})",
+                method,
+                url,
+                clientGroup != null ? clientGroup.getClientGroupName() : "none");
         CollectionUtil.consumeMergedSorted(
-            groupInterceptors,
-            interceptors,
-            Ordered.COMPARATOR,
-            interceptor -> {
-                log.trace("Running interceptor: {}", interceptor.getClass().getSimpleName());
-                interceptor.intercept(reusableContext);
-                if (abortedResponse != null) {
-                    log.debug("Request aborted by interceptor: {} for {} {}",
-                        interceptor.getClass().getSimpleName(), method, url);
-                }
-                return abortedResponse == null;
-            }
-        );
+                groupInterceptors,
+                interceptors,
+                Ordered.COMPARATOR,
+                interceptor -> {
+                    log.trace("Running interceptor: {}", interceptor.getClass().getSimpleName());
+                    interceptor.intercept(reusableContext);
+                    if (abortedResponse != null) {
+                        log.debug(
+                                "Request aborted by interceptor: {} for {} {}",
+                                interceptor.getClass().getSimpleName(),
+                                method,
+                                url);
+                    }
+                    return abortedResponse == null;
+                });
         if (abortedResponse != null) {
             return CastUtil.unsafeCast(abortedResponse);
         }
         try {
-            log.debug("Starting request execution: {} {} (retry policy: {})", method, url,
-                requestRetryPolicy.getClass().getSimpleName());
+            log.debug(
+                    "Starting request execution: {} {} (retry policy: {})",
+                    method,
+                    url,
+                    requestRetryPolicy.getClass().getSimpleName());
             return RetryExecutor.executeSync(
-                () -> onSend(responseType),
-                method,
-                requestRetryPolicy,
-                (attempt, response) -> {
-                    final boolean retryable = isRetryableStatus(response.getStatus());
-                    if (retryable) {
-                        log.debug("Received retryable status code: {} for {} {}",
-                            response.getStatus(), method, url);
-                    }
-                    return retryable;
-                },
-                (attempt, ex) -> {
-                    log.debug("Request exception encountered (attempt {}): {}", attempt,
-                        ex.getMessage());
-                    return true; // retryableErr
-                }
-            );
+                    () -> onSend(responseType),
+                    method,
+                    requestRetryPolicy,
+                    (attempt, response) -> {
+                        final boolean retryable = isRetryableStatus(response.getStatus());
+                        if (retryable) {
+                            log.debug(
+                                    "Received retryable status code: {} for {} {}",
+                                    response.getStatus(),
+                                    method,
+                                    url);
+                        }
+                        return retryable;
+                    },
+                    (attempt, ex) -> {
+                        log.debug(
+                                "Request exception encountered (attempt {}): {}",
+                                attempt,
+                                ex.getMessage());
+                        return true; // retryableErr
+                    });
         } catch (Exception ex) {
             if (ex instanceof RestRequestException restRequestEx) {
                 throw restRequestEx;
             }
             log.error("Request failed definitively: {} {} - {}", method, url, ex.getMessage());
-            throw new RestRequestException(String.format("Request failed: %s %s", method.name(),
-                url), ex);
+            throw new RestRequestException(
+                    String.format("Request failed: %s %s", method.name(), url), ex);
         }
     }
 

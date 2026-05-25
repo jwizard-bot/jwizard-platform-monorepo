@@ -17,8 +17,6 @@
  */
 package xyz.jwizard.jws.gateway;
 
-import java.util.Set;
-
 import xyz.jwizard.jwl.codec.serialization.SerializerRegistry;
 import xyz.jwizard.jwl.codec.serialization.json.JacksonSerializer;
 import xyz.jwizard.jwl.codec.serialization.raw.RawByteSerializer;
@@ -34,24 +32,27 @@ import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
+import java.util.Set;
+
 @Singleton
 class QueueServerLifecycle implements LifecycleHook {
     private final QueueServer queueServer;
 
     @Inject
     QueueServerLifecycle(ComponentProvider componentProvider) {
-        queueServer = RabbitMqServer.builder()
-            .rawNodes(Set.of("localhost:9111") /*TODO: incoming from config server*/)
-            .withConnector(ConnectorType.SINGLE_NODE)
-            .username("guest" /*TODO: incoming from config server*/)
-            .password("guest" /*TODO: incoming from config server*/)
-            .virtualHost("jwizard-main" /*TODO: incoming from config server*/)
-            .serializerRegistry(SerializerRegistry.createDefault()
-                .register(JacksonSerializer.createLenientForMessaging())
-                .register(RawByteSerializer.createDefault())
-            )
-            .componentProvider(componentProvider)
-            .build();
+        queueServer =
+                RabbitMqServer.builder()
+                        .rawNodes(Set.of("localhost:9111") /* TODO: incoming from config server */)
+                        .withConnector(ConnectorType.SINGLE_NODE)
+                        .username("guest" /* TODO: incoming from config server */)
+                        .password("guest" /* TODO: incoming from config server */)
+                        .virtualHost("jwizard-main" /* TODO: incoming from config server */)
+                        .serializerRegistry(
+                                SerializerRegistry.createDefault()
+                                        .register(JacksonSerializer.createLenientForMessaging())
+                                        .register(RawByteSerializer.createDefault()))
+                        .componentProvider(componentProvider)
+                        .build();
     }
 
     @Override

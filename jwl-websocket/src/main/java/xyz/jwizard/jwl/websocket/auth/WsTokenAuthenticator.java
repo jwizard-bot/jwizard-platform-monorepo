@@ -17,8 +17,6 @@
  */
 package xyz.jwizard.jwl.websocket.auth;
 
-import java.util.List;
-
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +24,8 @@ import org.slf4j.LoggerFactory;
 import xyz.jwizard.jwl.common.util.Assert;
 import xyz.jwizard.jwl.net.http.header.CommonHttpHeaderName;
 import xyz.jwizard.jwl.websocket.WsHandshakeRequest;
+
+import java.util.List;
 
 public class WsTokenAuthenticator implements WsAuthenticator {
     private static final Logger LOG = LoggerFactory.getLogger(WsTokenAuthenticator.class);
@@ -47,8 +47,8 @@ public class WsTokenAuthenticator implements WsAuthenticator {
     @Override
     public String authenticate(WsHandshakeRequest req) {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Attempting token authentication for configured principal: '{}'",
-                principalId);
+            LOG.trace(
+                    "Attempting token authentication for configured principal: '{}'", principalId);
         }
         final String incomingToken = req.getHeader(CommonHttpHeaderName.AUTHORIZATION);
         if (expectedToken.equals(incomingToken)) {
@@ -56,25 +56,33 @@ public class WsTokenAuthenticator implements WsAuthenticator {
             return principalId;
         }
         if (queryParameterKey == null) {
-            LOG.debug("Authentication failed for principal: '{}', " +
-                "header token mismatch and query parameter fallback is disabled", principalId);
+            LOG.debug(
+                    "Authentication failed for principal: '{}', "
+                            + "header token mismatch and query parameter fallback is disabled",
+                    principalId);
             return null;
         }
-        LOG.trace("Header token mismatch. Falling back to query parameter check using key: '?{}='",
-            queryParameterKey);
+        LOG.trace(
+                "Header token mismatch. Falling back to query parameter check using key: '?{}='",
+                queryParameterKey);
         final List<String> tokenParams = req.getQueryParameter(queryParameterKey);
         if (tokenParams == null || tokenParams.isEmpty()) {
-            LOG.debug("Authentication failed for principal: '{}', query parameter '{}' is missing",
-                principalId, queryParameterKey);
+            LOG.debug(
+                    "Authentication failed for principal: '{}', query parameter '{}' is missing",
+                    principalId,
+                    queryParameterKey);
             return null;
         }
         if (expectedToken.equals(tokenParams.getFirst())) {
-            LOG.trace("Authentication successful via query parameter '{}' for principal: '{}'",
-                queryParameterKey, principalId);
+            LOG.trace(
+                    "Authentication successful via query parameter '{}' for principal: '{}'",
+                    queryParameterKey,
+                    principalId);
             return principalId;
         }
-        LOG.debug("Authentication failed for principal: '{}', query parameter token mismatch",
-            principalId);
+        LOG.debug(
+                "Authentication failed for principal: '{}', query parameter token mismatch",
+                principalId);
         return null;
     }
 
@@ -83,8 +91,7 @@ public class WsTokenAuthenticator implements WsAuthenticator {
         private String principalId;
         private String queryParameterKey = null;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder expectedToken(String expectedToken) {
             this.expectedToken = expectedToken;

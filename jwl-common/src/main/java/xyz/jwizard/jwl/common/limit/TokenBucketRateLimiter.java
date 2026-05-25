@@ -17,11 +17,6 @@
  */
 package xyz.jwizard.jwl.common.limit;
 
-import java.time.Duration;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Supplier;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +25,11 @@ import xyz.jwizard.jwl.common.util.Assert;
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 
+import java.time.Duration;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
+
 public class TokenBucketRateLimiter implements RateLimiter {
     private static final Logger LOG = LoggerFactory.getLogger(TokenBucketRateLimiter.class);
 
@@ -37,16 +37,18 @@ public class TokenBucketRateLimiter implements RateLimiter {
     private final Supplier<Bucket> bucketSupplier;
 
     private TokenBucketRateLimiter(Builder builder) {
-        final Bandwidth limit = Bandwidth.builder()
-            .capacity(builder.capacity)
-            .refillGreedy(builder.refillTokens, builder.refillPeriod)
-            .build();
-        bucketSupplier = () -> Bucket.builder()
-            .addLimit(limit)
-            .build();
-        LOG.debug("Initialized TokenBucketRateLimiter with capacity: {}, refill tokens: {}, " +
-                "refill period: {}ms", builder.capacity, builder.refillTokens,
-            builder.refillPeriod.toMillis());
+        final Bandwidth limit =
+                Bandwidth.builder()
+                        .capacity(builder.capacity)
+                        .refillGreedy(builder.refillTokens, builder.refillPeriod)
+                        .build();
+        bucketSupplier = () -> Bucket.builder().addLimit(limit).build();
+        LOG.debug(
+                "Initialized TokenBucketRateLimiter with capacity: {}, refill tokens: {}, "
+                        + "refill period: {}ms",
+                builder.capacity,
+                builder.refillTokens,
+                builder.refillPeriod.toMillis());
     }
 
     public static Builder builder() {
@@ -73,8 +75,7 @@ public class TokenBucketRateLimiter implements RateLimiter {
         private long refillTokens = 10;
         private Duration refillPeriod = Duration.ofSeconds(1);
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder capacity(long capacity) {
             this.capacity = capacity;

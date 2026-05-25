@@ -17,10 +17,10 @@
  */
 package xyz.jwizard.jwl.kv.jedis.pubsub.pattern;
 
+import xyz.jwizard.jwl.kv.pubsub.pattern.ChannelParamExtractor;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import xyz.jwizard.jwl.kv.pubsub.pattern.ChannelParamExtractor;
 
 public class RegexChannelParamExtractor implements ChannelParamExtractor {
     private static final String[] EMPTY_PARAMS = new String[0];

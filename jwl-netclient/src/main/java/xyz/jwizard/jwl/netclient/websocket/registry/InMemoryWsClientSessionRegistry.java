@@ -17,18 +17,19 @@
  */
 package xyz.jwizard.jwl.netclient.websocket.registry;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
 import xyz.jwizard.jwl.common.registry.GenericConcurrentRegistry;
 import xyz.jwizard.jwl.net.ws.WsCloseCode;
 import xyz.jwizard.jwl.netclient.group.ClientGroup;
 import xyz.jwizard.jwl.netclient.websocket.WsClientSession;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
 // 1:1 socket <-> group relation
 public class InMemoryWsClientSessionRegistry
-    extends GenericConcurrentRegistry<String, WsClientSession> implements WsClientSessionRegistry {
+        extends GenericConcurrentRegistry<String, WsClientSession>
+        implements WsClientSessionRegistry {
     private InMemoryWsClientSessionRegistry() {
         super();
     }
@@ -42,12 +43,15 @@ public class InMemoryWsClientSessionRegistry
         final ClientGroup group = session.getGroup();
         final WsClientSession oldSession = super.putDirect(group.getClientGroupName(), session);
         if (oldSession != null && !oldSession.isClosed()) {
-            log.warn("Overwriting active session for group {}, closing the old one.",
-                group.getClientGroupName());
+            log.warn(
+                    "Overwriting active session for group {}, closing the old one.",
+                    group.getClientGroupName());
             oldSession.close(WsCloseCode.REPLACED_SESSION);
         }
-        log.debug("Registered session {} for group {}", session.getSessionId(),
-            group.getClientGroupName());
+        log.debug(
+                "Registered session {} for group {}",
+                session.getSessionId(),
+                group.getClientGroupName());
     }
 
     @Override

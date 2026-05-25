@@ -17,14 +17,6 @@
  */
 package xyz.jwizard.jwl.common.bootstrap;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.CountDownLatch;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +30,14 @@ import xyz.jwizard.jwl.common.reflect.ClassGraphScanner;
 import xyz.jwizard.jwl.common.reflect.ClassScanner;
 import xyz.jwizard.jwl.common.util.ArrayUtil;
 import xyz.jwizard.jwl.common.util.io.IoUtil;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CountDownLatch;
 
 public class DefaultBootstrapper {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultBootstrapper.class);
@@ -62,16 +62,16 @@ public class DefaultBootstrapper {
         LOG.info("Application runtime mode: {}", wait ? "blocking" : "non-blocking");
 
         final String[] packagesToScan = getPackagesToScan(primarySource);
-        LOG.info("Start bootstrapping application on package(s): {}",
-            Arrays.asList(packagesToScan));
+        LOG.info(
+                "Start bootstrapping application on package(s): {}", Arrays.asList(packagesToScan));
 
         final long startTime = System.currentTimeMillis();
         try (final ClassScanner scanner = new ClassGraphScanner(packagesToScan)) {
-            final ApplicationContext context = ApplicationContext.create(scanner, Map.of(
-                ComponentProvider.class, GuiceComponentProvider.class
-            ), Map.of(
-                ClassScanner.class, scanner
-            ));
+            final ApplicationContext context =
+                    ApplicationContext.create(
+                            scanner,
+                            Map.of(ComponentProvider.class, GuiceComponentProvider.class),
+                            Map.of(ClassScanner.class, scanner));
             final List<? extends LifecycleHook> hooks = discoverAndSortHooks(scanner, context);
             registerShutdownHook(hooks, wait);
             startHooks(hooks, context);
@@ -87,23 +87,27 @@ public class DefaultBootstrapper {
         }
     }
 
-    private static List<? extends LifecycleHook> discoverAndSortHooks(ClassScanner scanner,
-                                                                      ApplicationContext context) {
-        final List<LifecycleHook> rawHooks = scanner.getSubtypesOf(LifecycleHook.class).stream()
-            .map(clazz -> (LifecycleHook) context.getComponentProvider().getInstance(clazz))
-            .toList();
+    private static List<? extends LifecycleHook> discoverAndSortHooks(
+            ClassScanner scanner, ApplicationContext context) {
+        final List<LifecycleHook> rawHooks =
+                scanner.getSubtypesOf(LifecycleHook.class).stream()
+                        .map(
+                                clazz ->
+                                        (LifecycleHook)
+                                                context.getComponentProvider().getInstance(clazz))
+                        .toList();
         LIFECYCLE_GRAPH.addNodes(rawHooks);
         return LIFECYCLE_GRAPH.resolve();
     }
 
     private static void registerShutdownHook(List<? extends LifecycleHook> hooks, boolean wait) {
-        final GracefulShutdownHook shutdownThread = new GracefulShutdownHook(hooks,
-            SHUTDOWN_LATCH, wait);
+        final GracefulShutdownHook shutdownThread =
+                new GracefulShutdownHook(hooks, SHUTDOWN_LATCH, wait);
         Runtime.getRuntime().addShutdownHook(shutdownThread);
     }
 
-    private static void startHooks(List<? extends LifecycleHook> hooks,
-                                   ApplicationContext context) {
+    private static void startHooks(
+            List<? extends LifecycleHook> hooks, ApplicationContext context) {
         for (final LifecycleHook hook : hooks) {
             final String name = hook.getClass().getSimpleName();
             try {
@@ -117,8 +121,9 @@ public class DefaultBootstrapper {
 
     private static void awaitTermination(long startTime, boolean wait) throws InterruptedException {
         final long durationMs = System.currentTimeMillis() - startTime;
-        LOG.info("Bootstrapped and started successfully in {}s",
-            String.format("%.3f", durationMs / 1000.0));
+        LOG.info(
+                "Bootstrapped and started successfully in {}s",
+                String.format("%.3f", durationMs / 1000.0));
         IoUtil.thrownQuietly(System.in::close);
         if (wait) {
             SHUTDOWN_LATCH.await();
@@ -134,8 +139,8 @@ public class DefaultBootstrapper {
         }
         packagesToScan.add(jwlRoot);
         if (primarySource.isAnnotationPresent(AppBootstrapper.class)) {
-            final AppBootstrapper appInitializer = primarySource
-                .getAnnotation(AppBootstrapper.class);
+            final AppBootstrapper appInitializer =
+                    primarySource.getAnnotation(AppBootstrapper.class);
             Collections.addAll(packagesToScan, appInitializer.scanPackages());
         }
         return ArrayUtil.toArray(packagesToScan, String.class);

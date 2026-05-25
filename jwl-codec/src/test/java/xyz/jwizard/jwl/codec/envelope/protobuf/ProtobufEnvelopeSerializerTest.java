@@ -24,8 +24,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.function.Function;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -46,15 +44,14 @@ import xyz.jwizard.jwl.codec.serialization.protobuf.ProtobufSerializer;
 import xyz.jwizard.jwl.codec.serialization.protobuf.ProtobufSerializerException;
 import xyz.jwizard.jwl.codec.serialization.protobuf.TestMessage;
 
+import java.util.function.Function;
+
 @ExtendWith(MockitoExtension.class)
 class ProtobufEnvelopeSerializerTest {
-    @Mock
-    private ProtobufSerializer protobufSerializerMock;
-    @Mock
-    private EncodedPayloadVisitor visitorMock;
+    @Mock private ProtobufSerializer protobufSerializerMock;
+    @Mock private EncodedPayloadVisitor visitorMock;
     private ProtobufEnvelopeSerializer serializer;
-    @Captor
-    private ArgumentCaptor<byte[]> bytesCaptor;
+    @Captor private ArgumentCaptor<byte[]> bytesCaptor;
 
     @BeforeEach
     void setUp() {
@@ -81,14 +78,13 @@ class ProtobufEnvelopeSerializerTest {
     }
 
     @Test
-    @DisplayName("should correctly serialize Protobuf message, wrap it in envelope " +
-        "and dispatch as bytes")
+    @DisplayName(
+            "should correctly serialize Protobuf message, wrap it in envelope "
+                    + "and dispatch as bytes")
     void shouldSerializeAndAccept() throws Exception {
         // given
-        final TestMessage payload = TestMessage.newBuilder()
-            .setId(101)
-            .setValue("Wizard's Data")
-            .build();
+        final TestMessage payload =
+                TestMessage.newBuilder().setId(101).setValue("Wizard's Data").build();
         final int expectedOp = TestOpCode.USER_DATA.getCode();
         // when
         serializer.serializeAndAcceptEnvelope(TestOpCode.USER_DATA, payload, visitorMock);
@@ -105,24 +101,19 @@ class ProtobufEnvelopeSerializerTest {
     void shouldDeserializeEnvelope() {
         // given
         final int op = TestOpCode.USER_DATA.getCode();
-        final TestMessage innerPayload = TestMessage.newBuilder()
-            .setId(404)
-            .setValue("Not Found")
-            .build();
-        final RawWsEnvelope networkEnvelope = RawWsEnvelope.newBuilder()
-            .setOp(op)
-            .setData(innerPayload.toByteString())
-            .build();
+        final TestMessage innerPayload =
+                TestMessage.newBuilder().setId(404).setValue("Not Found").build();
+        final RawWsEnvelope networkEnvelope =
+                RawWsEnvelope.newBuilder().setOp(op).setData(innerPayload.toByteString()).build();
         final byte[] networkBytes = networkEnvelope.toByteArray();
 
-        when(protobufSerializerMock
-            .deserializeFromBytes(any(byte[].class), eq(RawWsEnvelope.class))
-        )
-            .thenReturn(networkEnvelope);
+        when(protobufSerializerMock.deserializeFromBytes(
+                        any(byte[].class), eq(RawWsEnvelope.class)))
+                .thenReturn(networkEnvelope);
         when(protobufSerializerMock.deserializeFromBytes(any(byte[].class), eq(TestMessage.class)))
-            .thenReturn(innerPayload);
-        final Function<Integer, Class<?>> typeResolver = code -> code == op
-            ? TestMessage.class : null;
+                .thenReturn(innerPayload);
+        final Function<Integer, Class<?>> typeResolver =
+                code -> code == op ? TestMessage.class : null;
         // when
         final MessageEnvelope<?> result = serializer.unwrap(networkBytes, typeResolver);
         // then
@@ -151,10 +142,11 @@ class ProtobufEnvelopeSerializerTest {
         // given
         final Object invalidPayload = "I am just a normal string, not a MessageLite";
         // then
-        assertThatThrownBy(() -> serializer
-            .serializeEnvelopeAsBytes(TestOpCode.USER_DATA, invalidPayload)
-        )
-            .isInstanceOf(ProtobufSerializerException.class)
-            .hasMessageContaining("Payload must be a Protobuf MessageLite");
+        assertThatThrownBy(
+                        () ->
+                                serializer.serializeEnvelopeAsBytes(
+                                        TestOpCode.USER_DATA, invalidPayload))
+                .isInstanceOf(ProtobufSerializerException.class)
+                .hasMessageContaining("Payload must be a Protobuf MessageLite");
     }
 }

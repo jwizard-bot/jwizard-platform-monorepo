@@ -17,6 +17,8 @@
  */
 package xyz.jwizard.jwl.common.util;
 
+import xyz.jwizard.jwl.common.bootstrap.ForbiddenInstantiationException;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,8 +27,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
-
-import xyz.jwizard.jwl.common.bootstrap.ForbiddenInstantiationException;
 
 public class CollectionUtil {
     private CollectionUtil() {
@@ -53,19 +53,18 @@ public class CollectionUtil {
         return Collections.unmodifiableList(result);
     }
 
-    // two-pointers algorithm (zero allocation), for O(n), instead of streams and O(nlogn)
-    public static <T> void consumeMergedSorted(List<T> list1, List<T> list2,
-                                               Comparator<? super T> comparator,
-                                               Predicate<T> action) {
+    // two-pointers algorithm (zero allocation), for O(n), instead of streams and
+    // O(nlogn)
+    public static <T> void consumeMergedSorted(
+            List<T> list1, List<T> list2, Comparator<? super T> comparator, Predicate<T> action) {
         if (action == null) {
             return;
         }
         final List<T> l1 = (list1 == null) ? List.of() : list1;
         final List<T> l2 = (list2 == null) ? List.of() : list2;
 
-        final Comparator<? super T> comp = (comparator != null)
-            ? comparator
-            : CastUtil.unsafeCast(Comparator.naturalOrder());
+        final Comparator<? super T> comp =
+                (comparator != null) ? comparator : CastUtil.unsafeCast(Comparator.naturalOrder());
 
         final int size1 = l1.size();
         final int size2 = l2.size();

@@ -17,9 +17,6 @@
  */
 package xyz.jwizard.jwl.codec.serialization.json;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-
 import xyz.jwizard.jwl.codec.serialization.SerializerFormat;
 import xyz.jwizard.jwl.codec.serialization.StandardSerializerFormat;
 import xyz.jwizard.jwl.common.util.StringUtil;
@@ -29,6 +26,9 @@ import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
 public class JacksonSerializer implements JsonSerializer {
     private final ObjectMapper objectMapper;
 
@@ -37,24 +37,27 @@ public class JacksonSerializer implements JsonSerializer {
     }
 
     public static JacksonSerializer createDefaultStrictMapper() {
-        final ObjectMapper mapper = JsonMapper.builder()
-            // error when a field required by the constructor/record is missing in the JSON
-            .enable(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES)
-            // error when the JSON contains properties that do not exist in our class
-            .enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-            // prevents setting null for primitive types (int, boolean, etc.)
-            .enable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
-            .build();
+        final ObjectMapper mapper =
+                JsonMapper.builder()
+                        // error when a field required by the constructor/record is missing in the
+                        // JSON
+                        .enable(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES)
+                        // error when the JSON contains properties that do not exist in our class
+                        .enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                        // prevents setting null for primitive types (int, boolean, etc.)
+                        .enable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+                        .build();
         return new JacksonSerializer(mapper);
     }
 
     // for loosely coupled service as queues (RabbitMQ, Kafka)
     public static JacksonSerializer createLenientForMessaging() {
-        final ObjectMapper mapper = JsonMapper.builder()
-            .enable(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES)
-            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-            .enable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
-            .build();
+        final ObjectMapper mapper =
+                JsonMapper.builder()
+                        .enable(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES)
+                        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                        .enable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+                        .build();
         return new JacksonSerializer(mapper);
     }
 
@@ -99,8 +102,8 @@ public class JacksonSerializer implements JsonSerializer {
         try {
             return objectMapper.convertValue(source, type);
         } catch (IllegalArgumentException ex) {
-            throw new JsonSerializerException("Failed to convert payload data to expected type: "
-                + type.getSimpleName(), ex);
+            throw new JsonSerializerException(
+                    "Failed to convert payload data to expected type: " + type.getSimpleName(), ex);
         }
     }
 

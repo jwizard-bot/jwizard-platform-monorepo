@@ -17,12 +17,6 @@
  */
 package xyz.jwizard.jwl.websocket;
 
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.jspecify.annotations.Nullable;
 
 import xyz.jwizard.jwl.codec.DataType;
@@ -51,6 +45,12 @@ import xyz.jwizard.jwl.websocket.negotation.WsSerializerResolver;
 import xyz.jwizard.jwl.websocket.negotation.WsSerializerResolverFactory;
 import xyz.jwizard.jwl.websocket.registry.WsSessionRegistry;
 import xyz.jwizard.jwl.websocket.registry.WsSubscriptionRegistry;
+
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class WsServer extends IdempotentService {
     protected final int port;
@@ -81,7 +81,8 @@ public abstract class WsServer extends IdempotentService {
         authFailureHandler = builder.authFailureHandler;
         busListener = CompositeBusListener.load(builder.busListeners);
         authenticator = loadWsAuthenticators(builder.componentProvider, builder.authenticators);
-        lifecycleListener = CompositeNetworkSessionLifecycleListener.load(builder.componentProvider);
+        lifecycleListener =
+                CompositeNetworkSessionLifecycleListener.load(builder.componentProvider);
         localSessionDispatcher = builder.localSessionDispatcherFactory.create(sessionRegistry);
         broadcaster = determinateWsBroadcaster(builder);
     }
@@ -98,23 +99,25 @@ public abstract class WsServer extends IdempotentService {
         return localSessionDispatcher;
     }
 
-    private WsAuthenticator loadWsAuthenticators(ComponentProvider componentProvider,
-                                                 List<WsAuthenticator> authenticators) {
-        final Collection<WsAuthenticator> reflectAuthenticators = componentProvider
-            .getInstancesOf(WsAuthenticator.class);
+    private WsAuthenticator loadWsAuthenticators(
+            ComponentProvider componentProvider, List<WsAuthenticator> authenticators) {
+        final Collection<WsAuthenticator> reflectAuthenticators =
+                componentProvider.getInstancesOf(WsAuthenticator.class);
         reflectAuthenticators.addAll(authenticators);
-        final List<WsAuthenticator> sortedAuthenticators = new ArrayList<>(reflectAuthenticators)
-            .stream()
-            .sorted(WsAuthenticator.COMPARATOR)
-            .toList();
+        final List<WsAuthenticator> sortedAuthenticators =
+                new ArrayList<>(reflectAuthenticators)
+                        .stream().sorted(WsAuthenticator.COMPARATOR).toList();
         if (log.isDebugEnabled()) {
-            final String pipeline = sortedAuthenticators.stream()
-                .map(listener -> listener.getClass().getSimpleName())
-                .collect(Collectors.joining(" -> "));
+            final String pipeline =
+                    sortedAuthenticators.stream()
+                            .map(listener -> listener.getClass().getSimpleName())
+                            .collect(Collectors.joining(" -> "));
             log.debug("CompositeWsAuthenticator initialized with pipeline: {}", pipeline);
         }
-        log.info("Load {} ({} via reflection) WS authenticator(s)", sortedAuthenticators.size(),
-            reflectAuthenticators.size());
+        log.info(
+                "Load {} ({} via reflection) WS authenticator(s)",
+                sortedAuthenticators.size(),
+                reflectAuthenticators.size());
         return new CompositeWsAuthenticator(sortedAuthenticators);
     }
 
@@ -123,8 +126,9 @@ public abstract class WsServer extends IdempotentService {
         if (builder.messageSink != null) {
             messageSink = builder.messageSink;
         }
-        final EnvelopeSerializer<?> envelopeSerializer = serializerRegistry
-            .get(TypedSerializerFormat.from(StandardSerializerFormat.JSON, DataType.BINARY));
+        final EnvelopeSerializer<?> envelopeSerializer =
+                serializerRegistry.get(
+                        TypedSerializerFormat.from(StandardSerializerFormat.JSON, DataType.BINARY));
         return new WsMessageSinkBroadcaster(messageSink, envelopeSerializer);
     }
 
@@ -147,8 +151,7 @@ public abstract class WsServer extends IdempotentService {
         private LocalSessionDispatcherFactory localSessionDispatcherFactory;
         private WsMessageSink messageSink;
 
-        protected AbstractBuilder() {
-        }
+        protected AbstractBuilder() {}
 
         protected abstract B self();
 
@@ -234,8 +237,8 @@ public abstract class WsServer extends IdempotentService {
             Assert.notNull(serializerRegistry, "EnvelopeSerializerRegistry cannot be null");
             Assert.notNull(serializerResolverFactory, "WsSerializerResolverFactory cannot be null");
             Assert.notNull(sessionRegistry, "WsSessionRegistry cannot be null");
-            Assert.notNull(localSessionDispatcherFactory,
-                "LocalSessionDispatcherFactory cannot be null");
+            Assert.notNull(
+                    localSessionDispatcherFactory, "LocalSessionDispatcherFactory cannot be null");
         }
 
         public abstract WsServer build();

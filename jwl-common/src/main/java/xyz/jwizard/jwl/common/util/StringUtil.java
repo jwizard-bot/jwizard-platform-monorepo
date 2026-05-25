@@ -17,6 +17,8 @@
  */
 package xyz.jwizard.jwl.common.util;
 
+import xyz.jwizard.jwl.common.bootstrap.ForbiddenInstantiationException;
+
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
@@ -26,8 +28,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import xyz.jwizard.jwl.common.bootstrap.ForbiddenInstantiationException;
 
 public class StringUtil {
     private StringUtil() {
@@ -48,7 +48,8 @@ public class StringUtil {
         return str.toUpperCase(Locale.ROOT);
     }
 
-    // splits by char using fast indexOf() to avoid regex overhead, unpredictable trim patterns
+    // splits by char using fast indexOf() to avoid regex overhead, unpredictable
+    // trim patterns
     public static List<String> split(String str, char separator) {
         if (str == null) {
             return new ArrayList<>();
@@ -87,14 +88,16 @@ public class StringUtil {
         if (bytes.length <= maxBytes) {
             return text;
         }
-        final CharsetDecoder decoder = StandardCharsets.UTF_8.newDecoder()
-            .onMalformedInput(CodingErrorAction.IGNORE)
-            .onUnmappableCharacter(CodingErrorAction.IGNORE);
+        final CharsetDecoder decoder =
+                StandardCharsets.UTF_8
+                        .newDecoder()
+                        .onMalformedInput(CodingErrorAction.IGNORE)
+                        .onUnmappableCharacter(CodingErrorAction.IGNORE);
         try {
             final ByteBuffer buffer = ByteBuffer.wrap(bytes, 0, maxBytes);
             final CharBuffer decoded = decoder.decode(buffer);
             return decoded.toString();
-        } catch (CharacterCodingException ex) {
+        } catch (CharacterCodingException ignored) {
             return "";
         }
     }

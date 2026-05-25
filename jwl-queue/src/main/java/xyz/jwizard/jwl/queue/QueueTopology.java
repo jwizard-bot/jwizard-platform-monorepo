@@ -17,21 +17,22 @@
  */
 package xyz.jwizard.jwl.queue;
 
-import java.util.Map;
-
 import xyz.jwizard.jwl.queue.exchange.DefaultExchangeType;
 import xyz.jwizard.jwl.queue.exchange.ExchangeType;
 
+import java.util.Map;
+
 public record QueueTopology(
-    boolean durable, // whether the queue should survive a broker restart (saved to disk)
-    boolean exclusive, // whether the queue is exclusive to this connection
-    boolean autoDelete, // whether to delete the queue when the last consumer unsubscribes
-    Map<String, Object> arguments, // additional configuration arguments
-    String exchangeName, // name of the exchange to bind the queue to (null/empty if none)
-    ExchangeType exchangeType, // type of the exchange (most common: "direct", "topic", "fanout")
-    String routingKey, // routing key used by the exchange to route messages to this queue
-    boolean useDeadLetter // use DLX (dead letter exchange)
-) {
+        boolean durable, // whether the queue should survive a broker restart (saved to disk)
+        boolean exclusive, // whether the queue is exclusive to this connection
+        boolean autoDelete, // whether to delete the queue when the last consumer unsubscribes
+        Map<String, Object> arguments, // additional configuration arguments
+        String exchangeName, // name of the exchange to bind the queue to (null/empty if none)
+        ExchangeType
+                exchangeType, // type of the exchange (most common: "direct", "topic", "fanout")
+        String routingKey, // routing key used by the exchange to route messages to this queue
+        boolean useDeadLetter // use DLX (dead letter exchange)
+        ) {
     public static Builder builder() {
         return new Builder();
     }
@@ -71,8 +72,8 @@ public record QueueTopology(
             return this;
         }
 
-        public Builder bindToExchange(String exchangeName, ExchangeType exchangeType,
-                                      String routingKey) {
+        public Builder bindToExchange(
+                String exchangeName, ExchangeType exchangeType, String routingKey) {
             this.exchangeName = exchangeName;
             this.exchangeType = exchangeType;
             this.routingKey = routingKey;
@@ -86,15 +87,14 @@ public record QueueTopology(
 
         public QueueTopology build() {
             return new QueueTopology(
-                durable,
-                exclusive,
-                autoDelete,
-                arguments,
-                exchangeName,
-                exchangeType,
-                routingKey,
-                useDeadLetter
-            );
+                    durable,
+                    exclusive,
+                    autoDelete,
+                    arguments,
+                    exchangeName,
+                    exchangeType,
+                    routingKey,
+                    useDeadLetter);
         }
     }
 }

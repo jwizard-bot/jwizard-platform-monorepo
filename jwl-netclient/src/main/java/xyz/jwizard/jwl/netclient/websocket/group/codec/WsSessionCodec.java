@@ -17,15 +17,15 @@
  */
 package xyz.jwizard.jwl.netclient.websocket.group.codec;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Function;
-
 import xyz.jwizard.jwl.codec.EncodedPayloadVisitor;
 import xyz.jwizard.jwl.codec.UnifiedMessageCodec;
 import xyz.jwizard.jwl.codec.envelope.MessageEnvelope;
 import xyz.jwizard.jwl.codec.envelope.OpCode;
 import xyz.jwizard.jwl.codec.serialization.MessageSerializerException;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Function;
 
 public interface WsSessionCodec extends UnifiedMessageCodec {
     WsSessionCodecMode getCurrentMode();
@@ -43,8 +43,8 @@ public interface WsSessionCodec extends UnifiedMessageCodec {
     }
 
     @Override
-    default void serializeAndAcceptEnvelope(OpCode opCode, Object data,
-                                            EncodedPayloadVisitor visitor) {
+    default void serializeAndAcceptEnvelope(
+            OpCode opCode, Object data, EncodedPayloadVisitor visitor) {
         throw throwNotSupported();
     }
 
@@ -59,13 +59,15 @@ public interface WsSessionCodec extends UnifiedMessageCodec {
     }
 
     default MessageSerializerException throwNotSupported() {
-        final List<String> notSupported = Arrays.stream(WsSessionCodecMode.values())
-            .filter(codec -> !codec.equals(getCurrentMode()))
-            .map(Enum::name)
-            .toList();
-        return new MessageSerializerException("""
+        final List<String> notSupported =
+                Arrays.stream(WsSessionCodecMode.values())
+                        .filter(codec -> !codec.equals(getCurrentMode()))
+                        .map(Enum::name)
+                        .toList();
+        return new MessageSerializerException(
+                """
             This session operates in %s mode and does not support %s operation(s)
-            """.formatted(getCurrentMode(), notSupported)
-        );
+            """
+                        .formatted(getCurrentMode(), notSupported));
     }
 }

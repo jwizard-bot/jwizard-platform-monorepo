@@ -17,8 +17,6 @@
  */
 package xyz.jwizard.jwl.netclient.rest.spec;
 
-import java.time.Duration;
-
 import xyz.jwizard.jwl.codec.serialization.SerializerFormat;
 import xyz.jwizard.jwl.net.http.auth.AuthScheme;
 import xyz.jwizard.jwl.net.http.auth.StandardAuthScheme;
@@ -28,6 +26,8 @@ import xyz.jwizard.jwl.net.http.header.HttpHeaderValue;
 import xyz.jwizard.jwl.netclient.group.ClientGroup;
 import xyz.jwizard.jwl.netclient.rest.RestResponse;
 import xyz.jwizard.jwl.netclient.rest.intercept.RequestInterceptor;
+
+import java.time.Duration;
 
 public interface RequestSpec {
     RequestSpec group(ClientGroup clientGroup);
@@ -39,8 +39,8 @@ public interface RequestSpec {
     RequestSpec unsafeHeader(HttpHeaderName name, String value);
 
     default RequestSpec auth(AuthScheme scheme, String... credentials) {
-        return unsafeHeader(CommonHttpHeaderName.AUTHORIZATION,
-            scheme.buildHeaderValue(credentials));
+        return unsafeHeader(
+                CommonHttpHeaderName.AUTHORIZATION, scheme.buildHeaderValue(credentials));
     }
 
     default RequestSpec bearerAuth(String token) {

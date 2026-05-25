@@ -17,6 +17,12 @@
  */
 package xyz.jwizard.jwl.sql.jdbc;
 
+import xyz.jwizard.jwl.sql.GenericSqlClient;
+import xyz.jwizard.jwl.sql.SqlDatabaseException;
+import xyz.jwizard.jwl.sql.SqlRowMapper;
+import xyz.jwizard.jwl.sql.config.SqlDatabaseConfig;
+import xyz.jwizard.jwl.sql.pool.ConnectionPoolFactory;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -25,12 +31,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-
-import xyz.jwizard.jwl.sql.GenericSqlClient;
-import xyz.jwizard.jwl.sql.SqlDatabaseException;
-import xyz.jwizard.jwl.sql.SqlRowMapper;
-import xyz.jwizard.jwl.sql.config.SqlDatabaseConfig;
-import xyz.jwizard.jwl.sql.pool.ConnectionPoolFactory;
 
 public class JdbcSqlClient extends GenericSqlClient {
     public JdbcSqlClient(SqlDatabaseConfig config, ConnectionPoolFactory poolFactory) {
@@ -43,8 +43,8 @@ public class JdbcSqlClient extends GenericSqlClient {
             log.debug("Executing SQL query: [{}] | Params: {}", sql, Arrays.toString(params));
         }
         try (final Connection conn = getActiveDataSource().getConnection();
-             final PreparedStatement stmt = prepareStatement(conn, sql, params);
-             final ResultSet rs = stmt.executeQuery()) {
+                final PreparedStatement stmt = prepareStatement(conn, sql, params);
+                final ResultSet rs = stmt.executeQuery()) {
 
             final List<T> results = new ArrayList<>();
             while (rs.next()) {
@@ -77,7 +77,7 @@ public class JdbcSqlClient extends GenericSqlClient {
             log.debug("Executing SQL update: [{}] | Params: {}", sql, Arrays.toString(params));
         }
         try (final Connection conn = getActiveDataSource().getConnection();
-             final PreparedStatement stmt = prepareStatement(conn, sql, params)) {
+                final PreparedStatement stmt = prepareStatement(conn, sql, params)) {
             final int affectedRows = stmt.executeUpdate();
             log.debug("Update affected {} row(s)", affectedRows);
             return affectedRows;
@@ -88,7 +88,7 @@ public class JdbcSqlClient extends GenericSqlClient {
     }
 
     private PreparedStatement prepareStatement(Connection conn, String sql, Object... params)
-        throws SQLException {
+            throws SQLException {
         final PreparedStatement stmt = conn.prepareStatement(sql);
         for (int i = 0; i < params.length; i++) {
             stmt.setObject(i + 1, params[i]);

@@ -17,11 +17,6 @@
  */
 package xyz.jwizard.jwl.common.reflect;
 
-import java.lang.annotation.Annotation;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,25 +26,30 @@ import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
 
+import java.lang.annotation.Annotation;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 public class ClassGraphScanner implements ClassScanner {
     private static final Logger LOG = LoggerFactory.getLogger(ClassGraphScanner.class);
     private final ScanResult scanResult;
 
     public ClassGraphScanner(String... packages) {
         LOG.info("Initializing class scanner for package(s): {}", Arrays.asList(packages));
-        scanResult = new ClassGraph()
-            .enableAnnotationInfo()
-            .acceptPackages(packages)
-            // enable all info about classes (fields, methods, etc.)
-            .enableAllInfo()
-            .scan();
+        scanResult =
+                new ClassGraph()
+                        .enableAnnotationInfo()
+                        .acceptPackages(packages)
+                        // enable all info about classes (fields, methods, etc.)
+                        .enableAllInfo()
+                        .scan();
     }
 
     @Override
     public Set<Class<?>> getTypesAnnotatedWith(Class<? extends Annotation> annotation) {
-        return new HashSet<>(scanResult
-            .getClassesWithAnnotation(annotation.getName())
-            .loadClasses());
+        return new HashSet<>(
+                scanResult.getClassesWithAnnotation(annotation.getName()).loadClasses());
     }
 
     @Override
@@ -59,8 +59,8 @@ public class ClassGraphScanner implements ClassScanner {
 
     @Override
     public <T> Set<Class<? extends T>> getInstantiableSubtypesOf(Class<T> type) {
-        final ClassInfoList concreteClasses = getRawSubtypes(type)
-            .filter(info -> !info.isAbstract() && !info.isInterface());
+        final ClassInfoList concreteClasses =
+                getRawSubtypes(type).filter(info -> !info.isAbstract() && !info.isInterface());
         return new HashSet<>(concreteClasses.loadClasses(type));
     }
 
@@ -72,8 +72,7 @@ public class ClassGraphScanner implements ClassScanner {
     private ClassInfoList getRawSubtypes(Class<?> type) {
         if (type.isInterface()) {
             return scanResult.getClassesImplementing(type.getName());
-        } else {
-            return scanResult.getSubclasses(type.getName());
         }
+        return scanResult.getSubclasses(type.getName());
     }
 }

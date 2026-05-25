@@ -17,11 +17,6 @@
  */
 package xyz.jwizard.jwl.http.resolver.body;
 
-import java.io.InputStream;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.util.Arrays;
-
 import xyz.jwizard.jwl.codec.serialization.MessageSerializer;
 import xyz.jwizard.jwl.codec.serialization.SerializerRegistry;
 import xyz.jwizard.jwl.http.HttpRequest;
@@ -32,12 +27,18 @@ import xyz.jwizard.jwl.http.resolver.ArgumentResolver;
 import xyz.jwizard.jwl.http.route.MatchResult;
 import xyz.jwizard.jwl.http.validation.ValidationHandler;
 
+import java.io.InputStream;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.Arrays;
+
 public class RequestBodyResolver implements ArgumentResolver {
     private final SerializerRegistry<MessageSerializer> serializerRegistry;
     private final ValidationHandler validationHandler;
 
-    public RequestBodyResolver(SerializerRegistry<MessageSerializer> serializerRegistry,
-                               ValidationHandler validationHandler) {
+    public RequestBodyResolver(
+            SerializerRegistry<MessageSerializer> serializerRegistry,
+            ValidationHandler validationHandler) {
         this.serializerRegistry = serializerRegistry;
         this.validationHandler = validationHandler;
     }
@@ -49,28 +50,29 @@ public class RequestBodyResolver implements ArgumentResolver {
 
     @Override
     public Object resolve(Parameter parameter, HttpRequest req, MatchResult match)
-        throws Exception {
+            throws Exception {
         final long contentLength = req.getLength();
         if (contentLength == 0) {
             return null;
         }
-        final BodyMediaSerializer mapping = BodyMediaSerializer
-            .resolve(parameter.getType(), req.getContentType());
+        final BodyMediaSerializer mapping =
+                BodyMediaSerializer.resolve(parameter.getType(), req.getContentType());
 
         final Body annotation = parameter.getAnnotation(Body.class);
-        final long limit = (annotation != null && annotation.limit() > 0)
-            ? annotation.unit().toBytes(annotation.limit())
-            : mapping.getMaxSizeBytes();
+        final long limit =
+                (annotation != null && annotation.limit() > 0)
+                        ? annotation.unit().toBytes(annotation.limit())
+                        : mapping.getMaxSizeBytes();
         if (contentLength > limit) {
-            throw new RequestTooLargeException(String
-                .format("Declared Content-Length: %d bytes, max allowed: %d bytes", contentLength,
-                    limit)
-            );
+            throw new RequestTooLargeException(
+                    String.format(
+                            "Declared Content-Length: %d bytes, max allowed: %d bytes",
+                            contentLength, limit));
         }
         final MessageSerializer serializer = serializerRegistry.get(mapping.getFormat());
         if (serializer == null) {
-            throw new IllegalStateException("No serializer registered for format: " +
-                mapping.getFormat());
+            throw new IllegalStateException(
+                    "No serializer registered for format: " + mapping.getFormat());
         }
         try (final InputStream in = new LimitedInputStream(req.getInputStream(), limit)) {
             final Object body = serializer.deserializeFromStream(in, parameter.getType());
@@ -83,12 +85,12 @@ public class RequestBodyResolver implements ArgumentResolver {
 
     @Override
     public void validate(Method method) throws RouteValidationException {
-        final long bodyParams = Arrays.stream(method.getParameters())
-            .filter(this::supports)
-            .count();
+        final long bodyParams =
+                Arrays.stream(method.getParameters()).filter(this::supports).count();
         if (bodyParams > 1) {
-            throw new RouteValidationException(method,
-                "Multiple @Body parameters detected, only one request body is allowed per route");
+            throw new RouteValidationException(
+                    method,
+                    "Multiple @Body parameters detected, only one request body is allowed per route");
         }
     }
 }

@@ -17,10 +17,6 @@
  */
 package xyz.jwizard.jwl.http;
 
-import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.Set;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +29,10 @@ import xyz.jwizard.jwl.http.route.Route;
 import xyz.jwizard.jwl.http.route.Router;
 import xyz.jwizard.jwl.net.http.HttpMethod;
 
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.Set;
+
 class RouteScanner {
     private static final Logger LOG = LoggerFactory.getLogger(RouteScanner.class);
 
@@ -42,16 +42,16 @@ class RouteScanner {
 
     private int registeredRoutesCount = 0;
 
-    RouteScanner(ComponentProvider componentProvider, Router router,
-                 Set<ArgumentResolver> resolvers) {
+    RouteScanner(
+            ComponentProvider componentProvider, Router router, Set<ArgumentResolver> resolvers) {
         this.componentProvider = componentProvider;
         this.router = router;
         this.resolvers = resolvers;
     }
 
     void scan() {
-        final Collection<Object> instances = componentProvider
-            .getInstancesAnnotatedWith(HttpController.class);
+        final Collection<Object> instances =
+                componentProvider.getInstancesAnnotatedWith(HttpController.class);
         for (final Object instance : instances) {
             registerRoutesForInstance(instance);
         }
@@ -84,8 +84,12 @@ class RouteScanner {
             final String fullPath = PathUtil.combinePaths(basePath, path);
             router.addRoute(httpMethod.name(), fullPath, new Route(instance, method, path));
             registeredRoutesCount++;
-            LOG.debug("Registered route: [{} {}] -> {}.{}()", httpMethod, fullPath,
-                instance.getClass().getSimpleName(), method.getName());
+            LOG.debug(
+                    "Registered route: [{} {}] -> {}.{}()",
+                    httpMethod,
+                    fullPath,
+                    instance.getClass().getSimpleName(),
+                    method.getName());
         }
     }
 }

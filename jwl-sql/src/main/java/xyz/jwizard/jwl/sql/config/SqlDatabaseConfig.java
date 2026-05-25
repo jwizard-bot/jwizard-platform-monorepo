@@ -17,20 +17,19 @@
  */
 package xyz.jwizard.jwl.sql.config;
 
-import java.util.Map;
-
 import xyz.jwizard.jwl.common.util.Assert;
 import xyz.jwizard.jwl.net.HostPort;
 import xyz.jwizard.jwl.net.NetworkUtil;
 
+import java.util.Map;
+
 public record SqlDatabaseConfig(
-    SqlDatabaseDialect dialect,
-    HostPort hostPort,
-    String username,
-    String password,
-    String databaseName,
-    int maxPoolSize
-) {
+        SqlDatabaseDialect dialect,
+        HostPort hostPort,
+        String username,
+        String password,
+        String databaseName,
+        int maxPoolSize) {
     public static Builder builder() {
         return new Builder();
     }
@@ -51,8 +50,7 @@ public record SqlDatabaseConfig(
         private String databaseName;
         private int maxPoolSize = 10;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder dialect(SqlDatabaseDialect dialect) {
             this.dialect = dialect;
@@ -96,13 +94,7 @@ public record SqlDatabaseConfig(
             Assert.notNull(username, "Database username cannot be null");
             Assert.notNull(databaseName, "Database name cannot be null");
             return new SqlDatabaseConfig(
-                dialect,
-                hostPort,
-                username,
-                password,
-                databaseName,
-                maxPoolSize
-            );
+                    dialect, hostPort, username, password, databaseName, maxPoolSize);
         }
     }
 }

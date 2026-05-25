@@ -17,9 +17,9 @@
  */
 package xyz.jwizard.jwl.codec.serialization.protobuf;
 
-import java.io.Serial;
-
 import xyz.jwizard.jwl.codec.serialization.MessageSerializerException;
+
+import java.io.Serial;
 
 public class ProtobufSerializerException extends MessageSerializerException {
     @Serial private static final long serialVersionUID = 1L;

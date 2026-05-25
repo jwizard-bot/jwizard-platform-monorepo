@@ -17,8 +17,6 @@
  */
 package xyz.jwizard.jwl.websocket.jetty.adapter;
 
-import java.util.List;
-
 import org.eclipse.jetty.http.HttpCookie;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.util.Fields;
@@ -27,6 +25,8 @@ import org.eclipse.jetty.websocket.server.ServerUpgradeRequest;
 import xyz.jwizard.jwl.net.http.cookie.CookieName;
 import xyz.jwizard.jwl.net.http.header.HttpHeaderName;
 import xyz.jwizard.jwl.websocket.WsHandshakeRequest;
+
+import java.util.List;
 
 public class JettyWsHandshakeRequestAdapter implements WsHandshakeRequest {
     private final ServerUpgradeRequest req;

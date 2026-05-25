@@ -17,10 +17,10 @@
  */
 package xyz.jwizard.jwl.common.util;
 
+import xyz.jwizard.jwl.common.bootstrap.ForbiddenInstantiationException;
+
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-
-import xyz.jwizard.jwl.common.bootstrap.ForbiddenInstantiationException;
 
 public class CodecUtil {
     private CodecUtil() {

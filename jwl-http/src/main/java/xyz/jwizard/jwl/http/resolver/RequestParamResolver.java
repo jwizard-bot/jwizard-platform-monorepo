@@ -17,11 +17,11 @@
  */
 package xyz.jwizard.jwl.http.resolver;
 
-import java.lang.reflect.Parameter;
-
 import xyz.jwizard.jwl.http.HttpRequest;
 import xyz.jwizard.jwl.http.annotation.RequestParam;
 import xyz.jwizard.jwl.http.route.MatchResult;
+
+import java.lang.reflect.Parameter;
 
 public class RequestParamResolver implements ArgumentResolver {
     @Override
@@ -38,8 +38,8 @@ public class RequestParamResolver implements ArgumentResolver {
         if (paramValue == null) {
             if (annotation.defaultValue().isEmpty()) {
                 if (annotation.required()) {
-                    throw new IllegalArgumentException("Required request parameter '" + paramName
-                        + "' is missing");
+                    throw new IllegalArgumentException(
+                            "Required request parameter '" + paramName + "' is missing");
                 }
                 return null;
             }

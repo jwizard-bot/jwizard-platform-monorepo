@@ -23,9 +23,6 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.ByteArrayInputStream;
-import java.util.Set;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,27 +38,22 @@ import xyz.jwizard.jwl.codec.serialization.SerializerFormat;
 import xyz.jwizard.jwl.codec.serialization.StandardSerializerFormat;
 import xyz.jwizard.jwl.common.reflect.ClassScanner;
 
+import java.io.ByteArrayInputStream;
+import java.util.Set;
+
 @ExtendWith(MockitoExtension.class)
 class ProtobufSerializerTest {
-    @Mock
-    private ClassScanner scannerMock;
-
     private ProtobufSerializer serializer;
 
-    @Mock
-    private EncodedPayloadVisitor visitorMock;
-
-    @Mock
-    private MessageLite messageLiteMock;
+    @Mock private ClassScanner scannerMock;
+    @Mock private EncodedPayloadVisitor visitorMock;
+    @Mock private MessageLite messageLiteMock;
 
     @BeforeEach
     void setUp() {
         // given
         when(scannerMock.getSubtypesOf(MessageLite.class))
-            .thenReturn(Set.of(
-                TestMessage.class,
-                ComplexMessage.class
-            ));
+                .thenReturn(Set.of(TestMessage.class, ComplexMessage.class));
         // when
         serializer = ProtobufSerializer.createDefault(scannerMock);
     }
@@ -70,10 +62,8 @@ class ProtobufSerializerTest {
     @DisplayName("should register test message and handle round-trip serialization")
     void shouldHandleSerialization() {
         // given
-        final TestMessage message = TestMessage.newBuilder()
-            .setId(100)
-            .setValue("test-content")
-            .build();
+        final TestMessage message =
+                TestMessage.newBuilder().setId(100).setValue("test-content").build();
         // when
         final byte[] bytes = serializer.serializeToBytes(message);
         final TestMessage result = serializer.deserializeFromBytes(bytes, TestMessage.class);
@@ -86,9 +76,7 @@ class ProtobufSerializerTest {
     @DisplayName("should handle stream deserialization for test message")
     void shouldHandleStream() {
         // given
-        final TestMessage message = TestMessage.newBuilder()
-            .setId(1)
-            .build();
+        final TestMessage message = TestMessage.newBuilder().setId(1).build();
         final ByteArrayInputStream in = new ByteArrayInputStream(message.toByteArray());
         // when
         final TestMessage result = serializer.deserializeFromStream(in, TestMessage.class);
@@ -103,8 +91,8 @@ class ProtobufSerializerTest {
         final byte[] data = new byte[0];
         // when & then
         assertThatThrownBy(() -> serializer.deserializeFromBytes(data, OtherTestMessage.class))
-            .isInstanceOf(ProtobufSerializerException.class)
-            .hasMessageContaining("Type not registered");
+                .isInstanceOf(ProtobufSerializerException.class)
+                .hasMessageContaining("Type not registered");
     }
 
     @Test
@@ -120,14 +108,13 @@ class ProtobufSerializerTest {
     @DisplayName("should handle composition where one proto class uses another")
     void shouldHandleCrossProtoComposition() {
         // given
-        final TestMessage inner = TestMessage.newBuilder()
-            .setId(99)
-            .setValue("nested-content")
-            .build();
-        final ComplexMessage complex = ComplexMessage.newBuilder()
-            .setDescription("root-container")
-            .setCoreData(inner)
-            .build();
+        final TestMessage inner =
+                TestMessage.newBuilder().setId(99).setValue("nested-content").build();
+        final ComplexMessage complex =
+                ComplexMessage.newBuilder()
+                        .setDescription("root-container")
+                        .setCoreData(inner)
+                        .build();
         // when
         final byte[] bytes = serializer.serializeToBytes(complex);
         final ComplexMessage result = serializer.deserializeFromBytes(bytes, ComplexMessage.class);
@@ -153,5 +140,4 @@ class ProtobufSerializerTest {
     }
 }
 
-abstract class OtherTestMessage implements MessageLite {
-}
+abstract class OtherTestMessage implements MessageLite {}

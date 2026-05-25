@@ -17,20 +17,21 @@
  */
 package xyz.jwizard.jwl.sql.config;
 
-import java.util.Map;
-
 import xyz.jwizard.jwl.common.bootstrap.CriticalBootstrapException;
 import xyz.jwizard.jwl.common.util.StringUtil;
 import xyz.jwizard.jwl.net.HostPort;
 
+import java.util.Map;
+
 public enum SqlDatabaseDialect {
-    POSTGRESQL("jdbc:postgresql://%s:%d/%s", Map.of(
-        "cachePrepStmts", "true",
-        "prepStmtCacheSize", "250",
-        "prepStmtCacheSqlLimit", "2048",
-        "reWriteBatchedInserts", "true"
-    )),
-    ;
+    POSTGRESQL(
+            "jdbc:postgresql://%s:%d/%s",
+            Map.of(
+                    "cachePrepStmts", "true",
+                    "prepStmtCacheSize", "250",
+                    "prepStmtCacheSqlLimit", "2048",
+                    "reWriteBatchedInserts", "true")),
+                    ;
 
     private final String urlTemplate;
     private final Map<String, String> defaultDriverProperties;
@@ -44,8 +45,8 @@ public enum SqlDatabaseDialect {
         try {
             return SqlDatabaseDialect.valueOf(StringUtil.toUpperCase(dialectName));
         } catch (IllegalArgumentException ex) {
-            throw new CriticalBootstrapException("Unsupported database dialect: "
-                + dialectName, ex);
+            throw new CriticalBootstrapException(
+                    "Unsupported database dialect: " + dialectName, ex);
         }
     }
 

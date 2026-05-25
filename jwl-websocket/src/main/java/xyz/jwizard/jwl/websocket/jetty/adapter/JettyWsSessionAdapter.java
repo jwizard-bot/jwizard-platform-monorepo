@@ -17,8 +17,6 @@
  */
 package xyz.jwizard.jwl.websocket.jetty.adapter;
 
-import java.nio.ByteBuffer;
-
 import org.eclipse.jetty.websocket.api.Session;
 
 import xyz.jwizard.jwl.codec.UnsupportedDataTypeException;
@@ -28,12 +26,14 @@ import xyz.jwizard.jwl.common.util.concurrent.ConcurrentUtil;
 import xyz.jwizard.jwl.net.ws.GenericWsSessionAdapter;
 import xyz.jwizard.jwl.websocket.WsSession;
 
+import java.nio.ByteBuffer;
+
 public class JettyWsSessionAdapter extends GenericWsSessionAdapter implements WsSession {
     private final Session session;
     private final EnvelopeSerializer<?> envelopeSerializer;
 
-    public JettyWsSessionAdapter(Session session, String principalId,
-                                 EnvelopeSerializer<?> envelopeSerializer) {
+    public JettyWsSessionAdapter(
+            Session session, String principalId, EnvelopeSerializer<?> envelopeSerializer) {
         super(principalId, envelopeSerializer);
         this.session = session;
         this.envelopeSerializer = envelopeSerializer;
@@ -46,9 +46,8 @@ public class JettyWsSessionAdapter extends GenericWsSessionAdapter implements Ws
 
     @Override
     protected void onSend(byte[] message) {
-        ConcurrentUtil.await(cb ->
-            session.sendBinary(ByteBuffer.wrap(message), new JettyCallbackAdapter(cb))
-        );
+        ConcurrentUtil.await(
+                cb -> session.sendBinary(ByteBuffer.wrap(message), new JettyCallbackAdapter(cb)));
     }
 
     @Override

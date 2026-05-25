@@ -19,11 +19,6 @@ package xyz.jwizard.jwl.common.util.concurrent;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -31,6 +26,11 @@ import org.junit.jupiter.api.Test;
 
 import xyz.jwizard.jwl.common.util.io.IoUtil;
 import xyz.jwizard.jwl.common.util.thread.TaskExecutor;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 class VirtualPeriodicTaskSchedulerTest {
     private ScheduledExecutorService ticker;
@@ -59,10 +59,15 @@ class VirtualPeriodicTaskSchedulerTest {
         final CountDownLatch latch = new CountDownLatch(expectedExecutions);
         final AtomicInteger counter = new AtomicInteger(0);
         // when
-        scheduler.scheduleAtFixedRate("test-task", () -> {
-            counter.incrementAndGet();
-            latch.countDown();
-        }, 10, 50, TimeUnit.MILLISECONDS);
+        scheduler.scheduleAtFixedRate(
+                "test-task",
+                () -> {
+                    counter.incrementAndGet();
+                    latch.countDown();
+                },
+                10,
+                50,
+                TimeUnit.MILLISECONDS);
         // then
         final boolean completed = latch.await(1, TimeUnit.SECONDS);
         assertThat(completed).isTrue();
@@ -76,8 +81,8 @@ class VirtualPeriodicTaskSchedulerTest {
         final AtomicInteger counter = new AtomicInteger(0);
         final String taskId = "cancellable-task";
         // when
-        scheduler.scheduleAtFixedRate(taskId, counter::incrementAndGet, 10, 50,
-            TimeUnit.MILLISECONDS);
+        scheduler.scheduleAtFixedRate(
+                taskId, counter::incrementAndGet, 10, 50, TimeUnit.MILLISECONDS);
         Thread.sleep(150);
         scheduler.cancel(taskId);
         final int countAfterCancel = counter.get();

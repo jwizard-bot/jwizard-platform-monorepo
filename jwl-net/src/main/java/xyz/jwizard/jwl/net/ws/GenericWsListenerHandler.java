@@ -17,9 +17,6 @@
  */
 package xyz.jwizard.jwl.net.ws;
 
-import java.nio.ByteBuffer;
-import java.util.function.Consumer;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +29,9 @@ import xyz.jwizard.jwl.net.NetworkSession;
 import xyz.jwizard.jwl.net.bus.RawBusListener;
 import xyz.jwizard.jwl.net.lifecycle.NetworkSessionLifecycleListener;
 
+import java.nio.ByteBuffer;
+import java.util.function.Consumer;
+
 public abstract class GenericWsListenerHandler<S extends NetworkSession> {
     private static final String UNKNOWN_SESSION = "UNKNOWN_PENDING_SESSION";
 
@@ -42,9 +42,10 @@ public abstract class GenericWsListenerHandler<S extends NetworkSession> {
 
     protected S sessionAdapter;
 
-    protected GenericWsListenerHandler(RegistryTracker<S> registryTracker,
-                                       NetworkSessionLifecycleListener<S> lifecycleListener,
-                                       RawBusListener<S> busListener) {
+    protected GenericWsListenerHandler(
+            RegistryTracker<S> registryTracker,
+            NetworkSessionLifecycleListener<S> lifecycleListener,
+            RawBusListener<S> busListener) {
         this.registryTracker = registryTracker;
         this.lifecycleListener = lifecycleListener;
         this.busListener = busListener;
@@ -62,8 +63,11 @@ public abstract class GenericWsListenerHandler<S extends NetworkSession> {
     }
 
     protected void handleClose(int statusCode, String reason) {
-        log.debug("WebSocket connection closed, session: {}, status: {}, reason: '{}'",
-            getSafeSessionId(), statusCode, reason);
+        log.debug(
+                "WebSocket connection closed, session: {}, status: {}, reason: '{}'",
+                getSafeSessionId(),
+                statusCode,
+                reason);
         if (sessionAdapter != null) {
             cleanupSession();
             lifecycleListener.onClose(sessionAdapter, statusCode, reason);
@@ -71,8 +75,10 @@ public abstract class GenericWsListenerHandler<S extends NetworkSession> {
     }
 
     protected void handleError(Throwable cause) {
-        log.warn("WebSocket protocol/network error, session: {}, cause: {}", getSafeSessionId(),
-            cause != null ? cause.getMessage() : "null");
+        log.warn(
+                "WebSocket protocol/network error, session: {}, cause: {}",
+                getSafeSessionId(),
+                cause != null ? cause.getMessage() : "null");
         if (sessionAdapter != null) {
             cleanupSession();
             lifecycleListener.onError(sessionAdapter, cause);
@@ -81,8 +87,10 @@ public abstract class GenericWsListenerHandler<S extends NetworkSession> {
 
     protected void onText(String message) {
         if (log.isTraceEnabled()) {
-            log.trace("Received text message, session: {}, size: {} chars", getSafeSessionId(),
-                message.length());
+            log.trace(
+                    "Received text message, session: {}, size: {} chars",
+                    getSafeSessionId(),
+                    message.length());
         }
         processMessageSafe(() -> busListener.dispatch(sessionAdapter, message), null, null);
     }
@@ -91,14 +99,16 @@ public abstract class GenericWsListenerHandler<S extends NetworkSession> {
         final byte[] bytes = new byte[payload.remaining()];
         payload.get(bytes);
         if (log.isTraceEnabled()) {
-            log.trace("Received binary message, session: {}, size: {} bytes", getSafeSessionId(),
-                bytes.length);
+            log.trace(
+                    "Received binary message, session: {}, size: {} bytes",
+                    getSafeSessionId(),
+                    bytes.length);
         }
         processMessageSafe(() -> busListener.dispatch(sessionAdapter, bytes), onSuccess, onFailure);
     }
 
-    protected void processMessageSafe(RunnableWithException action, Runnable onSuccess,
-                                      Consumer<Throwable> onFailure) {
+    protected void processMessageSafe(
+            RunnableWithException action, Runnable onSuccess, Consumer<Throwable> onFailure) {
         final String sessionId = getSafeSessionId();
         try {
             if (!checkRateLimit()) {
@@ -160,9 +170,7 @@ public abstract class GenericWsListenerHandler<S extends NetworkSession> {
         return true;
     }
 
-    protected void onRateLimitExceeded() {
-    }
+    protected void onRateLimitExceeded() {}
 
-    protected void onBusinessError() {
-    }
+    protected void onBusinessError() {}
 }

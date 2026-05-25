@@ -17,13 +17,13 @@
  */
 package xyz.jwizard.jwl.common.util.thread;
 
-import java.util.concurrent.ThreadFactory;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import xyz.jwizard.jwl.common.bootstrap.ForbiddenInstantiationException;
 import xyz.jwizard.jwl.common.util.io.RunnableWithException;
+
+import java.util.concurrent.ThreadFactory;
 
 public class ThreadUtil {
     private static final Logger LOG = LoggerFactory.getLogger(ThreadUtil.class);
@@ -34,14 +34,15 @@ public class ThreadUtil {
 
     public static void runAsync(String name, RunnableWithException task) {
         Thread.ofVirtual()
-            .name(name)
-            .start(() -> {
-                try {
-                    task.run();
-                } catch (Exception ex) {
-                    LOG.error("Critical error in async task: {}", name, ex);
-                }
-            });
+                .name(name)
+                .start(
+                        () -> {
+                            try {
+                                task.run();
+                            } catch (Exception ex) {
+                                LOG.error("Critical error in async task: {}", name, ex);
+                            }
+                        });
     }
 
     public static ThreadFactory createThreadFactory(String name) {

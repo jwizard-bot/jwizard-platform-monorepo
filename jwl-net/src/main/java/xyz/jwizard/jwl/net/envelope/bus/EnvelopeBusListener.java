@@ -17,10 +17,6 @@
  */
 package xyz.jwizard.jwl.net.envelope.bus;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +31,10 @@ import xyz.jwizard.jwl.net.bus.RawBusListener;
 import xyz.jwizard.jwl.net.envelope.ActionGroup;
 import xyz.jwizard.jwl.net.envelope.EnvelopeAction;
 import xyz.jwizard.jwl.net.envelope.EnvelopeSession;
+
+import java.util.Collection;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class EnvelopeBusListener<S extends EnvelopeSession> implements RawBusListener<S> {
     protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -58,9 +58,8 @@ public abstract class EnvelopeBusListener<S extends EnvelopeSession> implements 
     }
 
     private void registerEnvelopeActions() {
-        final Collection<EnvelopeAction<S, ?>> actions = componentProvider
-            .getInstancesOf(new TypeReference<>() {
-            });
+        final Collection<EnvelopeAction<S, ?>> actions =
+                componentProvider.getInstancesOf(new TypeReference<>() {});
         int registeredCount = 0;
         for (final EnvelopeAction<S, ?> action : actions) {
             if (actionGroup.groupName().equals(action.group().groupName())) {
@@ -75,8 +74,8 @@ public abstract class EnvelopeBusListener<S extends EnvelopeSession> implements 
         final OpCode op = action.opCode();
         typeRegistry.put(op.getCode(), action.payloadClass());
         actionHandlers.put(op.getCode(), action);
-        log.debug("Registered action: {} (OP: {})", action.getClass().getSimpleName(),
-            op.getCode());
+        log.debug(
+                "Registered action: {} (OP: {})", action.getClass().getSimpleName(), op.getCode());
     }
 
     @Override
@@ -98,8 +97,8 @@ public abstract class EnvelopeBusListener<S extends EnvelopeSession> implements 
     }
 
     private void processEnvelope(S session, MessageEnvelope<?> envelope) {
-        final EnvelopeAction<S, Object> handler = CastUtil
-            .unsafeCast(actionHandlers.get(envelope.op()));
+        final EnvelopeAction<S, Object> handler =
+                CastUtil.unsafeCast(actionHandlers.get(envelope.op()));
         if (handler != null) {
             handler.handle(session, envelope.data());
             return;
@@ -108,18 +107,21 @@ public abstract class EnvelopeBusListener<S extends EnvelopeSession> implements 
     }
 
     protected void handleProcessUnknownAction(S session, MessageEnvelope<?> envelope) {
-        log.warn("No action handler found for OP code: {} in session: {}", envelope.op(),
-            session.getSessionId());
+        log.warn(
+                "No action handler found for OP code: {} in session: {}",
+                envelope.op(),
+                session.getSessionId());
     }
 
     protected void handleProcessingError(S session, Exception ex) {
-        log.error("Error processing envelope from session {}: {}", session.getSessionId(),
-            ex.getMessage());
+        log.error(
+                "Error processing envelope from session {}: {}",
+                session.getSessionId(),
+                ex.getMessage());
     }
 
     protected abstract static class AbstractBuilder<
-        S extends EnvelopeSession,
-        B extends AbstractBuilder<S, B>> {
+            S extends EnvelopeSession, B extends AbstractBuilder<S, B>> {
         private ActionGroup actionGroup = ActionGroup.GLOBAL;
         private Integer order = Ordered.HIGHEST_PRIORITY;
         private ComponentProvider componentProvider;

@@ -20,8 +20,6 @@ package xyz.jwizard.jwl.http.validation;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.Set;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,16 +30,19 @@ import xyz.jwizard.jwl.http.validation.validator.LengthValidator;
 import xyz.jwizard.jwl.http.validation.validator.NotNullValidator;
 import xyz.jwizard.jwl.http.validation.validator.RangeValidator;
 
+import java.util.Set;
+
 class ValidationHandlerTest {
     private ValidationHandler validationHandler;
 
     @BeforeEach
     void setUp() {
-        validationHandler = new ValidationHandler(Set.of(
-            new NotNullValidator(),
-            new LengthValidator(),
-            new RangeValidator()
-        ));
+        validationHandler =
+                new ValidationHandler(
+                        Set.of(
+                                new NotNullValidator(),
+                                new LengthValidator(),
+                                new RangeValidator()));
     }
 
     @Test
@@ -50,8 +51,7 @@ class ValidationHandlerTest {
         // given
         final TestUser validTestUser = new TestUser("JWizard", 40);
         // when & then
-        assertThatCode(() -> validationHandler.validate(validTestUser))
-            .doesNotThrowAnyException();
+        assertThatCode(() -> validationHandler.validate(validTestUser)).doesNotThrowAnyException();
     }
 
     @Test
@@ -61,8 +61,8 @@ class ValidationHandlerTest {
         final TestUser invalidTestUser = new TestUser(null, 20);
         // when & then
         assertThatThrownBy(() -> validationHandler.validate(invalidTestUser))
-            .isInstanceOf(ValidationException.class)
-            .hasMessageContaining("Field 'name' must not be null");
+                .isInstanceOf(ValidationException.class)
+                .hasMessageContaining("Field 'name' must not be null");
     }
 
     @Test
@@ -72,8 +72,8 @@ class ValidationHandlerTest {
         final TestUser invalidTestUser = new TestUser("JW", 20);
         // when & then
         assertThatThrownBy(() -> validationHandler.validate(invalidTestUser))
-            .isInstanceOf(ValidationException.class)
-            .hasMessageContaining("Field 'name' length must be between 3 and");
+                .isInstanceOf(ValidationException.class)
+                .hasMessageContaining("Field 'name' length must be between 3 and");
     }
 
     @Test
@@ -83,8 +83,8 @@ class ValidationHandlerTest {
         final TestUser invalidTestUser = new TestUser("JWizard", 15);
         // when & then
         assertThatThrownBy(() -> validationHandler.validate(invalidTestUser))
-            .isInstanceOf(ValidationException.class)
-            .hasMessageContaining("Field 'age' must be between 18 and");
+                .isInstanceOf(ValidationException.class)
+                .hasMessageContaining("Field 'age' must be between 18 and");
     }
 
     @Test
@@ -95,8 +95,7 @@ class ValidationHandlerTest {
         // when
         validationHandler.validate(testUser);
         // when & then
-        assertThatCode(() -> validationHandler.validate(testUser))
-            .doesNotThrowAnyException();
+        assertThatCode(() -> validationHandler.validate(testUser)).doesNotThrowAnyException();
     }
 
     @Test
@@ -107,9 +106,9 @@ class ValidationHandlerTest {
         final TestEnvelope testEnvelope = new TestEnvelope("REQ-101", underageTestUser);
         // when & then
         assertThatThrownBy(() -> validationHandler.validate(testEnvelope))
-            .isInstanceOf(ValidationException.class)
-            .hasMessageContaining("Field 'age'")
-            .hasMessageContaining("must be between 18 and");
+                .isInstanceOf(ValidationException.class)
+                .hasMessageContaining("Field 'age'")
+                .hasMessageContaining("must be between 18 and");
     }
 
     @Test
@@ -120,9 +119,9 @@ class ValidationHandlerTest {
         final TestEnvelope testEnvelope = new TestEnvelope("REQ-102", shortNameTestUser);
         // when & then
         assertThatThrownBy(() -> validationHandler.validate(testEnvelope))
-            .isInstanceOf(ValidationException.class)
-            .hasMessageContaining("Field 'name'")
-            .hasMessageContaining("between 3 and");
+                .isInstanceOf(ValidationException.class)
+                .hasMessageContaining("Field 'name'")
+                .hasMessageContaining("between 3 and");
     }
 
     @Test
@@ -133,6 +132,6 @@ class ValidationHandlerTest {
         final TestEnvelope validTestEnvelope = new TestEnvelope("REQ-103", validTestUser);
         // when & then
         assertThatCode(() -> validationHandler.validate(validTestEnvelope))
-            .doesNotThrowAnyException();
+                .doesNotThrowAnyException();
     }
 }

@@ -17,9 +17,6 @@
  */
 package xyz.jwizard.jwl.kv.jedis.pubsub;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicReference;
-
 import xyz.jwizard.jwl.kv.pubsub.KvChannel;
 import xyz.jwizard.jwl.kv.pubsub.TestKvChannel;
 import xyz.jwizard.jwl.kv.pubsub.subscriber.AbstractKvSubscriber;
@@ -27,15 +24,19 @@ import xyz.jwizard.jwl.kv.pubsub.subscriber.SubscriptionMode;
 
 import jakarta.inject.Singleton;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
+
 @Singleton
 public class PatternStringTestSubscriber extends AbstractKvSubscriber<String> {
     private CountDownLatch latch;
     private AtomicReference<String> receivedRef;
     private AtomicReference<String[]> paramsRef;
 
-    public void prepareForTest(CountDownLatch latch,
-                               AtomicReference<String> receivedRef,
-                               AtomicReference<String[]> paramsRef) {
+    public void prepareForTest(
+            CountDownLatch latch,
+            AtomicReference<String> receivedRef,
+            AtomicReference<String[]> paramsRef) {
         this.latch = latch;
         this.receivedRef = receivedRef;
         this.paramsRef = paramsRef;

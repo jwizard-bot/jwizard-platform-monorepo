@@ -17,13 +17,13 @@
  */
 package xyz.jwizard.jwl.queue.rabbitmq.connector;
 
-import java.util.Set;
-
 import com.google.errorprone.annotations.Immutable;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
 import xyz.jwizard.jwl.net.HostPort;
+
+import java.util.Set;
 
 @Immutable
 public interface RabbitMqConnector {

@@ -17,16 +17,16 @@
  */
 package xyz.jwizard.jwl.common.bootstrap;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import xyz.jwizard.jwl.common.bootstrap.lifecycle.LifecycleHook;
 import xyz.jwizard.jwl.common.util.io.IoUtil;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 public class GracefulShutdownHook extends Thread {
     private static final Logger LOG = LoggerFactory.getLogger(GracefulShutdownHook.class);
@@ -35,8 +35,8 @@ public class GracefulShutdownHook extends Thread {
     private final CountDownLatch shutdownLatch;
     private final boolean wait;
 
-    public GracefulShutdownHook(List<? extends LifecycleHook> hooks, CountDownLatch shutdownLatch,
-                                boolean wait) {
+    public GracefulShutdownHook(
+            List<? extends LifecycleHook> hooks, CountDownLatch shutdownLatch, boolean wait) {
         super("shutdown-t");
         this.hooks = hooks;
         this.shutdownLatch = shutdownLatch;

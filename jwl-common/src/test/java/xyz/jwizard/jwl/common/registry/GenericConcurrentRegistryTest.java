@@ -21,14 +21,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 
 class GenericConcurrentRegistryTest {
     @Test
@@ -52,10 +52,8 @@ class GenericConcurrentRegistryTest {
         final StrictRegistry registry = new StrictRegistry();
         registry.register("key1", "val1");
         // when
-        final IllegalStateException ex = assertThrows(
-            IllegalStateException.class,
-            () -> registry.register("key1", "val2")
-        );
+        final IllegalStateException ex =
+                assertThrows(IllegalStateException.class, () -> registry.register("key1", "val2"));
         // then
         assertTrue(ex.getMessage().contains("is already registered"));
         assertEquals("val1", registry.get("key1"));
@@ -86,18 +84,19 @@ class GenericConcurrentRegistryTest {
         // when
         for (int i = 0; i < numThreads; i++) {
             final int threadId = i;
-            executor.execute(() -> {
-                try {
-                    startGun.await();
-                    for (int j = 0; j < keysPerThread; j++) {
-                        registry.register("key-" + threadId + "-" + j, "value");
-                    }
-                } catch (InterruptedException ex) {
-                    Thread.currentThread().interrupt();
-                } finally {
-                    finishLine.countDown();
-                }
-            });
+            executor.execute(
+                    () -> {
+                        try {
+                            startGun.await();
+                            for (int j = 0; j < keysPerThread; j++) {
+                                registry.register("key-" + threadId + "-" + j, "value");
+                            }
+                        } catch (InterruptedException ex) {
+                            Thread.currentThread().interrupt();
+                        } finally {
+                            finishLine.countDown();
+                        }
+                    });
         }
         startGun.countDown();
         assertTrue(finishLine.await(5, TimeUnit.SECONDS), "Threads timed out");
@@ -109,8 +108,9 @@ class GenericConcurrentRegistryTest {
     }
 
     @Test
-    @DisplayName("concurrency: only ONE thread should succeed when registering the same key " +
-        "(Strict Mode)")
+    @DisplayName(
+            "concurrency: only ONE thread should succeed when registering the same key "
+                    + "(Strict Mode)")
     void should_prevent_race_condition_on_duplicate_keys() throws InterruptedException {
         // given
         final StrictRegistry registry = new StrictRegistry();
@@ -123,19 +123,20 @@ class GenericConcurrentRegistryTest {
         // when
         for (int i = 0; i < numThreads; i++) {
             final int threadId = i;
-            executor.execute(() -> {
-                try {
-                    startGun.await();
-                    registry.register("RACE_KEY", "VALUE_" + threadId);
-                    successes.incrementAndGet();
-                } catch (IllegalStateException ex) {
-                    failures.incrementAndGet();
-                } catch (InterruptedException ex) {
-                    Thread.currentThread().interrupt();
-                } finally {
-                    finishLine.countDown();
-                }
-            });
+            executor.execute(
+                    () -> {
+                        try {
+                            startGun.await();
+                            registry.register("RACE_KEY", "VALUE_" + threadId);
+                            successes.incrementAndGet();
+                        } catch (IllegalStateException ex) {
+                            failures.incrementAndGet();
+                        } catch (InterruptedException ex) {
+                            Thread.currentThread().interrupt();
+                        } finally {
+                            finishLine.countDown();
+                        }
+                    });
         }
         startGun.countDown();
         assertTrue(finishLine.await(5, TimeUnit.SECONDS));
@@ -143,8 +144,8 @@ class GenericConcurrentRegistryTest {
         executor.close();
         // then
         assertEquals(1, successes.get(), "Exactly one thread should have registered the key");
-        assertEquals(numThreads - 1, failures.get(),
-            "All other threads should have thrown exception");
+        assertEquals(
+                numThreads - 1, failures.get(), "All other threads should have thrown exception");
         assertEquals(1, registry.getAll().size());
     }
 
@@ -161,26 +162,29 @@ class GenericConcurrentRegistryTest {
         final AtomicInteger successfulRemoves = new AtomicInteger(0);
         // when
         for (int i = 0; i < numThreads; i++) {
-            executor.execute(() -> {
-                try {
-                    startGun.await();
-                    if (registry.removeDirect("TARGET_KEY", "TARGET_VALUE")) {
-                        successfulRemoves.incrementAndGet();
-                    }
-                } catch (InterruptedException ex) {
-                    Thread.currentThread().interrupt();
-                } finally {
-                    finishLine.countDown();
-                }
-            });
+            executor.execute(
+                    () -> {
+                        try {
+                            startGun.await();
+                            if (registry.removeDirect("TARGET_KEY", "TARGET_VALUE")) {
+                                successfulRemoves.incrementAndGet();
+                            }
+                        } catch (InterruptedException ex) {
+                            Thread.currentThread().interrupt();
+                        } finally {
+                            finishLine.countDown();
+                        }
+                    });
         }
         startGun.countDown();
         assertTrue(finishLine.await(5, TimeUnit.SECONDS));
         executor.shutdown();
         executor.close();
         // then
-        assertEquals(1, successfulRemoves.get(),
-            "Only one thread should have successfully removed the value");
+        assertEquals(
+                1,
+                successfulRemoves.get(),
+                "Only one thread should have successfully removed the value");
         assertEquals(0, registry.getAll().size(), "Registry should be empty");
     }
 }

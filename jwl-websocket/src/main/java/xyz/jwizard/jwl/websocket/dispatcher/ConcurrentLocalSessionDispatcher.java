@@ -17,32 +17,32 @@
  */
 package xyz.jwizard.jwl.websocket.dispatcher;
 
-import java.util.Collection;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import xyz.jwizard.jwl.websocket.WsSession;
 import xyz.jwizard.jwl.websocket.registry.WsSessionRegistry;
 
+import java.util.Collection;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class ConcurrentLocalSessionDispatcher implements LocalSessionDispatcher {
-    private static final Logger LOG = LoggerFactory
-        .getLogger(ConcurrentLocalSessionDispatcher.class);
+    private static final Logger LOG =
+            LoggerFactory.getLogger(ConcurrentLocalSessionDispatcher.class);
 
     private final WsSessionRegistry registry;
     private final ExecutorService executorService;
 
-    private ConcurrentLocalSessionDispatcher(WsSessionRegistry registry,
-                                             ExecutorService executorService) {
+    private ConcurrentLocalSessionDispatcher(
+            WsSessionRegistry registry, ExecutorService executorService) {
         this.registry = registry;
         this.executorService = executorService;
     }
 
     public static ConcurrentLocalSessionDispatcher createVirtual(WsSessionRegistry registry) {
-        return new ConcurrentLocalSessionDispatcher(registry,
-            Executors.newVirtualThreadPerTaskExecutor());
+        return new ConcurrentLocalSessionDispatcher(
+                registry, Executors.newVirtualThreadPerTaskExecutor());
     }
 
     @Override
@@ -60,8 +60,10 @@ public class ConcurrentLocalSessionDispatcher implements LocalSessionDispatcher 
             return;
         }
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Broadcasting RAW payload to {} sessions (topic: {})", sessions.size(),
-                topic != null ? topic : "GLOBAL");
+            LOG.trace(
+                    "Broadcasting RAW payload to {} sessions (topic: {})",
+                    sessions.size(),
+                    topic != null ? topic : "GLOBAL");
         }
         for (final WsSession session : sessions) {
             executorService.execute(() -> send(session, payload));
@@ -75,8 +77,10 @@ public class ConcurrentLocalSessionDispatcher implements LocalSessionDispatcher 
         try {
             session.sendAdapted(payload);
         } catch (Exception ex) {
-            LOG.warn("Send failed for session {}, removing. Reason: {}", session.getSessionId(),
-                ex.getMessage());
+            LOG.warn(
+                    "Send failed for session {}, removing. Reason: {}",
+                    session.getSessionId(),
+                    ex.getMessage());
             registry.unregister(session);
         }
     }

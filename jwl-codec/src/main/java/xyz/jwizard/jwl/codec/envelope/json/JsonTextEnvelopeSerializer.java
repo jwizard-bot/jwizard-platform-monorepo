@@ -17,12 +17,12 @@
  */
 package xyz.jwizard.jwl.codec.envelope.json;
 
-import java.nio.charset.StandardCharsets;
-
 import xyz.jwizard.jwl.codec.DataType;
 import xyz.jwizard.jwl.codec.EncodedPayloadVisitor;
 import xyz.jwizard.jwl.codec.envelope.OpCode;
 import xyz.jwizard.jwl.codec.serialization.json.JsonSerializer;
+
+import java.nio.charset.StandardCharsets;
 
 public class JsonTextEnvelopeSerializer extends JsonEnvelopeSerializer<String> {
     private JsonTextEnvelopeSerializer(JsonSerializer serializer) {
@@ -44,8 +44,8 @@ public class JsonTextEnvelopeSerializer extends JsonEnvelopeSerializer<String> {
     }
 
     @Override
-    public void serializeAndAcceptEnvelope(OpCode opCode, Object payload,
-                                           EncodedPayloadVisitor visitor) {
+    public void serializeAndAcceptEnvelope(
+            OpCode opCode, Object payload, EncodedPayloadVisitor visitor) {
         visitor.accept(serializeForSession(opCode, payload));
     }
 

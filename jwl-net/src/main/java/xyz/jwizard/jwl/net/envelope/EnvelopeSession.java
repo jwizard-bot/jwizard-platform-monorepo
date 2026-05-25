@@ -17,11 +17,11 @@
  */
 package xyz.jwizard.jwl.net.envelope;
 
-import java.util.function.Function;
-
 import xyz.jwizard.jwl.codec.envelope.MessageEnvelope;
 import xyz.jwizard.jwl.codec.envelope.OpCode;
 import xyz.jwizard.jwl.net.NetworkSession;
+
+import java.util.function.Function;
 
 public interface EnvelopeSession extends NetworkSession {
     void sendEnvelope(OpCode opCode, Object data);

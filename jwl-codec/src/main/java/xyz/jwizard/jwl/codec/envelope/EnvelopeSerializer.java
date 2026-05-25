@@ -17,11 +17,11 @@
  */
 package xyz.jwizard.jwl.codec.envelope;
 
-import java.util.function.Function;
-
 import xyz.jwizard.jwl.codec.EncodedPayloadVisitor;
 import xyz.jwizard.jwl.codec.UnifiedMessageCodec;
 import xyz.jwizard.jwl.codec.UnsupportedDataTypeException;
+
+import java.util.function.Function;
 
 public interface EnvelopeSerializer<T> extends UnifiedMessageCodec {
     T serializeForSession(OpCode opCode, Object payload);

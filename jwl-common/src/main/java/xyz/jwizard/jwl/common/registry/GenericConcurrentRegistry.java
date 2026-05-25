@@ -17,16 +17,16 @@
  */
 package xyz.jwizard.jwl.common.registry;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public abstract class GenericConcurrentRegistry<K, V>
-    implements RegistryReader<K, V>, RegistryWriter<K, V> {
+        implements RegistryReader<K, V>, RegistryWriter<K, V> {
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     private final Map<K, V> registry = new ConcurrentHashMap<>();
@@ -48,11 +48,14 @@ public abstract class GenericConcurrentRegistry<K, V>
         final V existing = registry.putIfAbsent(key, value);
         if (existing != null) {
             if (!allowOverwrite) {
-                throw new IllegalStateException("Key '" + key +
-                    "' is already registered in this registry");
+                throw new IllegalStateException(
+                        "Key '" + key + "' is already registered in this registry");
             }
-            log.warn("Overwriting existing value for key '{}', old value: [{}], new value: [{}]",
-                key, existing, value);
+            log.warn(
+                    "Overwriting existing value for key '{}', old value: [{}], new value: [{}]",
+                    key,
+                    existing,
+                    value);
             registry.put(key, value);
         } else {
             log.debug("Registered new value under key '{}'", key);

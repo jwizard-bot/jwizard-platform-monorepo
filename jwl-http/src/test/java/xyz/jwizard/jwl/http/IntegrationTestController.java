@@ -17,8 +17,6 @@
  */
 package xyz.jwizard.jwl.http;
 
-import java.util.Map;
-
 import xyz.jwizard.jwl.common.util.math.MemUnit;
 import xyz.jwizard.jwl.http.annotation.Body;
 import xyz.jwizard.jwl.http.annotation.HttpController;
@@ -28,6 +26,8 @@ import xyz.jwizard.jwl.http.annotation.RequestParam;
 import xyz.jwizard.jwl.http.annotation.SecuredRoute;
 import xyz.jwizard.jwl.http.header.TestHttpHeaderName;
 import xyz.jwizard.jwl.net.http.HttpMethod;
+
+import java.util.Map;
 
 @HttpController
 class IntegrationTestController {
@@ -53,44 +53,42 @@ class IntegrationTestController {
 
     @RequestMapping(value = "/api/search", method = HttpMethod.GET)
     ResponseEntity<String> search(
-        @RequestParam("q") String query,
-        @RequestParam("page") Integer page) {
+            @RequestParam("q") String query, @RequestParam("page") Integer page) {
         return ResponseEntity.ok("Search: " + query + " on page " + page);
     }
 
     @RequestMapping(value = "/api/users/{id}/orders", method = HttpMethod.GET)
     ResponseEntity<String> getUserOrders(
-        @PathVariable("id") String userId,
-        @RequestParam("status") String status) {
+            @PathVariable("id") String userId, @RequestParam("status") String status) {
         return ResponseEntity.ok("User " + userId + " orders with status " + status);
     }
 
     @RequestMapping(value = "/api/products", method = HttpMethod.GET)
     ResponseEntity<String> getProducts(
-        @RequestParam(value = "category", defaultValue = "all") String category) {
+            @RequestParam(value = "category", defaultValue = "all") String category) {
         return ResponseEntity.ok("Category: " + category);
     }
 
     @RequestMapping(value = "/api/profile", method = HttpMethod.GET)
     ResponseEntity<String> getProfile(
-        @RequestParam(value = "token", required = false) String token) {
+            @RequestParam(value = "token", required = false) String token) {
         final String status = (token == null) ? "Guest" : "User-" + token;
         return ResponseEntity.ok("Status: " + status);
     }
 
     @RequestMapping(value = "/api/items", method = HttpMethod.GET)
     ResponseEntity<String> getItems(
-        @RequestParam(value = "limit", defaultValue = "10") Integer limit) {
+            @RequestParam(value = "limit", defaultValue = "10") Integer limit) {
         return ResponseEntity.ok("Limit: " + limit);
     }
 
     @RequestMapping(value = "/api/map", method = HttpMethod.GET)
     ResponseEntity<Map<String, Object>> getMap() {
-        return ResponseEntity.ok(Map.of(
-            "status", "UP",
-            "version", "1.0.0",
-            "active", true
-        ));
+        return ResponseEntity.ok(
+                Map.of(
+                        "status", "UP",
+                        "version", "1.0.0",
+                        "active", true));
     }
 
     @RequestMapping(value = "/api/blocked", method = HttpMethod.GET)
@@ -114,8 +112,8 @@ class IntegrationTestController {
         final String customHeader = request.getHeader(TestHttpHeaderName.X_INSPECT_HEADER);
         final String method = request.getMethod();
         return ResponseEntity.ok(
-            String.format("method: %s, header: %s", method, customHeader != null
-                ? customHeader : "NONE")
-        );
+                String.format(
+                        "method: %s, header: %s",
+                        method, customHeader != null ? customHeader : "NONE"));
     }
 }

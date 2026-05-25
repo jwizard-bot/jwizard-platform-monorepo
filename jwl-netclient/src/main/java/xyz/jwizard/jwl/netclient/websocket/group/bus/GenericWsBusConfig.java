@@ -17,15 +17,15 @@
  */
 package xyz.jwizard.jwl.netclient.websocket.group.bus;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
-
 import xyz.jwizard.jwl.common.util.Assert;
 import xyz.jwizard.jwl.net.bus.CompositeBusListener;
 import xyz.jwizard.jwl.net.bus.RawBusListener;
 import xyz.jwizard.jwl.netclient.websocket.WsClientSession;
 import xyz.jwizard.jwl.netclient.websocket.group.WsClientGroupConfig;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
 abstract class GenericWsBusConfig implements WsBusConfig {
     protected final String encodingParamName;
@@ -43,15 +43,15 @@ abstract class GenericWsBusConfig implements WsBusConfig {
         return busListener;
     }
 
-    abstract static class AbstractBuilder<B extends AbstractBuilder<B, C>,
-        C extends GenericWsBusConfig> {
+    abstract static class AbstractBuilder<
+            B extends AbstractBuilder<B, C>, C extends GenericWsBusConfig> {
         protected final List<RawBusListener<WsClientSession>> busListeners = new ArrayList<>();
         private final boolean paramsRequired;
         protected String encodingParamName;
         protected String dataTypeParamName;
 
-        protected AbstractBuilder(String encodingParamName, String dataTypeParamName,
-                                  boolean paramsRequired) {
+        protected AbstractBuilder(
+                String encodingParamName, String dataTypeParamName, boolean paramsRequired) {
             this.encodingParamName = encodingParamName;
             this.dataTypeParamName = dataTypeParamName;
             this.paramsRequired = paramsRequired;

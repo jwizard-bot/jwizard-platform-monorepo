@@ -20,8 +20,6 @@ package xyz.jwizard.jws.ingestor.scripting.graal;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.Map;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -31,14 +29,14 @@ import xyz.jwizard.jwl.common.util.CastUtil;
 import xyz.jwizard.jws.ingestor.scripting.ScriptFile;
 import xyz.jwizard.jws.ingestor.scripting.TestScript;
 
+import java.util.Map;
+
 class GraalJsEngineTest {
     private GraalJsEngine engine;
 
     @BeforeEach
     void setUp() {
-        engine = GraalJsEngine.builder()
-            .withLibrary(TestScript.PRELOAD)
-            .build();
+        engine = GraalJsEngine.builder().withLibrary(TestScript.PRELOAD).build();
     }
 
     @AfterEach
@@ -50,8 +48,8 @@ class GraalJsEngineTest {
     @DisplayName("should throw NullPointerException when using engine before calling start()")
     void shouldThrowWhenUsingEngineBeforeStart() {
         assertThatThrownBy(() -> engine.executeScript(TestScript.EXECUTE, String.class))
-            .isInstanceOf(NullPointerException.class)
-            .hasMessageContaining("JsEngine is not running");
+                .isInstanceOf(NullPointerException.class)
+                .hasMessageContaining("JsEngine is not running");
     }
 
     @Test
@@ -81,10 +79,10 @@ class GraalJsEngineTest {
     void shouldExecuteScriptWithInjectedVariables() throws Exception {
         // given
         engine.start();
-        final Map<String, Object> vars = Map.of(
-            "injectedA", 15,
-            "injectedB", 25
-        );
+        final Map<String, Object> vars =
+                Map.of(
+                        "injectedA", 15,
+                        "injectedB", 25);
         // when
         final Integer result = engine.executeScript(TestScript.VARS, vars, Integer.class);
         // then
@@ -96,10 +94,10 @@ class GraalJsEngineTest {
     void shouldCleanupInjectedVariablesAfterExecution() throws Exception {
         // given
         engine.start();
-        final Map<String, Object> vars = Map.of(
-            "injectedA", 10,
-            "injectedB", 20
-        );
+        final Map<String, Object> vars =
+                Map.of(
+                        "injectedA", 10,
+                        "injectedB", 20);
         // when
         engine.executeScript(TestScript.VARS, vars, Integer.class);
         final String typeofInjectedA = engine.executeScript(TestScript.CLEANUP, String.class);
@@ -115,7 +113,7 @@ class GraalJsEngineTest {
         final Map<String, Object> vars = Map.of("injectedA", "Will Fail");
         // when & then
         assertThatThrownBy(() -> engine.executeScript(TestScript.VARS, vars, Integer.class))
-            .isInstanceOf(Exception.class);
+                .isInstanceOf(Exception.class);
         final String typeofInjectedA = engine.executeScript(TestScript.CLEANUP, String.class);
         assertThat(typeofInjectedA).isEqualTo("undefined");
     }
@@ -138,8 +136,8 @@ class GraalJsEngineTest {
         engine.start();
         // when & then
         assertThatThrownBy(() -> engine.callFunction("nonExistentFunc", String.class))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("does not exist");
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("does not exist");
     }
 
     @Test
@@ -150,8 +148,8 @@ class GraalJsEngineTest {
         // when
         engine.executeScript(TestScript.SIDE_EFFECT);
         // then
-        final Boolean wasExecuted = engine
-            .executeScript(TestScript.CHECK_SIDE_EFFECT, Boolean.class);
+        final Boolean wasExecuted =
+                engine.executeScript(TestScript.CHECK_SIDE_EFFECT, Boolean.class);
         assertThat(wasExecuted).isTrue();
     }
 
@@ -173,12 +171,10 @@ class GraalJsEngineTest {
         // given
         engine.start();
         // when
-        final Map<String, Object> result = CastUtil
-            .unsafeCast(engine.callFunction("createObject", Map.class, "John", 30));
+        final Map<String, Object> result =
+                CastUtil.unsafeCast(engine.callFunction("createObject", Map.class, "John", 30));
         // then
-        assertThat(result)
-            .containsEntry("name", "John")
-            .containsEntry("age", 30);
+        assertThat(result).containsEntry("name", "John").containsEntry("age", 30);
     }
 
     @Test
@@ -189,6 +185,6 @@ class GraalJsEngineTest {
         final ScriptFile missingFile = () -> "non-existent-path.js";
         // when & then
         assertThatThrownBy(() -> engine.executeScript(missingFile))
-            .isInstanceOf(java.io.IOException.class);
+                .isInstanceOf(java.io.IOException.class);
     }
 }

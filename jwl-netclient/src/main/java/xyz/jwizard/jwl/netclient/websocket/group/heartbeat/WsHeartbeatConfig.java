@@ -17,9 +17,9 @@
  */
 package xyz.jwizard.jwl.netclient.websocket.group.heartbeat;
 
-import java.time.Duration;
-
 import xyz.jwizard.jwl.common.util.Assert;
+
+import java.time.Duration;
 
 public class WsHeartbeatConfig {
     private final Duration interval;

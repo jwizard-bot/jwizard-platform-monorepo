@@ -23,10 +23,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Map;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.util.Map;
 
 public class NetworkUtilTest {
     @Test
@@ -59,9 +59,11 @@ public class NetworkUtilTest {
     @DisplayName("should throw IllegalArgumentException when address is null")
     void shouldThrowExceptionWhenAddressIsNull() {
         // when & then
-        final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-            () -> NetworkUtil.parseHostPort(null),
-            "Should throw IllegalArgumentException for null address");
+        final IllegalArgumentException exception =
+                assertThrows(
+                        IllegalArgumentException.class,
+                        () -> NetworkUtil.parseHostPort(null),
+                        "Should throw IllegalArgumentException for null address");
         assertEquals("Address string cannot be null or empty", exception.getMessage());
     }
 
@@ -71,9 +73,11 @@ public class NetworkUtilTest {
         // given
         final String blankAddress = "   ";
         // when & then
-        final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-            () -> NetworkUtil.parseHostPort(blankAddress),
-            "Should throw IllegalArgumentException for blank address");
+        final IllegalArgumentException exception =
+                assertThrows(
+                        IllegalArgumentException.class,
+                        () -> NetworkUtil.parseHostPort(blankAddress),
+                        "Should throw IllegalArgumentException for blank address");
         assertEquals("Address string cannot be null or empty", exception.getMessage());
     }
 
@@ -83,11 +87,14 @@ public class NetworkUtilTest {
         // given
         final String address = "localhost8080";
         // when & then
-        final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-            () -> NetworkUtil.parseHostPort(address),
-            "Should throw exception when format does not contain a colon");
-        assertTrue(exception.getMessage().contains("Invalid address format"),
-            "Exception message should indicate invalid format");
+        final IllegalArgumentException exception =
+                assertThrows(
+                        IllegalArgumentException.class,
+                        () -> NetworkUtil.parseHostPort(address),
+                        "Should throw exception when format does not contain a colon");
+        assertTrue(
+                exception.getMessage().contains("Invalid address format"),
+                "Exception message should indicate invalid format");
     }
 
     @Test
@@ -96,11 +103,14 @@ public class NetworkUtilTest {
         // given
         final String address = "localhost:8080:9090";
         // when & then
-        final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-            () -> NetworkUtil.parseHostPort(address),
-            "Should throw exception when format contains more than one colon");
-        assertTrue(exception.getMessage().contains("Invalid address format"),
-            "Exception message should indicate invalid format");
+        final IllegalArgumentException exception =
+                assertThrows(
+                        IllegalArgumentException.class,
+                        () -> NetworkUtil.parseHostPort(address),
+                        "Should throw exception when format contains more than one colon");
+        assertTrue(
+                exception.getMessage().contains("Invalid address format"),
+                "Exception message should indicate invalid format");
     }
 
     @Test
@@ -109,14 +119,19 @@ public class NetworkUtilTest {
         // given
         final String address = "localhost:abc";
         // when & then
-        final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-            () -> NetworkUtil.parseHostPort(address),
-            "Should throw exception when port part cannot be parsed to an integer");
-        assertTrue(exception.getMessage().contains("Invalid port number"),
-            "Exception message should indicate invalid port number");
+        final IllegalArgumentException exception =
+                assertThrows(
+                        IllegalArgumentException.class,
+                        () -> NetworkUtil.parseHostPort(address),
+                        "Should throw exception when port part cannot be parsed to an integer");
+        assertTrue(
+                exception.getMessage().contains("Invalid port number"),
+                "Exception message should indicate invalid port number");
         assertNotNull(exception.getCause(), "Exception should contain the original cause");
-        assertEquals(NumberFormatException.class, exception.getCause().getClass(),
-            "Root cause should be NumberFormatException");
+        assertEquals(
+                NumberFormatException.class,
+                exception.getCause().getClass(),
+                "Root cause should be NumberFormatException");
     }
 
     @Test
@@ -152,11 +167,12 @@ public class NetworkUtilTest {
         final String result = NetworkUtil.addQueryParameter(uri, key, value);
         // then
         assertTrue(result.contains("user") && result.contains("name"), "Key should be present");
-        assertTrue(result.contains("Jan") && result.contains("Kowalski"),
-            "Value should be present");
+        assertTrue(
+                result.contains("Jan") && result.contains("Kowalski"), "Value should be present");
         assertTrue(result.contains("%2B"), "The plus sign must be encoded as %2B");
-        assertTrue(result.startsWith("https://jwizard.xyz/api?"),
-            "Should start with correctly appended ?");
+        assertTrue(
+                result.startsWith("https://jwizard.xyz/api?"),
+                "Should start with correctly appended ?");
     }
 
     @Test
@@ -210,10 +226,11 @@ public class NetworkUtilTest {
         // when
         final Map<String, String> params = NetworkUtil.getQueryParameters(uri);
         // then
-        assertThat(params).hasSize(3)
-            .containsEntry("encoding", "raw")
-            .containsEntry("frame", "binary")
-            .containsEntry("token", "secret123");
+        assertThat(params)
+                .hasSize(3)
+                .containsEntry("encoding", "raw")
+                .containsEntry("frame", "binary")
+                .containsEntry("token", "secret123");
     }
 
     @Test

@@ -17,35 +17,38 @@
  */
 package xyz.jwizard.jwl.common.di;
 
-import java.util.Map;
-
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 import xyz.jwizard.jwl.common.reflect.ClassScanner;
 
+import java.util.Map;
+
 public class ApplicationContext {
     private final ComponentProvider componentProvider;
     private final ClassScanner scanner;
 
-    private ApplicationContext(ClassScanner scanner, Map<Class<?>, Class<?>> components,
-                               Map<Class<?>, Object> instanceComponents) {
+    private ApplicationContext(
+            ClassScanner scanner,
+            Map<Class<?>, Class<?>> components,
+            Map<Class<?>, Object> instanceComponents) {
         this.scanner = scanner;
-        final Injector injector = Guice.createInjector(
-            new ManualBootstrapModule(components, instanceComponents),
-            new AutoScanModule(scanner)
-        );
+        final Injector injector =
+                Guice.createInjector(
+                        new ManualBootstrapModule(components, instanceComponents),
+                        new AutoScanModule(scanner));
         componentProvider = injector.getInstance(ComponentProvider.class);
     }
 
-    public static ApplicationContext create(ClassScanner scanner,
-                                            Map<Class<?>, Class<?>> components,
-                                            Map<Class<?>, Object> instanceComponents) {
+    public static ApplicationContext create(
+            ClassScanner scanner,
+            Map<Class<?>, Class<?>> components,
+            Map<Class<?>, Object> instanceComponents) {
         return new ApplicationContext(scanner, components, instanceComponents);
     }
 
-    public static ApplicationContext createDefault(ClassScanner scanner,
-                                                   Map<Class<?>, Class<?>> components) {
+    public static ApplicationContext createDefault(
+            ClassScanner scanner, Map<Class<?>, Class<?>> components) {
         return create(scanner, components, Map.of());
     }
 

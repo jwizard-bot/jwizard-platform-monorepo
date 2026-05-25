@@ -17,12 +17,12 @@
  */
 package xyz.jwizard.jwl.netclient.websocket.registry;
 
-import java.util.Collection;
-import java.util.Optional;
-
 import xyz.jwizard.jwl.common.registry.RegistryTracker;
 import xyz.jwizard.jwl.netclient.group.ClientGroup;
 import xyz.jwizard.jwl.netclient.websocket.WsClientSession;
+
+import java.util.Collection;
+import java.util.Optional;
 
 public interface WsClientSessionRegistry extends RegistryTracker<WsClientSession> {
     // for 1:N

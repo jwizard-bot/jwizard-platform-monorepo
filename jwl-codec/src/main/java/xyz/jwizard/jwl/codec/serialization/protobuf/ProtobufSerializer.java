@@ -17,13 +17,6 @@
  */
 package xyz.jwizard.jwl.codec.serialization.protobuf;
 
-import java.io.InputStream;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +32,13 @@ import xyz.jwizard.jwl.codec.serialization.StandardSerializerFormat;
 import xyz.jwizard.jwl.codec.serialization.TypedMessageSerializer;
 import xyz.jwizard.jwl.common.reflect.ClassScanner;
 import xyz.jwizard.jwl.common.util.CastUtil;
+
+import java.io.InputStream;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ProtobufSerializer implements MessageSerializer, TypedMessageSerializer<byte[]> {
     private static final Logger LOG = LoggerFactory.getLogger(ProtobufSerializer.class);
@@ -61,9 +61,8 @@ public class ProtobufSerializer implements MessageSerializer, TypedMessageSerial
             return message.toByteArray();
         }
         throw new ProtobufSerializerException(
-            "ProtobufSerializer can only handle com.google.protobuf.MessageLite, but received: "
-                + value.getClass().getName()
-        );
+                "ProtobufSerializer can only handle com.google.protobuf.MessageLite, but received: "
+                        + value.getClass().getName());
     }
 
     @Override
@@ -99,8 +98,8 @@ public class ProtobufSerializer implements MessageSerializer, TypedMessageSerial
     }
 
     private void registerAllFrom(ClassScanner scanner) {
-        final Set<Class<? extends MessageLite>> protoClasses = scanner
-            .getSubtypesOf(MessageLite.class);
+        final Set<Class<? extends MessageLite>> protoClasses =
+                scanner.getSubtypesOf(MessageLite.class);
         for (final Class<? extends MessageLite> type : protoClasses) {
             if (!isInstantiableMessage(type)) {
                 continue;
@@ -118,8 +117,8 @@ public class ProtobufSerializer implements MessageSerializer, TypedMessageSerial
 
     private boolean isInstantiableMessage(Class<?> type) {
         return !type.isInterface()
-            && !Modifier.isAbstract(type.getModifiers())
-            && !type.getName().startsWith("com.google.protobuf");
+                && !Modifier.isAbstract(type.getModifiers())
+                && !type.getName().startsWith("com.google.protobuf");
     }
 
     @Override

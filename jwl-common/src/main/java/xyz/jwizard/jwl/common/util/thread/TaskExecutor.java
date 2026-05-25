@@ -17,6 +17,10 @@
  */
 package xyz.jwizard.jwl.common.util.thread;
 
+import org.jspecify.annotations.NonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.time.Duration;
@@ -24,10 +28,6 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
-import org.jspecify.annotations.NonNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class TaskExecutor implements Executor, Closeable {
     private static final Logger LOG = LoggerFactory.getLogger(TaskExecutor.class);

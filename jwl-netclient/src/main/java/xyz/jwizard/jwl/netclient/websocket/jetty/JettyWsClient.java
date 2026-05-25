@@ -17,8 +17,6 @@
  */
 package xyz.jwizard.jwl.netclient.websocket.jetty;
 
-import java.util.concurrent.Executors;
-
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
@@ -34,6 +32,8 @@ import xyz.jwizard.jwl.netclient.websocket.WsClientUpgradeRequest;
 import xyz.jwizard.jwl.netclient.websocket.group.WsClientGroupConfig;
 import xyz.jwizard.jwl.netclient.websocket.group.codec.WsSessionCodec;
 import xyz.jwizard.jwl.netclient.websocket.jetty.adapter.JettyWsClientListenerAdapter;
+
+import java.util.concurrent.Executors;
 
 public class JettyWsClient extends GenericWsClient {
     private WebSocketClient jettyWsClient;
@@ -64,20 +64,18 @@ public class JettyWsClient extends GenericWsClient {
     }
 
     @Override
-    protected void onClientGroupStart(ClientGroup clientGroup, WsClientGroupConfig config,
-                                      WsClientUpgradeRequest req,
-                                      WsSessionCodec sessionCodec,
-                                      NetworkSessionLifecycleListener<WsClientSession>
-                                          lifecycleListener) throws Exception {
+    protected void onClientGroupStart(
+            ClientGroup clientGroup,
+            WsClientGroupConfig config,
+            WsClientUpgradeRequest req,
+            WsSessionCodec sessionCodec,
+            NetworkSessionLifecycleListener<WsClientSession> lifecycleListener)
+            throws Exception {
         final ClientUpgradeRequest request = new ClientUpgradeRequest(req.getUri());
         request.setHeaders(req.getHeaders());
-        final JettyWsClientListenerAdapter listener = new JettyWsClientListenerAdapter(
-            clientGroup,
-            config,
-            sessionRegistry,
-            sessionCodec,
-            lifecycleListener
-        );
+        final JettyWsClientListenerAdapter listener =
+                new JettyWsClientListenerAdapter(
+                        clientGroup, config, sessionRegistry, sessionCodec, lifecycleListener);
         jettyWsClient.connect(listener, request).get();
     }
 
@@ -89,8 +87,7 @@ public class JettyWsClient extends GenericWsClient {
     }
 
     public static class Builder extends AbstractBuilder<Builder> {
-        private Builder() {
-        }
+        private Builder() {}
 
         @Override
         protected Builder self() {

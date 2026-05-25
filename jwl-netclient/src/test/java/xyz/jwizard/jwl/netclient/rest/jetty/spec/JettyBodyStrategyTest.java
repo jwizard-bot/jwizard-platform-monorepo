@@ -21,12 +21,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.Map;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import xyz.jwizard.jwl.netclient.rest.spec.GenericRequestSpec;
+
+import java.util.Map;
 
 class JettyBodyStrategyTest {
     private final JettyBodyStrategy rawStrategy = new JettyRawBodyStrategy();

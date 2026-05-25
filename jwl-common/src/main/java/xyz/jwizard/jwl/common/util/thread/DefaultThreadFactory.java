@@ -17,9 +17,9 @@
  */
 package xyz.jwizard.jwl.common.util.thread;
 
-import java.util.concurrent.ThreadFactory;
-
 import org.jspecify.annotations.NonNull;
+
+import java.util.concurrent.ThreadFactory;
 
 class DefaultThreadFactory implements ThreadFactory {
     private final String threadName;

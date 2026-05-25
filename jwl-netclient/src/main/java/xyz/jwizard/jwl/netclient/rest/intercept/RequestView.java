@@ -17,10 +17,10 @@
  */
 package xyz.jwizard.jwl.netclient.rest.intercept;
 
-import java.util.Map;
-
 import xyz.jwizard.jwl.net.http.HttpMethod;
 import xyz.jwizard.jwl.netclient.group.ClientGroup;
+
+import java.util.Map;
 
 public interface RequestView {
     HttpMethod getMethod();

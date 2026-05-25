@@ -21,11 +21,6 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.time.Duration;
-import java.util.Map;
-
 import org.java_websocket.WebSocket;
 import org.java_websocket.server.WebSocketServer;
 import org.junit.jupiter.api.AfterEach;
@@ -52,6 +47,11 @@ import xyz.jwizard.jwl.netclient.websocket.bus.RawTextBusListener;
 import xyz.jwizard.jwl.netclient.websocket.group.WsClientGroupConfig;
 import xyz.jwizard.jwl.netclient.websocket.group.WsReconnectConfig;
 
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.time.Duration;
+import java.util.Map;
+
 class JettyWsRawIntegrationTest {
     private final TestQueueProvider testQueueProvider = new TestQueueProvider();
 
@@ -63,11 +63,11 @@ class JettyWsRawIntegrationTest {
     @BeforeEach
     void setUp() throws IOException {
         scanner = new ClassGraphScanner("xyz.jwizard.jwl.netclient.websocket");
-        final ApplicationContext context = ApplicationContext.create(scanner, Map.of(
-            ComponentProvider.class, GuiceComponentProvider.class
-        ), Map.of(
-            TestQueueProvider.class, testQueueProvider
-        ));
+        final ApplicationContext context =
+                ApplicationContext.create(
+                        scanner,
+                        Map.of(ComponentProvider.class, GuiceComponentProvider.class),
+                        Map.of(TestQueueProvider.class, testQueueProvider));
         componentProvider = context.getComponentProvider();
         // setup server
         webSocketServer = createWsServer(getRandomPort());
@@ -83,33 +83,46 @@ class JettyWsRawIntegrationTest {
 
     private GenericWsClient createWsClient(int port) {
         return JettyWsClient.builder()
-            .defaultClientGroup(WsClientGroupConfig.builder()
-                .url("ws://localhost:" + port)
-                .principalId(TestConstants.SERVICE_NAME)
-                .componentProvider(componentProvider)
-                .reconnectConfig(WsReconnectConfig.enabled(Duration.ofSeconds(2), 5))
-                .setTypedMessageMode()
-                .typedMessageBusConfig(config -> config
-                    .dataTypeParamName(TestConstants.DATA_TYPE_QUERY_PARAM_NAME)
-                    .serializer(RawTextSerializer.createDefault())
-                    .addBusListener(new RawTextBusListener(testQueueProvider))
-                )
-                .build()
-            )
-            .clientGroup(TestWsClientGroup.RAW_BYTE, WsClientGroupConfig.builder()
-                .url("ws://localhost:" + port)
-                .principalId(TestConstants.SERVICE_NAME)
-                .componentProvider(componentProvider)
-                .reconnectConfig(WsReconnectConfig.enabled(Duration.ofSeconds(2), 5))
-                .setTypedMessageMode()
-                .typedMessageBusConfig(config -> config
-                    .dataTypeParamName(TestConstants.DATA_TYPE_QUERY_PARAM_NAME)
-                    .serializer(RawByteSerializer.createDefault())
-                    .addBusListener(new RawByteBusListener(testQueueProvider))
-                )
-                .build()
-            )
-            .build();
+                .defaultClientGroup(
+                        WsClientGroupConfig.builder()
+                                .url("ws://localhost:" + port)
+                                .principalId(TestConstants.SERVICE_NAME)
+                                .componentProvider(componentProvider)
+                                .reconnectConfig(
+                                        WsReconnectConfig.enabled(Duration.ofSeconds(2), 5))
+                                .setTypedMessageMode()
+                                .typedMessageBusConfig(
+                                        config ->
+                                                config.dataTypeParamName(
+                                                                TestConstants
+                                                                        .DATA_TYPE_QUERY_PARAM_NAME)
+                                                        .serializer(
+                                                                RawTextSerializer.createDefault())
+                                                        .addBusListener(
+                                                                new RawTextBusListener(
+                                                                        testQueueProvider)))
+                                .build())
+                .clientGroup(
+                        TestWsClientGroup.RAW_BYTE,
+                        WsClientGroupConfig.builder()
+                                .url("ws://localhost:" + port)
+                                .principalId(TestConstants.SERVICE_NAME)
+                                .componentProvider(componentProvider)
+                                .reconnectConfig(
+                                        WsReconnectConfig.enabled(Duration.ofSeconds(2), 5))
+                                .setTypedMessageMode()
+                                .typedMessageBusConfig(
+                                        config ->
+                                                config.dataTypeParamName(
+                                                                TestConstants
+                                                                        .DATA_TYPE_QUERY_PARAM_NAME)
+                                                        .serializer(
+                                                                RawByteSerializer.createDefault())
+                                                        .addBusListener(
+                                                                new RawByteBusListener(
+                                                                        testQueueProvider)))
+                                .build())
+                .build();
     }
 
     private int getRandomPort() throws IOException {
@@ -132,16 +145,14 @@ class JettyWsRawIntegrationTest {
     @DisplayName("should send and receive raw bytes payload")
     void shouldSendAndReceiveRawBytesPayload() {
         // given
-        final byte[] originalBytes = new byte[]{0x01, 0x02, 0x03, 0x04, 0x05};
+        final byte[] originalBytes = new byte[] {0x01, 0x02, 0x03, 0x04, 0x05};
         // when
         final WebSocket session = webSocketServer.getSession(DataType.BINARY);
         session.send(originalBytes);
         await().atMost(5, SECONDS).until(() -> !testQueueProvider.get().isEmpty());
         // then
         final byte[] receivedBytes = (byte[]) testQueueProvider.get().poll();
-        assertThat(receivedBytes)
-            .isNotNull()
-            .containsExactly(originalBytes);
+        assertThat(receivedBytes).isNotNull().containsExactly(originalBytes);
     }
 
     @Test
@@ -155,9 +166,7 @@ class JettyWsRawIntegrationTest {
         await().atMost(5, SECONDS).until(() -> !testQueueProvider.get().isEmpty());
         // then
         final String receivedText = (String) testQueueProvider.get().poll();
-        assertThat(receivedText)
-            .isNotNull()
-            .contains(receivedText);
+        assertThat(receivedText).isNotNull().contains(receivedText);
     }
 
     @Test

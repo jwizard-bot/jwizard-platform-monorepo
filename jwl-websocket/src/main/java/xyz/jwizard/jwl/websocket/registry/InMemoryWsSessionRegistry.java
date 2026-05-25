@@ -17,18 +17,18 @@
  */
 package xyz.jwizard.jwl.websocket.registry;
 
+import xyz.jwizard.jwl.common.registry.GenericConcurrentRegistry;
+import xyz.jwizard.jwl.websocket.WsSession;
+import xyz.jwizard.jwl.websocket.broadcast.WsTopic;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import xyz.jwizard.jwl.common.registry.GenericConcurrentRegistry;
-import xyz.jwizard.jwl.websocket.WsSession;
-import xyz.jwizard.jwl.websocket.broadcast.WsTopic;
-
 public class InMemoryWsSessionRegistry extends GenericConcurrentRegistry<String, WsSession>
-    implements WsSessionRegistry {
+        implements WsSessionRegistry {
     // for optimization
     private final Map<String, Map<String, WsSession>> subscriptions = new ConcurrentHashMap<>();
     private final Map<String, Set<String>> sessionTopics = new ConcurrentHashMap<>();
@@ -44,8 +44,10 @@ public class InMemoryWsSessionRegistry extends GenericConcurrentRegistry<String,
     @Override
     public void register(WsSession session) {
         super.register(session.getSessionId(), session);
-        log.debug("Session registered: {} (total active: {})", session.getSessionId(),
-            getEntries().size());
+        log.debug(
+                "Session registered: {} (total active: {})",
+                session.getSessionId(),
+                getEntries().size());
     }
 
     @Override
@@ -58,18 +60,25 @@ public class InMemoryWsSessionRegistry extends GenericConcurrentRegistry<String,
             return;
         }
         for (final String topic : topics) {
-            subscriptions.computeIfPresent(topic, (t, subs) -> {
-                subs.remove(sid);
-                if (subs.isEmpty()) {
-                    log.trace("Topic '{}' became empty and was removed during unregister of {}", t,
-                        sid);
-                    return null;
-                }
-                return subs;
-            });
+            subscriptions.computeIfPresent(
+                    topic,
+                    (t, subs) -> {
+                        subs.remove(sid);
+                        if (subs.isEmpty()) {
+                            log.trace(
+                                    "Topic '{}' became empty and was removed during unregister of {}",
+                                    t,
+                                    sid);
+                            return null;
+                        }
+                        return subs;
+                    });
         }
-        log.debug("Session unregistered: {} (was in {} topics, remaining sessions: {})", sid,
-            topicsCount, getEntries().size());
+        log.debug(
+                "Session unregistered: {} (was in {} topics, remaining sessions: {})",
+                sid,
+                topicsCount,
+                getEntries().size());
     }
 
     @Override
@@ -82,10 +91,14 @@ public class InMemoryWsSessionRegistry extends GenericConcurrentRegistry<String,
     public void subscribe(WsSession session, WsTopic topic) {
         final String sid = session.getSessionId();
         final String topicName = topic.getTopic();
-        subscriptions.computeIfAbsent(topicName, k -> {
-            log.trace("Creating new topic bucket: {}", k);
-            return new ConcurrentHashMap<>();
-        }).put(sid, session);
+        subscriptions
+                .computeIfAbsent(
+                        topicName,
+                        k -> {
+                            log.trace("Creating new topic bucket: {}", k);
+                            return new ConcurrentHashMap<>();
+                        })
+                .put(sid, session);
         sessionTopics.computeIfAbsent(sid, k -> ConcurrentHashMap.newKeySet()).add(topicName);
         log.debug("Session {} subscribed to '{}'", sid, topicName);
     }
@@ -94,18 +107,22 @@ public class InMemoryWsSessionRegistry extends GenericConcurrentRegistry<String,
     public void unsubscribe(WsSession session, WsTopic topic) {
         final String sid = session.getSessionId();
         final String topicName = topic.getTopic();
-        subscriptions.computeIfPresent(topicName, (t, subs) -> {
-            subs.remove(sid);
-            if (subs.isEmpty()) {
-                log.trace("Topic '{}' removed because last subscriber {} left", t, sid);
-                return null;
-            }
-            return subs;
-        });
-        sessionTopics.computeIfPresent(sid, (s, topics) -> {
-            topics.remove(topicName);
-            return topics.isEmpty() ? null : topics;
-        });
+        subscriptions.computeIfPresent(
+                topicName,
+                (t, subs) -> {
+                    subs.remove(sid);
+                    if (subs.isEmpty()) {
+                        log.trace("Topic '{}' removed because last subscriber {} left", t, sid);
+                        return null;
+                    }
+                    return subs;
+                });
+        sessionTopics.computeIfPresent(
+                sid,
+                (s, topics) -> {
+                    topics.remove(topicName);
+                    return topics.isEmpty() ? null : topics;
+                });
         log.debug("Session {} unsubscribed from '{}'", sid, topicName);
     }
 

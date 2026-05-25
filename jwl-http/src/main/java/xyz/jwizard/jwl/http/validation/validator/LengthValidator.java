@@ -17,13 +17,13 @@
  */
 package xyz.jwizard.jwl.http.validation.validator;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-
 import xyz.jwizard.jwl.http.annotation.Validator;
 import xyz.jwizard.jwl.http.annotation.validation.Length;
 import xyz.jwizard.jwl.http.validation.AnnotationValidator;
 import xyz.jwizard.jwl.http.validation.ValidationException;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 
 @Validator
 public class LengthValidator implements AnnotationValidator<Length> {
@@ -42,9 +42,11 @@ public class LengthValidator implements AnnotationValidator<Length> {
         }
         final int len = str.length();
         if (len < annotation.min() || len > annotation.max()) {
-            final String msg = annotation.message()
-                .replace("{min}", String.valueOf(annotation.min()))
-                .replace("{max}", String.valueOf(annotation.max()));
+            final String msg =
+                    annotation
+                            .message()
+                            .replace("{min}", String.valueOf(annotation.min()))
+                            .replace("{max}", String.valueOf(annotation.max()));
             throw new ValidationException(String.format("Field '%s' %s", field.getName(), msg));
         }
     }

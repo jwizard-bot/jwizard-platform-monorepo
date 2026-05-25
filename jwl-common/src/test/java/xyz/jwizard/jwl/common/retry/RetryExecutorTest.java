@@ -27,10 +27,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.BiPredicate;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,11 +34,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiPredicate;
+
 @ExtendWith(MockitoExtension.class)
 class RetryExecutorTest {
     private final String context = "test-context";
-    @Mock
-    private RetryPolicyContext<String> policy;
+    @Mock private RetryPolicyContext<String> policy;
 
     @BeforeEach
     void setUp() {
@@ -56,8 +55,9 @@ class RetryExecutorTest {
         // given
         final Callable<String> action = () -> "success";
         // when
-        final String result = RetryExecutor.executeSync(action, context, policy,
-            (at, res) -> false, (at, ex) -> false);
+        final String result =
+                RetryExecutor.executeSync(
+                        action, context, policy, (at, res) -> false, (at, ex) -> false);
         // then
         assertThat(result).isEqualTo("success");
         verify(policy, times(0)).shouldRetry(anyInt(), eq(context));
@@ -72,8 +72,8 @@ class RetryExecutorTest {
         final BiPredicate<Integer, Integer> retryOnOne = (attempt, res) -> res == 1;
         when(policy.shouldRetry(eq(1), eq(context))).thenReturn(true);
         // when
-        final Integer result = RetryExecutor
-            .executeSync(action, context, policy, retryOnOne, (at, ex) -> false);
+        final Integer result =
+                RetryExecutor.executeSync(action, context, policy, retryOnOne, (at, ex) -> false);
         // then
         assertThat(result).isEqualTo(2);
         assertThat(attempts.get()).isEqualTo(2);
@@ -85,18 +85,20 @@ class RetryExecutorTest {
     void shouldRetryOnException() throws Exception {
         // given
         final AtomicInteger attempts = new AtomicInteger(0);
-        final Callable<String> action = () -> {
-            if (attempts.incrementAndGet() == 1) {
-                throw new RuntimeException("temporary error");
-            }
-            return "recovered";
-        };
+        final Callable<String> action =
+                () -> {
+                    if (attempts.incrementAndGet() == 1) {
+                        throw new RuntimeException("temporary error");
+                    }
+                    return "recovered";
+                };
         when(policy.shouldRetry(eq(1), eq(context))).thenReturn(true);
-        final BiPredicate<Integer, Exception> retryOnRuntime = (at, ex) ->
-            ex instanceof RuntimeException;
+        final BiPredicate<Integer, Exception> retryOnRuntime =
+                (at, ex) -> ex instanceof RuntimeException;
         // when
-        final String result = RetryExecutor.executeSync(action, context, policy,
-            (at, res) -> false, retryOnRuntime);
+        final String result =
+                RetryExecutor.executeSync(
+                        action, context, policy, (at, res) -> false, retryOnRuntime);
         // then
         assertThat(result).isEqualTo("recovered");
         assertThat(attempts.get()).isEqualTo(2);
@@ -106,17 +108,20 @@ class RetryExecutorTest {
     @DisplayName("should throw exception when retry limit is reached")
     void shouldFailAfterExhaustingRetries() {
         // given
-        final Callable<String> action = () -> {
-            throw new RuntimeException("persistent error");
-        };
+        final Callable<String> action =
+                () -> {
+                    throw new RuntimeException("persistent error");
+                };
         when(policy.shouldRetry(anyInt(), eq(context))).thenReturn(true);
         when(policy.shouldRetry(eq(3), eq(context))).thenReturn(false);
         final BiPredicate<Integer, Exception> retryAlways = (at, ex) -> true;
         // when & then
-        assertThatThrownBy(() ->
-            RetryExecutor.executeSync(action, context, policy, (at, res) -> false, retryAlways)
-        ).isInstanceOf(RuntimeException.class)
-            .hasMessage("persistent error");
+        assertThatThrownBy(
+                        () ->
+                                RetryExecutor.executeSync(
+                                        action, context, policy, (at, res) -> false, retryAlways))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessage("persistent error");
         verify(policy, times(3)).shouldRetry(anyInt(), eq(context));
     }
 
@@ -125,16 +130,17 @@ class RetryExecutorTest {
     void shouldRespectBackoff() throws Exception {
         // given
         final AtomicInteger attempts = new AtomicInteger(0);
-        final Callable<String> action = () -> {
-            if (attempts.incrementAndGet() == 1) return "retry-me";
-            return "done";
-        };
+        final Callable<String> action =
+                () -> {
+                    if (attempts.incrementAndGet() == 1) return "retry-me";
+                    return "done";
+                };
         when(policy.getBackoffMs()).thenReturn(10L);
         when(policy.getMaxBackoffMs()).thenReturn(100L);
         when(policy.shouldRetry(eq(1), eq(context))).thenReturn(true);
         // when
-        RetryExecutor.executeSync(action, context, policy, (at, res) -> res.equals("retry-me"),
-            (at, ex) -> false);
+        RetryExecutor.executeSync(
+                action, context, policy, (at, res) -> res.equals("retry-me"), (at, ex) -> false);
         // then
         verify(policy, atLeastOnce()).getBackoffMs();
         verify(policy, atLeastOnce()).getMaxBackoffMs();

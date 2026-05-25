@@ -17,12 +17,12 @@
  */
 package xyz.jwizard.jwl.http.resolver;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-
 import xyz.jwizard.jwl.http.HttpRequest;
 import xyz.jwizard.jwl.http.exception.RouteValidationException;
 import xyz.jwizard.jwl.http.route.MatchResult;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 
 public interface ArgumentResolver {
     boolean supports(Parameter parameter);
@@ -31,6 +31,5 @@ public interface ArgumentResolver {
     Object resolve(Parameter parameter, HttpRequest req, MatchResult match) throws Exception;
 
     // runs once, at application startup
-    default void validate(Method method) throws RouteValidationException {
-    }
+    default void validate(Method method) throws RouteValidationException {}
 }

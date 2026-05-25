@@ -17,27 +17,29 @@
  */
 package xyz.jwizard.jwl.http.resolver;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 enum ParameterConverter {
     STRING(String.class, value -> value),
     INTEGER(Integer.class, Integer::valueOf),
     LONG(Long.class, Long::valueOf),
-    BOOLEAN(Boolean.class, value -> {
-        if ("true".equalsIgnoreCase(value)) {
-            return true;
-        }
-        if ("false".equalsIgnoreCase(value)) {
-            return false;
-        }
-        throw new IllegalArgumentException("Invalid boolean value: '" + value +
-            "', expected 'true' or 'false'");
-    }),
+    BOOLEAN(
+            Boolean.class,
+            value -> {
+                if ("true".equalsIgnoreCase(value)) {
+                    return true;
+                }
+                if ("false".equalsIgnoreCase(value)) {
+                    return false;
+                }
+                throw new IllegalArgumentException(
+                        "Invalid boolean value: '" + value + "', expected 'true' or 'false'");
+            }),
     DOUBLE(Double.class, Double::valueOf),
     ;
 
@@ -49,8 +51,10 @@ enum ParameterConverter {
     static {
         for (final ParameterConverter converter : values()) {
             LOOKUP.put(converter.targetType, converter);
-            LOG.trace("Registered parameter converter: {} -> {}",
-                converter.targetType.getSimpleName(), converter.name());
+            LOG.trace(
+                    "Registered parameter converter: {} -> {}",
+                    converter.targetType.getSimpleName(),
+                    converter.name());
         }
         LOG.info("ParameterConverter cache initialized with {} mapping(s)", LOOKUP.size());
     }
@@ -69,8 +73,8 @@ enum ParameterConverter {
         }
         final ParameterConverter converter = LOOKUP.get(targetType);
         if (converter == null) {
-            throw new IllegalArgumentException("Unsupported argument type: " +
-                targetType.getName());
+            throw new IllegalArgumentException(
+                    "Unsupported argument type: " + targetType.getName());
         }
         return converter.converterFunction.apply(value);
     }

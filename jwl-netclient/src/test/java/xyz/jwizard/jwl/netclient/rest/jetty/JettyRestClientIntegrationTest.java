@@ -33,8 +33,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.time.Duration;
-
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -64,6 +62,8 @@ import xyz.jwizard.jwl.netclient.rest.group.TestGroup;
 import xyz.jwizard.jwl.netclient.rest.intercept.CorrelationInterceptor;
 import xyz.jwizard.jwl.netclient.rest.intercept.SignatureInterceptor;
 
+import java.time.Duration;
+
 class JettyRestClientIntegrationTest {
     private static final String USER_AGENT = "JWL-Test-Bot/1.0";
 
@@ -91,40 +91,44 @@ class JettyRestClientIntegrationTest {
         configureFor("localhost", wireMockServer.port());
         final String wireMockUrl = "http://localhost:" + wireMockServer.port();
 
-        client = JettyRestClient.builder()
-            .scanner(scanner)
-            .serializerRegistry(SerializerRegistry.createDefault()
-                .register(JacksonSerializer.createDefaultStrictMapper())
-            )
-            .connectTimeout(Duration.ofSeconds(2))
-            .followRedirects(true)
-            .maxRedirects(8)
-            .maxConnectionsPerHost(10)
-            .maxQueuedRequests(1024)
-            .maxHeadersSize(8, MemUnit.KB)
-            .defaultClientGroup(RestClientGroupConfig.builder()
-                .url(wireMockUrl)
-                .principalId(USER_AGENT)
-                .retryOnSafeMethods(3, Duration.ofMillis(500))
-                .build()
-            )
-            .clientGroup(TestGroup.LIMITED_GROUP, RestClientGroupConfig.builder()
-                .url(wireMockUrl)
-                .principalId(USER_AGENT)
-                .rateLimit(TokenBucketRateLimiter.builder()
-                    .capacity(5)
-                    .refillTokens(1)
-                    .refillPeriod(Duration.ofHours(1))
-                    .build())
-                .build()
-            )
-            .clientGroup(TestGroup.OVERRIDE_GROUP, RestClientGroupConfig.builder()
-                .url(wireMockUrl)
-                .principalId(USER_AGENT)
-                .auth(StandardAuthScheme.BASIC, "admin", "secret")
-                .build()
-            )
-            .build();
+        client =
+                JettyRestClient.builder()
+                        .scanner(scanner)
+                        .serializerRegistry(
+                                SerializerRegistry.createDefault()
+                                        .register(JacksonSerializer.createDefaultStrictMapper()))
+                        .connectTimeout(Duration.ofSeconds(2))
+                        .followRedirects(true)
+                        .maxRedirects(8)
+                        .maxConnectionsPerHost(10)
+                        .maxQueuedRequests(1024)
+                        .maxHeadersSize(8, MemUnit.KB)
+                        .defaultClientGroup(
+                                RestClientGroupConfig.builder()
+                                        .url(wireMockUrl)
+                                        .principalId(USER_AGENT)
+                                        .retryOnSafeMethods(3, Duration.ofMillis(500))
+                                        .build())
+                        .clientGroup(
+                                TestGroup.LIMITED_GROUP,
+                                RestClientGroupConfig.builder()
+                                        .url(wireMockUrl)
+                                        .principalId(USER_AGENT)
+                                        .rateLimit(
+                                                TokenBucketRateLimiter.builder()
+                                                        .capacity(5)
+                                                        .refillTokens(1)
+                                                        .refillPeriod(Duration.ofHours(1))
+                                                        .build())
+                                        .build())
+                        .clientGroup(
+                                TestGroup.OVERRIDE_GROUP,
+                                RestClientGroupConfig.builder()
+                                        .url(wireMockUrl)
+                                        .principalId(USER_AGENT)
+                                        .auth(StandardAuthScheme.BASIC, "admin", "secret")
+                                        .build())
+                        .build();
         client.start();
     }
 
@@ -133,18 +137,18 @@ class JettyRestClientIntegrationTest {
     void shouldSendGetRequest() {
         // given
         final String url = "/api/user";
-        stubFor(get(urlEqualTo(url))
-            .withHeader("User-Agent", equalTo(USER_AGENT))
-            .willReturn(aResponse()
-                .withStatus(HttpStatus.OK_200.getCode())
-                .withHeader(
-                    CommonHttpHeaderName.CONTENT_TYPE.getCode(),
-                    CommonHttpHeaderValue.APPLICATION_JSON.buildWithArgs()
-                )
-                .withBody("{\"id\": 123, \"name\": \"JWizard\"}")));
-        final RestResponse<UserDto> response = client
-            .get(url)
-            .send(UserDto.class);
+        stubFor(
+                get(urlEqualTo(url))
+                        .withHeader("User-Agent", equalTo(USER_AGENT))
+                        .willReturn(
+                                aResponse()
+                                        .withStatus(HttpStatus.OK_200.getCode())
+                                        .withHeader(
+                                                CommonHttpHeaderName.CONTENT_TYPE.getCode(),
+                                                CommonHttpHeaderValue.APPLICATION_JSON
+                                                        .buildWithArgs())
+                                        .withBody("{\"id\": 123, \"name\": \"JWizard\"}")));
+        final RestResponse<UserDto> response = client.get(url).send(UserDto.class);
         // then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
         assertThat(response.getBody()).isNotNull();
@@ -157,13 +161,13 @@ class JettyRestClientIntegrationTest {
     void shouldSendPostWithRawBody() {
         // given
         final String url = "/api/data";
-        stubFor(post(urlEqualTo(url))
-            .withRequestBody(equalToJson("{\"id\":999,\"name\":\"Test Post\"}"))
-            .willReturn(aResponse().withStatus(HttpStatus.CREATED_201.getCode())));
+        stubFor(
+                post(urlEqualTo(url))
+                        .withRequestBody(equalToJson("{\"id\":999,\"name\":\"Test Post\"}"))
+                        .willReturn(aResponse().withStatus(HttpStatus.CREATED_201.getCode())));
         // when
-        final RestResponse<Void> response = client.post(url)
-            .body(new UserDto(999, "Test Post"))
-            .send();
+        final RestResponse<Void> response =
+                client.post(url).body(new UserDto(999, "Test Post")).send();
         // then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED_201);
     }
@@ -173,19 +177,22 @@ class JettyRestClientIntegrationTest {
     void shouldSendPostWithFormBody() {
         // given
         final String url = "/api/auth/token";
-        stubFor(post(urlEqualTo(url))
-            .withHeader(
-                CommonHttpHeaderName.CONTENT_TYPE.getCode(),
-                containing(CommonHttpHeaderValue.APPLICATION_X_WWW_FORM_URLENCODED.buildWithArgs())
-            )
-            .withRequestBody(containing("grant_type=client_credentials"))
-            .withRequestBody(containing("client_id=12345"))
-            .willReturn(aResponse().withStatus(HttpStatus.OK_200.getCode())));
+        stubFor(
+                post(urlEqualTo(url))
+                        .withHeader(
+                                CommonHttpHeaderName.CONTENT_TYPE.getCode(),
+                                containing(
+                                        CommonHttpHeaderValue.APPLICATION_X_WWW_FORM_URLENCODED
+                                                .buildWithArgs()))
+                        .withRequestBody(containing("grant_type=client_credentials"))
+                        .withRequestBody(containing("client_id=12345"))
+                        .willReturn(aResponse().withStatus(HttpStatus.OK_200.getCode())));
         // when
-        final RestResponse<Void> response = client.post(url)
-            .formParam("grant_type", "client_credentials")
-            .formParam("client_id", "12345")
-            .send();
+        final RestResponse<Void> response =
+                client.post(url)
+                        .formParam("grant_type", "client_credentials")
+                        .formParam("client_id", "12345")
+                        .send();
         // then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
     }
@@ -196,18 +203,16 @@ class JettyRestClientIntegrationTest {
         // given
         final String url = "/api/resource";
         final String bearer = "super-secret-token";
-        stubFor(delete(urlPathEqualTo(url))
-            .withQueryParam("force", equalTo("true"))
-            .withHeader(
-                CommonHttpHeaderName.AUTHORIZATION.getCode(),
-                equalTo(StandardAuthScheme.BEARER.buildHeaderValue(bearer))
-            )
-            .willReturn(aResponse().withStatus(204)));
+        stubFor(
+                delete(urlPathEqualTo(url))
+                        .withQueryParam("force", equalTo("true"))
+                        .withHeader(
+                                CommonHttpHeaderName.AUTHORIZATION.getCode(),
+                                equalTo(StandardAuthScheme.BEARER.buildHeaderValue(bearer)))
+                        .willReturn(aResponse().withStatus(204)));
         // when
-        final RestResponse<Void> response = client.delete(url)
-            .queryParam("force", "true")
-            .bearerAuth(bearer)
-            .send();
+        final RestResponse<Void> response =
+                client.delete(url).queryParam("force", "true").bearerAuth(bearer).send();
         // then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.NO_CONTENT_204);
     }
@@ -218,19 +223,17 @@ class JettyRestClientIntegrationTest {
         // given
         final String path = "/api/spam";
         final int tokens = 5;
-        stubFor(get(urlEqualTo(path))
-            .willReturn(aResponse().withStatus(HttpStatus.OK_200.getCode()))
-        );
+        stubFor(
+                get(urlEqualTo(path))
+                        .willReturn(aResponse().withStatus(HttpStatus.OK_200.getCode())));
         for (int i = 0; i < tokens; i++) {
-            final RestResponse<Void> okResponse = client.get(path)
-                .group(TestGroup.LIMITED_GROUP)
-                .send();
+            final RestResponse<Void> okResponse =
+                    client.get(path).group(TestGroup.LIMITED_GROUP).send();
             assertThat(okResponse.getStatus().getCode()).isEqualTo(HttpStatus.OK_200.getCode());
         }
         // when
-        final RestResponse<Void> rateLimitedResponse = client.get(path)
-            .group(TestGroup.LIMITED_GROUP)
-            .send();
+        final RestResponse<Void> rateLimitedResponse =
+                client.get(path).group(TestGroup.LIMITED_GROUP).send();
         // then
         assertThat(rateLimitedResponse.getStatus()).isEqualTo(HttpStatus.TOO_MANY_REQUESTS_429);
         verify(tokens, getRequestedFor(urlEqualTo(path)));
@@ -241,15 +244,17 @@ class JettyRestClientIntegrationTest {
     void shouldRetryOnServerError() {
         // given
         final String path = "/api/retry";
-        stubFor(get(urlEqualTo(path))
-            .inScenario("Retry Scenario")
-            .whenScenarioStateIs(Scenario.STARTED)
-            .willReturn(aResponse().withStatus(HttpStatus.BAD_GATEWAY_502.getCode()))
-            .willSetStateTo("Second Call"));
-        stubFor(get(urlEqualTo(path))
-            .inScenario("Retry Scenario")
-            .whenScenarioStateIs("Second Call")
-            .willReturn(aResponse().withStatus(HttpStatus.OK_200.getCode())));
+        stubFor(
+                get(urlEqualTo(path))
+                        .inScenario("Retry Scenario")
+                        .whenScenarioStateIs(Scenario.STARTED)
+                        .willReturn(aResponse().withStatus(HttpStatus.BAD_GATEWAY_502.getCode()))
+                        .willSetStateTo("Second Call"));
+        stubFor(
+                get(urlEqualTo(path))
+                        .inScenario("Retry Scenario")
+                        .whenScenarioStateIs("Second Call")
+                        .willReturn(aResponse().withStatus(HttpStatus.OK_200.getCode())));
         // when
         final RestResponse<Void> response = client.get("/api/retry").send();
         // then
@@ -264,27 +269,32 @@ class JettyRestClientIntegrationTest {
         final String path = "/api/dynamic";
         final String firstParam = "999";
         final String secondParam = "ABC";
-        stubFor(get(urlPathEqualTo(path))
-            .withHeader(
-                TestHttpHeaderName.X_CORRELATION_ID.getCode(),
-                equalTo(TestHttpHeaderValue.REQ.buildWithArgs(firstParam, secondParam))
-            )
-            .withQueryParam("tracking_enabled", equalTo("true"))
-            .withHeader("User-Agent", containing(USER_AGENT))
-            .willReturn(aResponse().withStatus(HttpStatus.OK_200.getCode())));
+        stubFor(
+                get(urlPathEqualTo(path))
+                        .withHeader(
+                                TestHttpHeaderName.X_CORRELATION_ID.getCode(),
+                                equalTo(
+                                        TestHttpHeaderValue.REQ.buildWithArgs(
+                                                firstParam, secondParam)))
+                        .withQueryParam("tracking_enabled", equalTo("true"))
+                        .withHeader("User-Agent", containing(USER_AGENT))
+                        .willReturn(aResponse().withStatus(HttpStatus.OK_200.getCode())));
         // when
-        final RestResponse<Void> response = client.get(path)
-            .interceptor(new CorrelationInterceptor(firstParam, secondParam))
-            .send();
+        final RestResponse<Void> response =
+                client.get(path)
+                        .interceptor(new CorrelationInterceptor(firstParam, secondParam))
+                        .send();
         // then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
-        verify(1, getRequestedFor(urlPathEqualTo(path))
-            .withHeader(
-                TestHttpHeaderName.X_CORRELATION_ID.getCode(),
-                equalTo(TestHttpHeaderValue.REQ.buildWithArgs(firstParam, secondParam))
-            )
-            .withQueryParam("tracking_enabled", equalTo("true"))
-        );
+        verify(
+                1,
+                getRequestedFor(urlPathEqualTo(path))
+                        .withHeader(
+                                TestHttpHeaderName.X_CORRELATION_ID.getCode(),
+                                equalTo(
+                                        TestHttpHeaderValue.REQ.buildWithArgs(
+                                                firstParam, secondParam)))
+                        .withQueryParam("tracking_enabled", equalTo("true")));
     }
 
     @Test
@@ -294,33 +304,37 @@ class JettyRestClientIntegrationTest {
         final String path = "/api/secure/action";
         final String firstParam = "UPDATE";
         final String secondParam = "505";
-        stubFor(get(urlPathEqualTo(path))
-            .withHeader(
-                TestHttpHeaderName.X_ACTION_TYPE.getCode(),
-                equalTo(TestHttpHeaderValue.UPDATE.buildWithArgs())
-            )
-            .withQueryParam("target_id", equalTo(secondParam))
-            .withHeader(
-                TestHttpHeaderName.X_REQUEST_SIGNATURE.getCode(),
-                equalTo(TestHttpHeaderValue.SIG.buildWithArgs(firstParam, secondParam))
-            )
-            .willReturn(aResponse().withStatus(HttpStatus.OK_200.getCode())));
+        stubFor(
+                get(urlPathEqualTo(path))
+                        .withHeader(
+                                TestHttpHeaderName.X_ACTION_TYPE.getCode(),
+                                equalTo(TestHttpHeaderValue.UPDATE.buildWithArgs()))
+                        .withQueryParam("target_id", equalTo(secondParam))
+                        .withHeader(
+                                TestHttpHeaderName.X_REQUEST_SIGNATURE.getCode(),
+                                equalTo(
+                                        TestHttpHeaderValue.SIG.buildWithArgs(
+                                                firstParam, secondParam)))
+                        .willReturn(aResponse().withStatus(HttpStatus.OK_200.getCode())));
         // when
-        final RestResponse<Void> response = client.get(path)
-            .header(TestHttpHeaderName.X_ACTION_TYPE, TestHttpHeaderValue.UPDATE)
-            .queryParam("target_id", secondParam)
-            .interceptor(new SignatureInterceptor())
-            .send();
+        final RestResponse<Void> response =
+                client.get(path)
+                        .header(TestHttpHeaderName.X_ACTION_TYPE, TestHttpHeaderValue.UPDATE)
+                        .queryParam("target_id", secondParam)
+                        .interceptor(new SignatureInterceptor())
+                        .send();
         // then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
-        verify(1, getRequestedFor(urlPathEqualTo(path))
-            .withHeader(TestHttpHeaderName.X_ACTION_TYPE.getCode(), equalTo(firstParam))
-            .withQueryParam("target_id", equalTo(secondParam))
-            .withHeader(
-                TestHttpHeaderName.X_REQUEST_SIGNATURE.getCode(),
-                equalTo(TestHttpHeaderValue.SIG.buildWithArgs(firstParam, secondParam))
-            )
-        );
+        verify(
+                1,
+                getRequestedFor(urlPathEqualTo(path))
+                        .withHeader(TestHttpHeaderName.X_ACTION_TYPE.getCode(), equalTo(firstParam))
+                        .withQueryParam("target_id", equalTo(secondParam))
+                        .withHeader(
+                                TestHttpHeaderName.X_REQUEST_SIGNATURE.getCode(),
+                                equalTo(
+                                        TestHttpHeaderValue.SIG.buildWithArgs(
+                                                firstParam, secondParam))));
     }
 
     @Test
@@ -329,25 +343,22 @@ class JettyRestClientIntegrationTest {
         // given
         final String path = "/api/secure";
         final String bearer = "request-token";
-        stubFor(get(urlEqualTo(path))
-            .withHeader(
-                CommonHttpHeaderName.AUTHORIZATION.getCode(),
-                equalTo(StandardAuthScheme.BEARER.buildHeaderValue(bearer))
-            )
-            .willReturn(aResponse().withStatus(HttpStatus.OK_200.getCode())));
+        stubFor(
+                get(urlEqualTo(path))
+                        .withHeader(
+                                CommonHttpHeaderName.AUTHORIZATION.getCode(),
+                                equalTo(StandardAuthScheme.BEARER.buildHeaderValue(bearer)))
+                        .willReturn(aResponse().withStatus(HttpStatus.OK_200.getCode())));
         // when
-        final RestResponse<Void> response = client.get(path)
-            .group(TestGroup.OVERRIDE_GROUP)
-            .bearerAuth(bearer)
-            .send();
+        final RestResponse<Void> response =
+                client.get(path).group(TestGroup.OVERRIDE_GROUP).bearerAuth(bearer).send();
         // then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
-        verify(getRequestedFor(urlEqualTo(path))
-            .withHeader(
-                CommonHttpHeaderName.AUTHORIZATION.getCode(),
-                equalTo(StandardAuthScheme.BEARER.buildHeaderValue(bearer))
-            )
-        );
+        verify(
+                getRequestedFor(urlEqualTo(path))
+                        .withHeader(
+                                CommonHttpHeaderName.AUTHORIZATION.getCode(),
+                                equalTo(StandardAuthScheme.BEARER.buildHeaderValue(bearer))));
     }
 
     @Test
@@ -355,12 +366,11 @@ class JettyRestClientIntegrationTest {
     void shouldDisableRetryAtRequestLevel() {
         // given
         final String path = "/api/no-retry";
-        stubFor(get(urlEqualTo(path))
-            .willReturn(aResponse().withStatus(HttpStatus.BAD_GATEWAY_502.getCode())));
+        stubFor(
+                get(urlEqualTo(path))
+                        .willReturn(aResponse().withStatus(HttpStatus.BAD_GATEWAY_502.getCode())));
         // when
-        final RestResponse<Void> response = client.get(path)
-            .disableRetry()
-            .send();
+        final RestResponse<Void> response = client.get(path).disableRetry().send();
         // then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_GATEWAY_502);
         verify(1, getRequestedFor(urlEqualTo(path)));
@@ -371,17 +381,18 @@ class JettyRestClientIntegrationTest {
     void shouldObeyRequestLevelRetryLimit() {
         // given
         final String path = "/api/fail-fast";
-        stubFor(get(urlEqualTo(path))
-            .willReturn(aResponse().withStatus(HttpStatus.INTERNAL_SERVER_ERROR_500.getCode())));
+        stubFor(
+                get(urlEqualTo(path))
+                        .willReturn(
+                                aResponse()
+                                        .withStatus(
+                                                HttpStatus.INTERNAL_SERVER_ERROR_500.getCode())));
         // when
-        final RestResponse<Void> response = client.get(path)
-            .retry(1, Duration.ofMillis(10))
-            .send();
+        final RestResponse<Void> response = client.get(path).retry(1, Duration.ofMillis(10)).send();
         // then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR_500);
         verify(2, getRequestedFor(urlEqualTo(path)));
     }
 }
 
-record UserDto(int id, String name) {
-}
+record UserDto(int id, String name) {}

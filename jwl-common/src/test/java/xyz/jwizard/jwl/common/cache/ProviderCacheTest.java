@@ -19,12 +19,12 @@ package xyz.jwizard.jwl.common.cache;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 class ProviderCacheTest {
     private ProviderCache<String, String, String> providerCache;
@@ -35,11 +35,15 @@ class ProviderCacheTest {
         callCount = new AtomicInteger(0);
         // providers are defined as simple strings for testing
         final Set<String> providers = Set.of("AlphaProvider", "BetaProvider");
-        providerCache = new ProviderCache<>(providers, (provider, context) -> {
-            // increment counter to track how many times the predicate is actually executed
-            callCount.incrementAndGet();
-            return provider.startsWith(context);
-        });
+        providerCache =
+                new ProviderCache<>(
+                        providers,
+                        (provider, context) -> {
+                            // increment counter to track how many times the predicate is actually
+                            // executed
+                            callCount.incrementAndGet();
+                            return provider.startsWith(context);
+                        });
     }
 
     @Test

@@ -17,10 +17,6 @@
  */
 package xyz.jwizard.jwl.common.di;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.Set;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +30,10 @@ import xyz.jwizard.jwl.common.util.CastUtil;
 
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Singleton;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Set;
 
 class AutoScanModule extends AbstractModule {
     private static final Logger LOG = LoggerFactory.getLogger(AutoScanModule.class);
@@ -68,21 +68,24 @@ class AutoScanModule extends AbstractModule {
             }
             final Class<Object> returnType = CastUtil.unsafeCast(method.getReturnType());
             if (returnType.equals(void.class)) {
-                throw new IllegalStateException("@Produces method cannot return void: " +
-                    method.getName());
+                throw new IllegalStateException(
+                        "@Produces method cannot return void: " + method.getName());
             }
             bind(returnType)
-                .toProvider(new BeanProvider<>(clazz, method, injectorProvider))
-                .in(Scopes.SINGLETON);
-            LOG.debug("Bound @Produces method: {} from {}.{}()",
-                returnType.getSimpleName(), clazz.getSimpleName(), method.getName());
+                    .toProvider(new BeanProvider<>(clazz, method, injectorProvider))
+                    .in(Scopes.SINGLETON);
+            LOG.debug(
+                    "Bound @Produces method: {} from {}.{}()",
+                    returnType.getSimpleName(),
+                    clazz.getSimpleName(),
+                    method.getName());
         }
     }
 
     private boolean isInstantiableClass(Class<?> clazz) {
         return !clazz.isInterface()
-            && !clazz.isAnnotation()
-            && !clazz.isEnum()
-            && !Modifier.isAbstract(clazz.getModifiers());
+                && !clazz.isAnnotation()
+                && !clazz.isEnum()
+                && !Modifier.isAbstract(clazz.getModifiers());
     }
 }

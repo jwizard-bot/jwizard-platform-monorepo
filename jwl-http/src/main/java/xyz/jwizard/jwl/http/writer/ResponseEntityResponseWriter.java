@@ -17,15 +17,15 @@
  */
 package xyz.jwizard.jwl.http.writer;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import xyz.jwizard.jwl.http.HttpResponse;
 import xyz.jwizard.jwl.http.ResponseEntity;
+
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 // implements cache, O(1) complexity
 public class ResponseEntityResponseWriter implements ResponseWriter {
@@ -51,12 +51,14 @@ public class ResponseEntityResponseWriter implements ResponseWriter {
         final Object body = entity.body();
         final Class<?> bodyClass = (body == null) ? void.class : body.getClass();
 
-        final ResponseWriter writer = writerCache.computeIfAbsent(bodyClass, clazz ->
-            delegates.stream()
-                .filter(w -> w != this && w.supports(body))
-                .findFirst()
-                .orElse(null)
-        );
+        final ResponseWriter writer =
+                writerCache.computeIfAbsent(
+                        bodyClass,
+                        clazz ->
+                                delegates.stream()
+                                        .filter(w -> w != this && w.supports(body))
+                                        .findFirst()
+                                        .orElse(null));
         if (writer != null) {
             writer.write(res, body);
             return;

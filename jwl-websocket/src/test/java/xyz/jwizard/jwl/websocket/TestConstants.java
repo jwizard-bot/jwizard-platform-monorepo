@@ -24,8 +24,8 @@ import xyz.jwizard.jwl.common.bootstrap.ForbiddenInstantiationException;
 public class TestConstants {
     public static final String SECRET_TOKEN = "super-secret-wizard-key";
     public static final String SERVICE_NAME = "internal-microservice";
-    public static final JsonSerializer JSON_SERIALIZER = JacksonSerializer
-        .createLenientForMessaging();
+    public static final JsonSerializer JSON_SERIALIZER =
+            JacksonSerializer.createLenientForMessaging();
 
     private TestConstants() {
         throw new ForbiddenInstantiationException(TestConstants.class);

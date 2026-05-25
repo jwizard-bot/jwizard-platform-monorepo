@@ -17,8 +17,6 @@
  */
 package xyz.jwizard.jwl.http.jetty.adapter;
 
-import java.io.InputStream;
-
 import org.eclipse.jetty.io.Content;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.util.MultiMap;
@@ -28,6 +26,8 @@ import xyz.jwizard.jwl.common.util.StringUtil;
 import xyz.jwizard.jwl.http.HttpRequest;
 import xyz.jwizard.jwl.net.http.header.CommonHttpHeaderName;
 import xyz.jwizard.jwl.net.http.header.HttpHeaderName;
+
+import java.io.InputStream;
 
 public class JettyHttpRequestAdapter implements HttpRequest {
     private final Request request;
@@ -92,9 +92,8 @@ public class JettyHttpRequestAdapter implements HttpRequest {
             return null;
         }
         final int semicolonIndex = contentType.indexOf(';');
-        final String rawType = (semicolonIndex != -1)
-            ? contentType.substring(0, semicolonIndex)
-            : contentType;
+        final String rawType =
+                (semicolonIndex != -1) ? contentType.substring(0, semicolonIndex) : contentType;
         return StringUtil.toLowerCase(rawType.trim());
     }
 }

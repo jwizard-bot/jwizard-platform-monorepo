@@ -17,11 +17,6 @@
  */
 package xyz.jwizard.jwl.netclient.websocket.group;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import xyz.jwizard.jwl.common.di.ComponentProvider;
 import xyz.jwizard.jwl.common.util.Assert;
 import xyz.jwizard.jwl.net.http.header.HttpHeaderName;
@@ -37,6 +32,11 @@ import xyz.jwizard.jwl.netclient.websocket.group.bus.WsEnvelopeBusConfig;
 import xyz.jwizard.jwl.netclient.websocket.group.bus.WsTypedMessageBusConfig;
 import xyz.jwizard.jwl.netclient.websocket.group.heartbeat.WsHeartbeatConfig;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 public class WsClientGroupConfig extends GenericClientGroupConfig {
     private final WsClientAuthenticator authenticator;
     private final NetworkSessionLifecycleListener<WsClientSession> lifecycleListener;
@@ -49,7 +49,8 @@ public class WsClientGroupConfig extends GenericClientGroupConfig {
     private WsClientGroupConfig(Builder builder) {
         super(builder);
         authenticator = CompositeWsClientAuthenticator.load(builder.authenticators);
-        lifecycleListener = CompositeNetworkSessionLifecycleListener.load(builder.componentProvider);
+        lifecycleListener =
+                CompositeNetworkSessionLifecycleListener.load(builder.componentProvider);
         customHeaders = builder.customHeaders;
         heartbeatConfig = builder.heartbeatConfig;
         reconnectConfig = builder.reconnectConfig;
@@ -95,8 +96,7 @@ public class WsClientGroupConfig extends GenericClientGroupConfig {
         private WsHeartbeatConfig heartbeatConfig = null;
         private WsReconnectConfig reconnectConfig = WsReconnectConfig.disabled();
 
-        private Builder() {
-        }
+        private Builder() {}
 
         @Override
         protected Builder self() {

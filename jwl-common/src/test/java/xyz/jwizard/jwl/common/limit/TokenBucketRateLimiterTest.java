@@ -20,11 +20,11 @@ package xyz.jwizard.jwl.common.limit;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.time.Duration;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.time.Duration;
 
 class TokenBucketRateLimiterTest {
     private static final long CAPACITY = 5;
@@ -35,11 +35,12 @@ class TokenBucketRateLimiterTest {
 
     @BeforeEach
     void setUp() {
-        rateLimiter = TokenBucketRateLimiter.builder()
-            .capacity(CAPACITY)
-            .refillTokens(REFILL_TOKENS)
-            .refillPeriod(REFILL_PERIOD)
-            .build();
+        rateLimiter =
+                TokenBucketRateLimiter.builder()
+                        .capacity(CAPACITY)
+                        .refillTokens(REFILL_TOKENS)
+                        .refillPeriod(REFILL_PERIOD)
+                        .build();
     }
 
     @Test
@@ -78,8 +79,8 @@ class TokenBucketRateLimiterTest {
         }
         // then
         assertFalse(rateLimiter.tryAcquire(userA), "User A should be rate limited");
-        assertTrue(rateLimiter.tryAcquire(userB),
-            "User B should not be affected by User A's limit");
+        assertTrue(
+                rateLimiter.tryAcquire(userB), "User B should not be affected by User A's limit");
     }
 
     @Test
@@ -94,8 +95,9 @@ class TokenBucketRateLimiterTest {
         // when
         rateLimiter.reset(key);
         // then
-        assertTrue(rateLimiter.tryAcquire(key),
-            "Should acquire token successfully after bucket reset");
+        assertTrue(
+                rateLimiter.tryAcquire(key),
+                "Should acquire token successfully after bucket reset");
     }
 
     @Test
@@ -110,7 +112,7 @@ class TokenBucketRateLimiterTest {
         // when
         Thread.sleep(REFILL_PERIOD.toMillis() + 50);
         // then
-        assertTrue(rateLimiter.tryAcquire(key),
-            "Should acquire token after refill period has passed");
+        assertTrue(
+                rateLimiter.tryAcquire(key), "Should acquire token after refill period has passed");
     }
 }

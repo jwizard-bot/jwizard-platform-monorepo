@@ -17,14 +17,14 @@
  */
 package xyz.jwizard.jwl.common.util.concurrent;
 
+import xyz.jwizard.jwl.common.bootstrap.ForbiddenInstantiationException;
+import xyz.jwizard.jwl.common.util.thread.ThreadUtil;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Consumer;
-
-import xyz.jwizard.jwl.common.bootstrap.ForbiddenInstantiationException;
-import xyz.jwizard.jwl.common.util.thread.ThreadUtil;
 
 public class ConcurrentUtil {
     private ConcurrentUtil() {
@@ -33,17 +33,18 @@ public class ConcurrentUtil {
 
     public static void await(Consumer<IoCallback> action) {
         final CompletableFuture<Void> future = new CompletableFuture<>();
-        final IoCallback callback = new IoCallback() {
-            @Override
-            public void onSuccess() {
-                future.complete(null);
-            }
+        final IoCallback callback =
+                new IoCallback() {
+                    @Override
+                    public void onSuccess() {
+                        future.complete(null);
+                    }
 
-            @Override
-            public void onFailure(Throwable cause) {
-                future.completeExceptionally(cause);
-            }
-        };
+                    @Override
+                    public void onFailure(Throwable cause) {
+                        future.completeExceptionally(cause);
+                    }
+                };
         try {
             action.accept(callback);
             future.join();

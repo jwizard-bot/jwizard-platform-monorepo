@@ -17,9 +17,6 @@
  */
 package xyz.jwizard.jwl.codec.envelope.json;
 
-import java.util.Map;
-import java.util.function.Function;
-
 import xyz.jwizard.jwl.codec.envelope.EnvelopeSerializer;
 import xyz.jwizard.jwl.codec.envelope.MessageEnvelope;
 import xyz.jwizard.jwl.codec.envelope.OpCode;
@@ -27,6 +24,9 @@ import xyz.jwizard.jwl.codec.serialization.SerializerFormat;
 import xyz.jwizard.jwl.codec.serialization.StandardSerializerFormat;
 import xyz.jwizard.jwl.codec.serialization.json.JsonSerializer;
 import xyz.jwizard.jwl.codec.serialization.json.JsonSerializerException;
+
+import java.util.Map;
+import java.util.function.Function;
 
 public abstract class JsonEnvelopeSerializer<T> implements EnvelopeSerializer<T> {
     protected final JsonSerializer serializer;
@@ -64,8 +64,8 @@ public abstract class JsonEnvelopeSerializer<T> implements EnvelopeSerializer<T>
         return serializer.serialize(envelope);
     }
 
-    private MessageEnvelope<?> parseMapToEnvelope(Map<?, ?> tree,
-                                                  Function<Integer, Class<?>> typeResolver) {
+    private MessageEnvelope<?> parseMapToEnvelope(
+            Map<?, ?> tree, Function<Integer, Class<?>> typeResolver) {
         if (tree == null) {
             throw new JsonSerializerException("Received empty or null payload");
         }
