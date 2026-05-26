@@ -31,9 +31,9 @@ public class BadRequestExceptionHandler implements ExceptionHandler {
 
     @Override
     public boolean supports(Throwable throwable) {
-        return throwable instanceof IllegalArgumentException ||
-            throwable instanceof JsonSerializerException ||
-            throwable instanceof ValidationException;
+        return throwable instanceof IllegalArgumentException
+                || throwable instanceof JsonSerializerException
+                || throwable instanceof ValidationException;
     }
 
     @Override

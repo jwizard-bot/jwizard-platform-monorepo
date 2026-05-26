@@ -25,7 +25,7 @@ import xyz.jwizard.jwl.netclient.NetworkClient;
 import xyz.jwizard.jwl.netclient.rest.group.RestClientGroupConfig;
 
 public abstract class GenericRestClient extends NetworkClient<RestClientGroupConfig>
-    implements RestClient {
+        implements RestClient {
     protected final boolean followRedirects;
     protected final int maxRedirects;
     protected final SerializerRegistry<MessageSerializer> serializerRegistry;
@@ -40,7 +40,7 @@ public abstract class GenericRestClient extends NetworkClient<RestClientGroupCon
     }
 
     protected abstract static class AbstractBuilder<B extends AbstractBuilder<B>>
-        extends AbstractBaseBuilder<RestClientGroupConfig, B> {
+            extends AbstractBaseBuilder<RestClientGroupConfig, B> {
         private boolean followRedirects = true;
         private int maxRedirects = 8;
         private SerializerRegistry<MessageSerializer> serializerRegistry;

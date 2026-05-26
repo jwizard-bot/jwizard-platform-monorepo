@@ -49,10 +49,14 @@ public class JettyWsCreator implements WebSocketCreator {
     private final RateLimiter rateLimiter;
     private final WsSerializerResolver serializerResolver;
 
-    public JettyWsCreator(NetworkSessionLifecycleListener<WsSession> lifecycleListener,
-                          RawBusListener<WsSession> busListener, WsSessionRegistry sessionRegistry,
-                          WsAuthenticator authenticator, WsAuthFailureHandler failureHandler,
-                          RateLimiter rateLimiter, WsSerializerResolver serializerResolver) {
+    public JettyWsCreator(
+            NetworkSessionLifecycleListener<WsSession> lifecycleListener,
+            RawBusListener<WsSession> busListener,
+            WsSessionRegistry sessionRegistry,
+            WsAuthenticator authenticator,
+            WsAuthFailureHandler failureHandler,
+            RateLimiter rateLimiter,
+            WsSerializerResolver serializerResolver) {
         this.lifecycleListener = lifecycleListener;
         this.busListener = busListener;
         this.sessionRegistry = sessionRegistry;
@@ -63,8 +67,8 @@ public class JettyWsCreator implements WebSocketCreator {
     }
 
     @Override
-    public Object createWebSocket(ServerUpgradeRequest req, ServerUpgradeResponse res,
-                                  Callback callback) {
+    public Object createWebSocket(
+            ServerUpgradeRequest req, ServerUpgradeResponse res, Callback callback) {
         LOG.trace("Intercepted WebSocket upgrade request, initiating authentication");
         final WsHandshakeRequest handshakeRequest = new JettyWsHandshakeRequestAdapter(req);
 
@@ -79,21 +83,22 @@ public class JettyWsCreator implements WebSocketCreator {
         if (principalId != null) {
             LOG.debug("WebSocket authentication successful for principal: {}", principalId);
             return new JettyWsListenerAdapter(
-                lifecycleListener,
-                busListener,
-                sessionRegistry,
-                rateLimiter,
-                serializer,
-                principalId
-            );
+                    lifecycleListener,
+                    busListener,
+                    sessionRegistry,
+                    rateLimiter,
+                    serializer,
+                    principalId);
         }
         LOG.debug("WebSocket authentication failed, rejecting connection with HTTP 401");
         if (failureHandler != null) {
             try {
                 failureHandler.onAuthFailure(handshakeRequest);
             } catch (Exception ex) {
-                LOG.error("Exception thrown during WsAuthFailureHandler execution, " +
-                    "proceeding to close socket", ex);
+                LOG.error(
+                        "Exception thrown during WsAuthFailureHandler execution, "
+                                + "proceeding to close socket",
+                        ex);
             }
         }
         res.setStatus(HttpStatus.UNAUTHORIZED_401);

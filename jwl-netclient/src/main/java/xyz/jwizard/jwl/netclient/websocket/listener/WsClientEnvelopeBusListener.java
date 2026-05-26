@@ -30,8 +30,7 @@ public class WsClientEnvelopeBusListener extends EnvelopeBusListener<WsClientSes
     }
 
     public static class Builder extends AbstractBuilder<WsClientSession, Builder> {
-        private Builder() {
-        }
+        private Builder() {}
 
         @Override
         protected Builder self() {

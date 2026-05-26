@@ -17,5 +17,4 @@
  */
 package xyz.jwizard.jwl.ci;
 
-class JwlCi {
-}
+class JwlCi {}

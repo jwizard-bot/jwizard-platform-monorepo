@@ -37,8 +37,7 @@ import xyz.jwizard.jwl.common.util.StringUtil;
 class RawByteSerializerTest {
     private final RawByteSerializer serializer = RawByteSerializer.createDefault();
 
-    @Mock
-    private EncodedPayloadVisitor visitorMock;
+    @Mock private EncodedPayloadVisitor visitorMock;
 
     @Test
     @DisplayName("should return the same byte array on serialization")
@@ -67,8 +66,8 @@ class RawByteSerializerTest {
         final String invalidInput = "I am not a byte array";
         // then
         assertThatThrownBy(() -> serializer.serializeToBytes(invalidInput))
-            .isInstanceOf(MessageSerializerException.class)
-            .hasMessageContaining("RawByteSerializer can only handle byte[]");
+                .isInstanceOf(MessageSerializerException.class)
+                .hasMessageContaining("RawByteSerializer can only handle byte[]");
     }
 
     @Test
@@ -89,8 +88,8 @@ class RawByteSerializerTest {
         final byte[] input = new byte[0];
         // then
         assertThatThrownBy(() -> serializer.deserializeFromBytes(input, String.class))
-            .isInstanceOf(MessageSerializerException.class)
-            .hasMessageContaining("RawByteSerializer can only deserialize to byte[].class");
+                .isInstanceOf(MessageSerializerException.class)
+                .hasMessageContaining("RawByteSerializer can only deserialize to byte[].class");
     }
 
     @Test

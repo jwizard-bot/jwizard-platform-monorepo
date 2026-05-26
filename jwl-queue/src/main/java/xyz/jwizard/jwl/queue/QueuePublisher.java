@@ -38,21 +38,24 @@ public class QueuePublisher implements MessagePublisher {
     }
 
     @Override
-    public <T> void publish(String exchange, String routingKey, T payload,
-                            SerializerFormat format) {
-        final String logExchange = (exchange == null || exchange.isBlank())
-            ? "<default>"
-            : exchange;
+    public <T> void publish(
+            String exchange, String routingKey, T payload, SerializerFormat format) {
+        final String logExchange =
+                (exchange == null || exchange.isBlank()) ? "<default>" : exchange;
         try {
-            LOG.trace("Publishing message to exchange '{}' with routing key '{}'", logExchange,
-                routingKey);
-            final byte[] body = queueServer.getSerializerRegistry()
-                .get(format)
-                .serializeToBytes(payload);
+            LOG.trace(
+                    "Publishing message to exchange '{}' with routing key '{}'",
+                    logExchange,
+                    routingKey);
+            final byte[] body =
+                    queueServer.getSerializerRegistry().get(format).serializeToBytes(payload);
             queueServer.onPublish(exchange, routingKey, body);
         } catch (Exception ex) {
-            LOG.error("Failed to publish message to exchange '{}' with routing key '{}'",
-                logExchange, routingKey, ex);
+            LOG.error(
+                    "Failed to publish message to exchange '{}' with routing key '{}'",
+                    logExchange,
+                    routingKey,
+                    ex);
         }
     }
 

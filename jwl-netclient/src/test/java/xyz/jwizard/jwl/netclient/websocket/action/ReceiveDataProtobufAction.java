@@ -29,7 +29,7 @@ import jakarta.inject.Singleton;
 
 @Singleton
 public class ReceiveDataProtobufAction
-    implements EnvelopeAction<WsClientSession, TestPayloadProto.MyMessage> {
+        implements EnvelopeAction<WsClientSession, TestPayloadProto.MyMessage> {
     private final TestQueueProvider testQueueProvider;
 
     @Inject

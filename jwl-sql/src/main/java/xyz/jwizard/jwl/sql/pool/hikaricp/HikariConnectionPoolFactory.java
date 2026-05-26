@@ -30,8 +30,7 @@ import xyz.jwizard.jwl.sql.pool.ManagedDataSource;
 public class HikariConnectionPoolFactory implements ConnectionPoolFactory {
     private static final Logger LOG = LoggerFactory.getLogger(HikariConnectionPoolFactory.class);
 
-    private HikariConnectionPoolFactory() {
-    }
+    private HikariConnectionPoolFactory() {}
 
     public static ConnectionPoolFactory create() {
         return new HikariConnectionPoolFactory();

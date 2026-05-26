@@ -19,5 +19,4 @@ package xyz.jwizard.jwl.net.http.cookie;
 
 import xyz.jwizard.jwl.common.Identifiable;
 
-public interface CookieName extends Identifiable<String> {
-}
+public interface CookieName extends Identifiable<String> {}

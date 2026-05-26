@@ -31,8 +31,8 @@ public class JedisPubSubAdapter extends JedisPubSub {
     private final KvSubscriber<String> kvSubscriber;
     private final ChannelParamExtractor paramExtractor;
 
-    public JedisPubSubAdapter(KvSubscriber<String> kvSubscriber,
-                              ChannelParamExtractor paramExtractor) {
+    public JedisPubSubAdapter(
+            KvSubscriber<String> kvSubscriber, ChannelParamExtractor paramExtractor) {
         this.kvSubscriber = kvSubscriber;
         this.paramExtractor = paramExtractor;
     }
@@ -47,8 +47,8 @@ public class JedisPubSubAdapter extends JedisPubSub {
 
     @Override
     public void onPMessage(String pattern, String channel, String message) {
-        LOG.debug("KV RECEIVED (pattern, byte[]) -> pattern: '{}', channel: '{}'", pattern,
-            channel);
+        LOG.debug(
+                "KV RECEIVED (pattern, byte[]) -> pattern: '{}', channel: '{}'", pattern, channel);
         if (kvSubscriber != null) {
             final String[] extractedParams = paramExtractor.extract(channel);
             kvSubscriber.handle(channel, extractedParams, message);
@@ -59,8 +59,10 @@ public class JedisPubSubAdapter extends JedisPubSub {
     public void onSubscribe(String channel, int subscribedChannels) {
         if (kvSubscriber != null) {
             kvSubscriber.setSubscribed(true);
-            LOG.debug("Successfully subscribed to channel/pattern: '{}' (total active: {})",
-                channel, subscribedChannels);
+            LOG.debug(
+                    "Successfully subscribed to channel/pattern: '{}' (total active: {})",
+                    channel,
+                    subscribedChannels);
         }
     }
 

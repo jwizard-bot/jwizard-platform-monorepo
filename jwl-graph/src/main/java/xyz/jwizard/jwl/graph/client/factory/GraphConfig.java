@@ -38,8 +38,8 @@ public abstract class GraphConfig {
         return address;
     }
 
-    protected static abstract class AbstractBuilder<B extends AbstractBuilder<B, C>,
-        C extends GraphConfig> {
+    protected abstract static class AbstractBuilder<
+            B extends AbstractBuilder<B, C>, C extends GraphConfig> {
         protected GraphProtocol protocol;
         protected HostPort address;
 

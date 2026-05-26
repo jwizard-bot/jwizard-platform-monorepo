@@ -22,7 +22,8 @@ import xyz.jwizard.jwl.codec.envelope.OpCode;
 public enum TestOpCode implements OpCode {
     SUBSCRIBE(0x09, 0x01),
     SUBSCRIBE_ACK(0x09, 0x02),
-    BROADCAST_MSG(0x09, 0x03);
+    BROADCAST_MSG(0x09, 0x03),
+    ;
 
     private final int code;
 

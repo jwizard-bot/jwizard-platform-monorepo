@@ -27,12 +27,11 @@ import jakarta.inject.Singleton;
 
 @Singleton
 public class SendDataProtobufAction
-    implements EnvelopeAction<WsSession, TestPayloadProto.MyMessage> {
+        implements EnvelopeAction<WsSession, TestPayloadProto.MyMessage> {
     @Override
     public void handle(WsSession channel, TestPayloadProto.MyMessage data) {
-        final TestPayloadProto.MyMessage response = data.toBuilder()
-            .setContent("Received: " + data.getContent())
-            .build();
+        final TestPayloadProto.MyMessage response =
+                data.toBuilder().setContent("Received: " + data.getContent()).build();
         channel.sendEnvelope(TestWsOpCode.RECEIVE_DATA_PROTO, response);
     }
 

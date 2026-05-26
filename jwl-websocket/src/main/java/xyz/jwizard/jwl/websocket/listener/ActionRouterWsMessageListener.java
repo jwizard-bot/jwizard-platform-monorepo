@@ -46,8 +46,7 @@ public class ActionRouterWsMessageListener extends EnvelopeBusListener<WsSession
     }
 
     public static class Builder extends AbstractBuilder<WsSession, Builder> {
-        protected Builder() {
-        }
+        protected Builder() {}
 
         @Override
         protected Builder self() {

@@ -39,8 +39,7 @@ public class AuthInterceptor implements RequestInterceptor {
     @Override
     public void intercept(InterceptorContext context) {
         final String authHeaderName = CommonHttpHeaderName.AUTHORIZATION.getCode();
-        final boolean hasCustomAuth = context.getView().getHeaders()
-            .containsKey(authHeaderName);
+        final boolean hasCustomAuth = context.getView().getHeaders().containsKey(authHeaderName);
         if (!hasCustomAuth) {
             LOG.trace("Applying group auth scheme: {}", scheme);
             context.setAuth(scheme, credentials);

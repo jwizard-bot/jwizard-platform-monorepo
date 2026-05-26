@@ -40,8 +40,9 @@ public abstract class WsCookieAuthenticator implements WsAuthenticator {
         }
         final String cookieValue = req.getCookie(cookie);
         if (cookieValue == null) {
-            log.debug("Authentication failed: cookie '{}' is missing from the handshake request",
-                cookieName);
+            log.debug(
+                    "Authentication failed: cookie '{}' is missing from the handshake request",
+                    cookieName);
             return null;
         }
         if (log.isTraceEnabled()) {
@@ -49,8 +50,10 @@ public abstract class WsCookieAuthenticator implements WsAuthenticator {
         }
         final String principalId = validateCookieAndGetPrincipal(cookieValue);
         if (principalId != null) {
-            log.debug("Authentication successful via cookie '{}' for principal: '{}'", cookieName,
-                principalId);
+            log.debug(
+                    "Authentication successful via cookie '{}' for principal: '{}'",
+                    cookieName,
+                    principalId);
             return principalId;
         }
         log.debug("Authentication failed: invalid value for cookie '{}'", cookieName);

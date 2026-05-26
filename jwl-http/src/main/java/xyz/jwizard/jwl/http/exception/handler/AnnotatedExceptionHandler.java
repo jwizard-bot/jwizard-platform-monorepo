@@ -36,8 +36,11 @@ public class AnnotatedExceptionHandler implements ExceptionHandler {
     @Override
     public void handle(HttpRequest req, HttpResponse res, Throwable throwable) {
         final HttpStatus status = throwable.getClass().getAnnotation(ResponseStatus.class).value();
-        LOG.warn("Annotated exception [{}]: {} -> Status {}",
-            req.getPath(), throwable.getClass().getSimpleName(), status);
+        LOG.warn(
+                "Annotated exception [{}]: {} -> Status {}",
+                req.getPath(),
+                throwable.getClass().getSimpleName(),
+                status);
         res.setStatus(status);
         res.end();
     }

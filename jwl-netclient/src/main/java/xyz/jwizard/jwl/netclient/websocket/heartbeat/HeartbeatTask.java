@@ -48,8 +48,10 @@ class HeartbeatTask implements Runnable {
         try {
             action.execute(session);
         } catch (Exception ex) {
-            LOG.warn("Failed to dispatch heartbeat for session {}: {}", session.getSessionId(),
-                ex.getMessage());
+            LOG.warn(
+                    "Failed to dispatch heartbeat for session {}: {}",
+                    session.getSessionId(),
+                    ex.getMessage());
         }
     }
 }

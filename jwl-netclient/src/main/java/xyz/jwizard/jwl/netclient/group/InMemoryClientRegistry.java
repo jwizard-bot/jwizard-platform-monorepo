@@ -20,7 +20,7 @@ package xyz.jwizard.jwl.netclient.group;
 import xyz.jwizard.jwl.common.registry.GenericConcurrentRegistry;
 
 public class InMemoryClientRegistry<T extends ClientGroupConfig>
-    extends GenericConcurrentRegistry<ClientGroup, T> implements ClientRegistry<T> {
+        extends GenericConcurrentRegistry<ClientGroup, T> implements ClientRegistry<T> {
     private InMemoryClientRegistry() {
         super();
     }

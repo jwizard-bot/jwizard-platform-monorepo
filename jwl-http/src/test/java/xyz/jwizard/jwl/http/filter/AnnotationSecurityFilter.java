@@ -45,4 +45,3 @@ public class AnnotationSecurityFilter extends SecureRouteFilter {
         return 1000;
     }
 }
-

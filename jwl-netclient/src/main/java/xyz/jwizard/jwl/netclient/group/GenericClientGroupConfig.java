@@ -39,13 +39,12 @@ public class GenericClientGroupConfig implements ClientGroupConfig {
         return principalId;
     }
 
-    public abstract static class AbstractBuilder<B extends AbstractBuilder<B, C>,
-        C extends GenericClientGroupConfig> {
+    public abstract static class AbstractBuilder<
+            B extends AbstractBuilder<B, C>, C extends GenericClientGroupConfig> {
         private String url;
         private String principalId;
 
-        protected AbstractBuilder() {
-        }
+        protected AbstractBuilder() {}
 
         protected abstract B self();
 

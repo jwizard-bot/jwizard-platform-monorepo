@@ -28,9 +28,8 @@ class RegexChannelParamExtractorTest {
     @DisplayName("should return empty array when pattern has no wildcards")
     void shouldHandleExactMatch() {
         // given
-        final RegexChannelParamExtractor extractor = new RegexChannelParamExtractor(
-            "sys:global:events"
-        );
+        final RegexChannelParamExtractor extractor =
+                new RegexChannelParamExtractor("sys:global:events");
         // when
         final String[] params = extractor.extract("sys:global:events");
         // then
@@ -41,9 +40,8 @@ class RegexChannelParamExtractorTest {
     @DisplayName("should extract single parameter from wildcard")
     void shouldExtractSingleWildcard() {
         // given
-        final RegexChannelParamExtractor extractor = new RegexChannelParamExtractor(
-            "user:*:notifications"
-        );
+        final RegexChannelParamExtractor extractor =
+                new RegexChannelParamExtractor("user:*:notifications");
         // when
         final String[] params = extractor.extract("user:jwizard_123:notifications");
         // then
@@ -55,23 +53,21 @@ class RegexChannelParamExtractorTest {
     @DisplayName("should extract multiple parameters from multiple wildcards")
     void shouldExtractMultipleWildcards() {
         // given
-        final RegexChannelParamExtractor extractor = new RegexChannelParamExtractor(
-            "game:*:match:*:player:*:stats"
-        );
+        final RegexChannelParamExtractor extractor =
+                new RegexChannelParamExtractor("game:*:match:*:player:*:stats");
         // when
         final String[] params = extractor.extract("game:lol:match:999:player:faker:stats");
         // then
         assertEquals(3, params.length);
-        assertArrayEquals(new String[]{"lol", "999", "faker"}, params);
+        assertArrayEquals(new String[] {"lol", "999", "faker"}, params);
     }
 
     @Test
     @DisplayName("should return empty array when channel does not match pattern")
     void shouldReturnEmptyWhenNoMatch() {
         // given
-        final RegexChannelParamExtractor extractor = new RegexChannelParamExtractor(
-            "user:*:notifications"
-        );
+        final RegexChannelParamExtractor extractor =
+                new RegexChannelParamExtractor("user:*:notifications");
         // when
         final String[] params = extractor.extract("user:123:other_events");
         // then

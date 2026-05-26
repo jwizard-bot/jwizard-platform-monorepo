@@ -19,5 +19,4 @@ package xyz.jwizard.jwl.graph.model;
 
 import java.util.Map;
 
-public record GraphEdge(String type, String fromId, String toId, Map<String, Object> props) {
-}
+public record GraphEdge(String type, String fromId, String toId, Map<String, Object> props) {}

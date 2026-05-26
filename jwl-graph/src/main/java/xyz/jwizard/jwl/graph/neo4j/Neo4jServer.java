@@ -1,5 +1,5 @@
 /*
- * Copyright 2026 by JWizard
+ * Copyright (c) 2022-2026 JWizard. All Rights Reserved.
  *
  * NOTICE: This source code is publicly available for reference
  * and educational purposes only. It is NOT open-source software.
@@ -31,8 +31,7 @@ public class Neo4jServer extends GraphServer<Neo4jConfig> {
     }
 
     public static class Builder extends AbstractBuilder<Builder, Neo4jConfig> {
-        private Builder() {
-        }
+        private Builder() {}
 
         @Override
         protected Builder self() {

@@ -19,5 +19,4 @@ package xyz.jwizard.jwl.graph.model;
 
 import java.util.Map;
 
-public record GraphNode(String label, String id, Map<String, Object> props) {
-}
+public record GraphNode(String label, String id, Map<String, Object> props) {}

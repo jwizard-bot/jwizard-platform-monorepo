@@ -26,8 +26,7 @@ import xyz.jwizard.jwl.codec.serialization.TypedMessageSerializer;
 import xyz.jwizard.jwl.common.util.CastUtil;
 
 public class RawByteSerializer implements MessageSerializer, TypedMessageSerializer<byte[]> {
-    private RawByteSerializer() {
-    }
+    private RawByteSerializer() {}
 
     public static RawByteSerializer createDefault() {
         return new RawByteSerializer();
@@ -42,8 +41,8 @@ public class RawByteSerializer implements MessageSerializer, TypedMessageSeriali
             return array;
         }
         throw new MessageSerializerException(
-            "RawByteSerializer can only handle byte[], but received: " + value.getClass().getName()
-        );
+                "RawByteSerializer can only handle byte[], but received: "
+                        + value.getClass().getName());
     }
 
     @Override
@@ -52,9 +51,8 @@ public class RawByteSerializer implements MessageSerializer, TypedMessageSeriali
             return CastUtil.unsafeCast(bytes);
         }
         throw new MessageSerializerException(
-            "RawByteSerializer can only deserialize to byte[].class, but requested: " +
-                type.getName()
-        );
+                "RawByteSerializer can only deserialize to byte[].class, but requested: "
+                        + type.getName());
     }
 
     @Override

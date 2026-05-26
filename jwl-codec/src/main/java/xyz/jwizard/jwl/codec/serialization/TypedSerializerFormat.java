@@ -21,10 +21,8 @@ import org.jspecify.annotations.NonNull;
 
 import xyz.jwizard.jwl.codec.DataType;
 
-public record TypedSerializerFormat(
-    SerializerFormat baseFormat,
-    DataType dataType
-) implements SerializerFormat {
+public record TypedSerializerFormat(SerializerFormat baseFormat, DataType dataType)
+        implements SerializerFormat {
     public static TypedSerializerFormat from(SerializerFormat format, DataType dataType) {
         return new TypedSerializerFormat(format, dataType);
     }

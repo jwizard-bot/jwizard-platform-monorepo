@@ -26,7 +26,8 @@ import xyz.jwizard.jwl.http.exception.RequestTooLargeException;
 import xyz.jwizard.jwl.net.http.HttpStatus;
 
 public class RequestTooLargeExceptionHandler implements ExceptionHandler {
-    private static final Logger LOG = LoggerFactory.getLogger(RequestTooLargeExceptionHandler.class);
+    private static final Logger LOG =
+            LoggerFactory.getLogger(RequestTooLargeExceptionHandler.class);
 
     @Override
     public boolean supports(Throwable throwable) {

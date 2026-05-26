@@ -20,8 +20,8 @@ package xyz.jwizard.jwl.common.util.concurrent;
 import java.util.concurrent.TimeUnit;
 
 public interface PeriodicTaskScheduler {
-    void scheduleAtFixedRate(String taskId, Runnable task, long initialDelay, long period,
-                             TimeUnit unit);
+    void scheduleAtFixedRate(
+            String taskId, Runnable task, long initialDelay, long period, TimeUnit unit);
 
     void cancel(String taskId);
 

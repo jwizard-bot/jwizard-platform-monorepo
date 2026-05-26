@@ -24,6 +24,5 @@ public class NoOpRateLimiter implements RateLimiter {
     }
 
     @Override
-    public void reset(String key) {
-    }
+    public void reset(String key) {}
 }

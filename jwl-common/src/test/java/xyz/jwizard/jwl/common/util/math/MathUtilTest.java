@@ -41,10 +41,10 @@ class MathUtilTest {
 
     @ParameterizedTest
     @CsvSource({
-        "1, 100, 90, 110",    // 100 * 2^0 = 100 (+/- 10%)
-        "2, 100, 180, 220",   // 100 * 2^1 = 200 (+/- 10%)
-        "3, 100, 360, 440",   // 100 * 2^2 = 400 (+/- 10%)
-        "4, 100, 720, 880"    // 100 * 2^3 = 800 (+/- 10%)
+        "1, 100, 90, 110", // 100 * 2^0 = 100 (+/- 10%)
+        "2, 100, 180, 220", // 100 * 2^1 = 200 (+/- 10%)
+        "3, 100, 360, 440", // 100 * 2^2 = 400 (+/- 10%)
+        "4, 100, 720, 880" // 100 * 2^3 = 800 (+/- 10%)
     })
     @DisplayName("should calculate exponential delay within jitter range")
     void shouldCalculateExpDelayWithJitter(int attempt, long baseDelay, long min, long max) {

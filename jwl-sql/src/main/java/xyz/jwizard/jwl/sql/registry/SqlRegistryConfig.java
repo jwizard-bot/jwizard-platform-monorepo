@@ -20,5 +20,4 @@ package xyz.jwizard.jwl.sql.registry;
 import xyz.jwizard.jwl.sql.SqlClientFactory;
 import xyz.jwizard.jwl.sql.config.SqlDatabaseConfig;
 
-record SqlRegistryConfig(SqlDatabaseConfig config, SqlClientFactory factory) {
-}
+record SqlRegistryConfig(SqlDatabaseConfig config, SqlClientFactory factory) {}

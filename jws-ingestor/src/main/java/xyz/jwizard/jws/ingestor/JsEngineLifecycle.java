@@ -32,9 +32,7 @@ class JsEngineLifecycle implements LifecycleHook {
     private final GraalJsEngine jsEngine;
 
     JsEngineLifecycle() {
-        jsEngine = GraalJsEngine.builder()
-            .withLibrary(IngestorScript.YARN_PARSER)
-            .build();
+        jsEngine = GraalJsEngine.builder().withLibrary(IngestorScript.YARN_PARSER).build();
     }
 
     @Override

@@ -19,5 +19,4 @@ package xyz.jwizard.jwl.net.http.header;
 
 import xyz.jwizard.jwl.common.Identifiable;
 
-public interface HttpHeaderName extends Identifiable<String> {
-}
+public interface HttpHeaderName extends Identifiable<String> {}

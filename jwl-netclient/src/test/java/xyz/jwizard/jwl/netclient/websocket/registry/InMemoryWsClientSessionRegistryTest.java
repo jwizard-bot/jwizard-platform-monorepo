@@ -34,8 +34,8 @@ class InMemoryWsClientSessionRegistryTest {
     @DisplayName("should close old session when new one registers for same group")
     void shouldCloseOldSessionWhenNewOneRegistersForSameGroup() {
         // given
-        final InMemoryWsClientSessionRegistry registry = InMemoryWsClientSessionRegistry
-            .createDefault();
+        final InMemoryWsClientSessionRegistry registry =
+                InMemoryWsClientSessionRegistry.createDefault();
         ClientGroup group = mock(ClientGroup.class);
         when(group.getClientGroupName()).thenReturn("group-1");
         final WsClientSession oldSession = mock(WsClientSession.class);

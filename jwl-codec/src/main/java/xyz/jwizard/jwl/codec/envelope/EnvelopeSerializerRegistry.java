@@ -43,7 +43,7 @@ public class EnvelopeSerializerRegistry extends SerializerRegistry<EnvelopeSeria
         register(ProtobufEnvelopeSerializer.createDefault(serializer));
         return this;
     }
-    
+
     @Override
     public EnvelopeSerializerRegistry register(EnvelopeSerializer<?> serializer) {
         super.register(serializer);

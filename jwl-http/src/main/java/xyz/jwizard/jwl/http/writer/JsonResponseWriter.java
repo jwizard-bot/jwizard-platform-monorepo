@@ -36,8 +36,8 @@ public class JsonResponseWriter implements ResponseWriter {
 
     @Override
     public void write(HttpResponse res, Object result) {
-        res.setHeader(CommonHttpHeaderName.CONTENT_TYPE,
-            CommonHttpHeaderValue.APPLICATION_JSON_UTF_8);
+        res.setHeader(
+                CommonHttpHeaderName.CONTENT_TYPE, CommonHttpHeaderValue.APPLICATION_JSON_UTF_8);
         final String json = jsonSerializer.serialize(result);
         res.write(json, true);
     }

@@ -42,8 +42,8 @@ public class QueryParamSerializerResolver implements WsSerializerResolver {
 
     @Override
     public EnvelopeSerializer<?> resolve(WsHandshakeRequest req) {
-        final String encoding = CollectionUtil
-            .getFirstSafety(req.getQueryParameter(encodingParamName));
+        final String encoding =
+                CollectionUtil.getFirstSafety(req.getQueryParameter(encodingParamName));
         final String frame = CollectionUtil.getFirstSafety(req.getQueryParameter(frameParamName));
         return cache.find(encoding, frame);
     }
@@ -54,8 +54,7 @@ public class QueryParamSerializerResolver implements WsSerializerResolver {
         private String encodingParamName = "encoding";
         private String frameParamName = "frame";
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder registry(EnvelopeSerializerRegistry registry) {
             this.registry = registry;

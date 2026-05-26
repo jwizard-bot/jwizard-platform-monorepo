@@ -48,8 +48,7 @@ public class WsQueryParamAuthenticator implements WsClientAuthenticator {
         private String queryParameterKey = "token";
         private String queryParameterValue = null;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder queryParameterKey(String queryParameterKey) {
             this.queryParameterKey = queryParameterKey;

@@ -21,5 +21,4 @@ import org.eclipse.jetty.client.Request;
 
 import xyz.jwizard.jwl.netclient.rest.spec.BodyBuilderStrategy;
 
-public interface JettyBodyStrategy extends BodyBuilderStrategy<Request.Content> {
-}
+public interface JettyBodyStrategy extends BodyBuilderStrategy<Request.Content> {}

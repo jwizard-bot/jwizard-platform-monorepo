@@ -32,12 +32,13 @@ class Neo4jConfigUnitTest {
     @DisplayName("should build valid Neo4jConfig when all required properties are provided")
     void shouldBuildValidConfig() {
         // when
-        final Neo4jConfig config = Neo4jConfig.builder()
-            .protocol(Neo4jGraphProtocol.NEO4J_S)
-            .address(HostPort.from("localhost", 7687))
-            .username("admin")
-            .password("pass")
-            .build();
+        final Neo4jConfig config =
+                Neo4jConfig.builder()
+                        .protocol(Neo4jGraphProtocol.NEO4J_S)
+                        .address(HostPort.from("localhost", 7687))
+                        .username("admin")
+                        .password("pass")
+                        .build();
         // then
         assertThat(config.getProtocol()).isEqualTo(Neo4jGraphProtocol.NEO4J_S);
         assertThat(config.getAddress().host()).isEqualTo("localhost");
@@ -48,27 +49,29 @@ class Neo4jConfigUnitTest {
     @DisplayName("should throw CriticalBootstrapException when password is not provided")
     void shouldThrowExceptionWhenPasswordIsMissing() {
         // given
-        final Neo4jConfig.Builder builder = Neo4jConfig.builder()
-            .protocol(Neo4jGraphProtocol.BOLT)
-            .address(HostPort.from("localhost", 7687))
-            .username("admin");
+        final Neo4jConfig.Builder builder =
+                Neo4jConfig.builder()
+                        .protocol(Neo4jGraphProtocol.BOLT)
+                        .address(HostPort.from("localhost", 7687))
+                        .username("admin");
         // when & then
         assertThatThrownBy(builder::build)
-            .isInstanceOf(CriticalBootstrapException.class)
-            .hasMessageContaining("Password cannot be null");
+                .isInstanceOf(CriticalBootstrapException.class)
+                .hasMessageContaining("Password cannot be null");
     }
 
     @Test
     @DisplayName("should throw CriticalBootstrapException when base protocol is missing")
     void shouldThrowExceptionWhenProtocolIsMissing() {
         // given
-        final Neo4jConfig.Builder builder = Neo4jConfig.builder()
-            .address(HostPort.from("localhost", 7687))
-            .username("admin")
-            .password("pass");
+        final Neo4jConfig.Builder builder =
+                Neo4jConfig.builder()
+                        .address(HostPort.from("localhost", 7687))
+                        .username("admin")
+                        .password("pass");
         // when & then
         assertThatThrownBy(builder::build)
-            .isInstanceOf(CriticalBootstrapException.class)
-            .hasMessageContaining("Protocol cannot be null");
+                .isInstanceOf(CriticalBootstrapException.class)
+                .hasMessageContaining("Protocol cannot be null");
     }
 }

@@ -36,11 +36,13 @@ public class ProviderCache<K, C, V> {
         if (key == null) {
             return null;
         }
-        return cache.computeIfAbsent(key, k ->
-            providers.stream()
+        return cache.computeIfAbsent(key, k -> findFirstSupportedProvider(context));
+    }
+
+    private V findFirstSupportedProvider(C context) {
+        return providers.stream()
                 .filter(p -> supportsPredicate.test(p, context))
                 .findFirst()
-                .orElse(null)
-        );
+                .orElse(null);
     }
 }

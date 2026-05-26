@@ -47,11 +47,15 @@ public class WsTypedMessageSessionCodec implements WsSessionCodec {
         try {
             serializer.serializeAndAccept(payload, visitor);
         } catch (UnsupportedDataTypeException | MessageSerializerException ex) {
-            LOG.error("Message error for RAW {}: {}", serializer.getFormat().getFormatName(),
-                ex.getMessage());
+            LOG.error(
+                    "Message error for RAW {}: {}",
+                    serializer.getFormat().getFormatName(),
+                    ex.getMessage());
         } catch (Exception ex) {
-            LOG.error("Unexpected error during processing RAW payload of type: {}",
-                payload != null ? payload.getClass().getSimpleName() : "null", ex);
+            LOG.error(
+                    "Unexpected error during processing RAW payload of type: {}",
+                    payload != null ? payload.getClass().getSimpleName() : "null",
+                    ex);
         }
     }
 

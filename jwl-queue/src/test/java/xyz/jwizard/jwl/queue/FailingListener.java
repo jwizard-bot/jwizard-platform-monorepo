@@ -37,9 +37,7 @@ public class FailingListener implements QueueListener<byte[]> {
 
     @Override
     public QueueTopology getTopology() {
-        return QueueTopology.builder()
-            .withDeadLetter()
-            .build();
+        return QueueTopology.builder().withDeadLetter().build();
     }
 
     @Override

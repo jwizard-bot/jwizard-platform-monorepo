@@ -31,8 +31,11 @@ public class CorrelationInterceptor implements RequestInterceptor {
 
     @Override
     public void intercept(InterceptorContext context) {
-        context.addHeader(TestHttpHeaderName.X_CORRELATION_ID, TestHttpHeaderValue.REQ,
-            correlationId, correlationCode);
+        context.addHeader(
+                TestHttpHeaderName.X_CORRELATION_ID,
+                TestHttpHeaderValue.REQ,
+                correlationId,
+                correlationCode);
         context.addQueryParam("tracking_enabled", "true");
     }
 

@@ -18,7 +18,7 @@
 package xyz.jwizard.jwl.codec.envelope;
 
 public enum TestOpCode implements OpCode {
-    USER_DATA(0x01, 0x64),  // 65636  (0x010064)
+    USER_DATA(0x01, 0x64), // 65636 (0x010064)
     ;
 
     private final int code;

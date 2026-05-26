@@ -21,8 +21,8 @@ import java.io.IOException;
 import java.util.Map;
 
 public interface JsEngine {
-    <T> T executeScript(ScriptFile scriptFile, Map<String, Object> variables,
-                        Class<T> returnType) throws IOException;
+    <T> T executeScript(ScriptFile scriptFile, Map<String, Object> variables, Class<T> returnType)
+            throws IOException;
 
     <T> T executeScript(ScriptFile scriptFile, Class<T> returnType) throws IOException;
 

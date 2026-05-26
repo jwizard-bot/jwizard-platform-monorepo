@@ -61,8 +61,10 @@ public class WsMessageSinkBroadcaster implements WsBroadcaster {
     @Override
     public void broadcastRaw(WsTopic topic, byte[] payload) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Broadcasting RAW bytes to topic: [{}] (size: {} bytes)", topic,
-                payload.length);
+            LOG.debug(
+                    "Broadcasting RAW bytes to topic: [{}] (size: {} bytes)",
+                    topic,
+                    payload.length);
         }
         sink.payload(topic, payload);
     }

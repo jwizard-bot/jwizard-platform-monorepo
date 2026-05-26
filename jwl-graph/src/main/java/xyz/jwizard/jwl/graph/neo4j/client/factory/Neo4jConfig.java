@@ -46,8 +46,7 @@ public class Neo4jConfig extends GraphConfig {
         private String username;
         private String password;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         @Override
         protected Builder self() {

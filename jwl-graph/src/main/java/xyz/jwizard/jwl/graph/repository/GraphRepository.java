@@ -20,5 +20,4 @@ package xyz.jwizard.jwl.graph.repository;
 import xyz.jwizard.jwl.graph.GraphReader;
 import xyz.jwizard.jwl.graph.GraphWriter;
 
-public interface GraphRepository extends GraphReader, GraphWriter {
-}
+public interface GraphRepository extends GraphReader, GraphWriter {}

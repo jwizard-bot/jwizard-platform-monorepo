@@ -42,8 +42,8 @@ public class JsonBinaryEnvelopeSerializer extends JsonEnvelopeSerializer<byte[]>
     }
 
     @Override
-    public void serializeAndAcceptEnvelope(OpCode opCode, Object payload,
-                                           EncodedPayloadVisitor visitor) {
+    public void serializeAndAcceptEnvelope(
+            OpCode opCode, Object payload, EncodedPayloadVisitor visitor) {
         visitor.accept(serializeForSession(opCode, payload));
     }
 

@@ -34,8 +34,8 @@ public class SecondPriorityFilter implements HttpFilter {
     @Override
     public boolean preHandle(HttpRequest req, HttpResponse res) {
         final String current = res.getHeader(TestHttpHeaderName.X_FILTER_ORDER);
-        res.setHeader(TestHttpHeaderName.X_FILTER_ORDER,
-            (current == null ? "" : current) + " -> Second");
+        res.setHeader(
+                TestHttpHeaderName.X_FILTER_ORDER, (current == null ? "" : current) + " -> Second");
         return true;
     }
 

@@ -34,17 +34,18 @@ public class JettyRawBodyStrategy implements JettyBodyStrategy {
 
     @Override
     public boolean supports(GenericRequestSpec spec) {
-        return spec.getBody() != null &&
-            (spec.getFormParams() == null || spec.getFormParams().isEmpty());
+        return spec.getBody() != null
+                && (spec.getFormParams() == null || spec.getFormParams().isEmpty());
     }
 
     @Override
-    public Request.Content buildContent(GenericRequestSpec spec, MessageSerializer serializer,
-                                        HeaderConsumer headerConsumer) {
+    public Request.Content buildContent(
+            GenericRequestSpec spec, MessageSerializer serializer, HeaderConsumer headerConsumer) {
         final String mimeType = serializer.getFormat().getMimeType();
-        LOG.trace("Building raw body, format: {}, mime type: {}", serializer.getFormat()
-                .getFormatName(),
-            mimeType);
+        LOG.trace(
+                "Building raw body, format: {}, mime type: {}",
+                serializer.getFormat().getFormatName(),
+                mimeType);
         if (mimeType != null) {
             headerConsumer.addHeader(CommonHttpHeaderName.CONTENT_TYPE, mimeType);
         }

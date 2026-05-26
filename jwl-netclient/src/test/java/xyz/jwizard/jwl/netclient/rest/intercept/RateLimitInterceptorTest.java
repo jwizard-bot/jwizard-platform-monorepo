@@ -17,8 +17,8 @@
  */
 package xyz.jwizard.jwl.netclient.rest.intercept;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -28,23 +28,24 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import xyz.jwizard.jwl.common.limit.RateLimiter;
 import xyz.jwizard.jwl.net.http.HttpStatus;
 import xyz.jwizard.jwl.netclient.group.ClientGroup;
+import xyz.jwizard.jwl.netclient.rest.RestResponse;
 
 @ExtendWith(MockitoExtension.class)
 class RateLimitInterceptorTest {
-    @Mock
-    private RateLimiter rateLimiter;
-    @Mock
-    private InterceptorContext context;
-    @Mock
-    private RequestView view;
-    @Mock
-    private ClientGroup clientGroup;
+    @Mock private RateLimiter rateLimiter;
+    @Mock private InterceptorContext context;
+    @Mock private RequestView view;
+    @Mock private ClientGroup clientGroup;
+
+    @Captor private ArgumentCaptor<RestResponse<?>> responseCaptor;
 
     private RateLimitInterceptor interceptor;
 
@@ -75,8 +76,9 @@ class RateLimitInterceptorTest {
         // when
         interceptor.intercept(context);
         // then
-        verify(context).abortWith(argThat(response -> response.getStatus()
-            .equals(HttpStatus.TOO_MANY_REQUESTS_429) && response.getBody() == null
-        ));
+        verify(context).abortWith(responseCaptor.capture());
+        final RestResponse<?> capturedResponse = responseCaptor.getValue();
+        assertThat(capturedResponse.getStatus()).isEqualTo(HttpStatus.TOO_MANY_REQUESTS_429);
+        assertThat(capturedResponse.getBody()).isNull();
     }
 }

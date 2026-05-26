@@ -46,8 +46,9 @@ public class WsClientHeaderAuthenticator implements WsClientAuthenticator {
     @Override
     public void applyAuthentication(WsClientUpgradeRequest req) {
         final String headerValue = authScheme.buildHeaderValue(credentials);
-        LOG.trace("Applying authentication via HTTP Authorization header with scheme: {}",
-            authScheme);
+        LOG.trace(
+                "Applying authentication via HTTP Authorization header with scheme: {}",
+                authScheme);
         req.setHeader(headerName, headerValue);
     }
 
@@ -56,8 +57,7 @@ public class WsClientHeaderAuthenticator implements WsClientAuthenticator {
         private AuthScheme authScheme;
         private String[] credentials;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder headerName(HttpHeaderName headerName) {
             this.headerName = headerName;

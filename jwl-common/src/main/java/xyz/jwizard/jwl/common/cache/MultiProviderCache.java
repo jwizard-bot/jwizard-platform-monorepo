@@ -36,10 +36,8 @@ public class MultiProviderCache<K, C, V> {
         if (key == null) {
             return List.of();
         }
-        return cache.computeIfAbsent(key, k ->
-            providers.stream()
-                .filter(p -> supportsPredicate.test(p, context))
-                .toList()
-        );
+        return cache.computeIfAbsent(
+                key,
+                k -> providers.stream().filter(p -> supportsPredicate.test(p, context)).toList());
     }
 }

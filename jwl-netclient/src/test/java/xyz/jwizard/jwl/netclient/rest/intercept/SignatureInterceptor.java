@@ -27,8 +27,11 @@ public class SignatureInterceptor implements RequestInterceptor {
         final String actionType = view.getHeaders().get(TestHttpHeaderName.X_ACTION_TYPE.getCode());
         final String targetId = view.getQueryParams().get("target_id");
         if (actionType != null && targetId != null) {
-            context.addHeader(TestHttpHeaderName.X_REQUEST_SIGNATURE, TestHttpHeaderValue.SIG,
-                actionType, targetId);
+            context.addHeader(
+                    TestHttpHeaderName.X_REQUEST_SIGNATURE,
+                    TestHttpHeaderValue.SIG,
+                    actionType,
+                    targetId);
         }
     }
 

@@ -32,11 +32,8 @@ import xyz.jwizard.jwl.codec.EncodedPayloadVisitor;
 
 @ExtendWith(MockitoExtension.class)
 class JsonBinarySerializerTest {
-    @Mock
-    private JsonSerializer engineMock;
-
-    @Mock
-    private EncodedPayloadVisitor visitorMock;
+    @Mock private JsonSerializer engineMock;
+    @Mock private EncodedPayloadVisitor visitorMock;
 
     @Test
     @DisplayName("should delegate binary serialization and call visitor")

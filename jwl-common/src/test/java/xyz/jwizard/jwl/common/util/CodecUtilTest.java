@@ -76,6 +76,6 @@ class CodecUtilTest {
         final String invalidBase64 = "This is not valid base64!@#";
         // when & then
         assertThatThrownBy(() -> xyz.jwizard.jwl.common.util.CodecUtil.decodeBase64(invalidBase64))
-            .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }
