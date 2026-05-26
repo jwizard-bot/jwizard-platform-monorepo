@@ -7,6 +7,7 @@ no-argument:
 .PHONY: init-hooks
 init-hooks:
 	-chmod +x .githooks/pre-commit
+	-chmod +x .githooks/pre-push
 	git config core.hooksPath .githooks
 
 .PHONY: build
